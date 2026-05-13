@@ -35,7 +35,8 @@ Thumbs.db
 
 # IDEs/Editors
 .vscode/
-**/ .vscode/
+**/.vscode/
+!.vscode/settings.json
 !.vscode/extensions.json
 .idea/
 **/.idea/
@@ -44,7 +45,6 @@ Thumbs.db
 
 # Prisma
 /backend/generated/prisma/
-backend/prisma/migrations/
 backend/prisma/*.db
 backend/prisma/*.db-journal
 
@@ -67,6 +67,8 @@ coverage/
 .next
 **/.next
 
+# Build error logs
+frontend/build_errors*.txt
 
 # Exports
 *.pdf
@@ -81,6 +83,3 @@ storage/
 **/storage/
 temp/
 **/temp/
-
-
-
