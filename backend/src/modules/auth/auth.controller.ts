@@ -1,0 +1,79 @@
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import { Response, Request } from 'express';
+import { AuthService } from './auth.service';
+import { AuthDto } from './dto/auth.dto';
+import { Tokens } from './types/tokens.type';
+import { AtGuard, RtGuard } from './guards';
+import { GetCurrentUser, GetCurrentUserId, Public } from '../../common/decorators';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Public()
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  async signup(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ access_token: string }> {
+    const tokens = await this.authService.signup(dto);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
+  }
+
+  @Public()
+  @Post('signin')
+  @HttpCode(HttpStatus.OK)
+  async signin(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ access_token: string }> {
+    const tokens = await this.authService.signin(dto);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(
+    @GetCurrentUserId() userId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.logout(userId);
+    res.clearCookie('refresh_token');
+    return { message: 'Logged out successfully' };
+  }
+
+  @Public()
+  @UseGuards(RtGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refreshTokens(
+    @GetCurrentUserId() userId: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ access_token: string }> {
+    const tokens = await this.authService.refreshTokens(userId, refreshToken);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
+  }
+
+  private setRefreshTokenCookie(res: Response, refreshToken: string) {
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+  }
+}

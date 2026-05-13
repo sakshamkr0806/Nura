@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshToken String?
+
+  cycles     Cycle[]
+  dailyLogs  DailyLog[]
+
+  @@map("users")
+}
+
+model Cycle {
+  id        String    @id @default(uuid())
+  startDate DateTime
+  endDate   DateTime?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cycles")
+}
+
+model DailyLog {
+  id           String   @id @default(uuid())
+  date         DateTime
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+
+  symptoms     String[]
+  moods        String[]
+  sleepHours   Float?
+  waterIntake  Int?     // in ml
+  notes        String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@map("daily_logs")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+
