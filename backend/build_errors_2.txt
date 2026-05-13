@@ -1,0 +1,187 @@
+
+> backend@0.0.1 build
+> nest build
+
+[96mprisma.config.ts[0m:[93m4[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module 'prisma/config' or its corresponding type declarations.
+
+[7m4[0m import { defineConfig } from "prisma/config";
+[7m [0m [91m                             ~~~~~~~~~~~~~~~[0m
+[96msrc/modules/ai/ai.service.ts[0m:[93m48[0m:[93m25[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+
+[7m48[0m       return JSON.parse(response.choices[0].message.content);
+[7m  [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/alert/alert.service.ts[0m:[93m36[0m:[93m21[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; message: string; level: "MEDICAL_SUGGESTION"; }' is not assignable to parameter of type 'never'.
+
+[7m 36[0m         alerts.push({
+[7m   [0m [91m                    ~[0m
+[7m 37[0m           title: 'Cycle Delay Detected',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 39[0m           level: AlertLevel.MEDICAL_SUGGESTION,
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 40[0m         });
+[7m   [0m [91m~~~~~~~~~[0m
+[96msrc/modules/alert/alert.service.ts[0m:[93m57[0m:[93m19[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; message: string; level: "ATTENTION"; }' is not assignable to parameter of type 'never'.
+
+[7m 57[0m       alerts.push({
+[7m   [0m [91m                  ~[0m
+[7m 58[0m         title: 'Increased Symptom Intensity',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 60[0m         level: AlertLevel.ATTENTION,
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 61[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/alert/alert.service.ts[0m:[93m67[0m:[93m19[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; message: string; level: "INFO"; }' is not assignable to parameter of type 'never'.
+
+[7m 67[0m       alerts.push({
+[7m   [0m [91m                  ~[0m
+[7m 68[0m         title: 'Hydration Goal Missed',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 70[0m         level: AlertLevel.INFO,
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 71[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/alert/alert.service.ts[0m:[93m79[0m:[93m24[0m - [91merror[0m[90m TS2339: [0mProperty 'title' does not exist on type 'never'.
+
+[7m79[0m           title: alert.title,
+[7m  [0m [91m                       ~~~~~[0m
+[96msrc/modules/alert/alert.service.ts[0m:[93m86[0m:[93m19[0m - [91merror[0m[90m TS2698: [0mSpread types may only be created from object types.
+
+[7m86[0m           data: { ...alert, userId },
+[7m  [0m [91m                  ~~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m56[0m:[93m21[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; description: string; type: string; }' is not assignable to parameter of type 'never'.
+
+[7m 56[0m       insights.push({
+[7m   [0m [91m                    ~[0m
+[7m 57[0m         title: 'Sleep Inconsistency',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 59[0m         type: 'warning',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 60[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m62[0m:[93m21[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; description: string; type: string; }' is not assignable to parameter of type 'never'.
+
+[7m 62[0m       insights.push({
+[7m   [0m [91m                    ~[0m
+[7m 63[0m         title: 'Restful Week',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 65[0m         type: 'success',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 66[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m70[0m:[93m21[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ title: string; description: string; type: string; }' is not assignable to parameter of type 'never'.
+
+[7m 70[0m       insights.push({
+[7m   [0m [91m                    ~[0m
+[7m 71[0m         title: 'Hydration Gap',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 73[0m         type: 'info',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 74[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m85[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ category: string; action: string; tip: string; }' is not assignable to parameter of type 'never'.
+
+[7m 85[0m       recommendations.push({
+[7m   [0m [91m                           ~[0m
+[7m 86[0m         category: 'Rest',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 88[0m         tip: 'Try reading or meditation instead of screens before bed.',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 89[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m93[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ category: string; action: string; tip: string; }' is not assignable to parameter of type 'never'.
+
+[7m 93[0m       recommendations.push({
+[7m   [0m [91m                           ~[0m
+[7m 94[0m         category: 'Nutrition',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 96[0m         tip: 'Keep a glass of water on your nightstand to start hydrating early.',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 97[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m101[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ category: string; action: string; tip: string; }' is not assignable to parameter of type 'never'.
+
+[7m101[0m       recommendations.push({
+[7m   [0m [91m                           ~[0m
+[7m102[0m         category: 'Activity',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m104[0m         tip: 'Light movement can help alleviate the discomfort you logged recently.',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m105[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/analytics/analytics.service.ts[0m:[93m110[0m:[93m28[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ category: string; action: string; tip: string; }' is not assignable to parameter of type 'never'.
+
+[7m110[0m       recommendations.push({
+[7m   [0m [91m                           ~[0m
+[7m111[0m         category: 'Wellness',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m113[0m         tip: 'Consistency is your greatest strength in body literacy.',
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m114[0m       });
+[7m   [0m [91m~~~~~~~[0m
+[96msrc/modules/auth/strategies/at.strategy.ts[0m:[93m10[0m:[93m11[0m - [91merror[0m[90m TS2345: [0mArgument of type '[{ jwtFromRequest: JwtFromRequestFunction<any>; secretOrKey: string | undefined; }]' is not assignable to parameter of type '[opt: StrategyOptionsWithRequest] | [opt: StrategyOptionsWithoutRequest]'.
+  Type '[{ jwtFromRequest: JwtFromRequestFunction<any>; secretOrKey: string | undefined; }]' is not assignable to type '[opt: StrategyOptionsWithoutRequest]'.
+    Type '{ jwtFromRequest: JwtFromRequestFunction<any>; secretOrKey: string | undefined; }' is not assignable to type 'StrategyOptionsWithoutRequest'.
+      Type '{ jwtFromRequest: JwtFromRequestFunction<any>; secretOrKey: string | undefined; }' is not assignable to type 'Omit<WithSecretOrKey, "secretOrKeyProvider"> & { passReqToCallback?: false | undefined; }'.
+        Type '{ jwtFromRequest: JwtFromRequestFunction<any>; secretOrKey: string | undefined; }' is not assignable to type 'Omit<WithSecretOrKey, "secretOrKeyProvider">'.
+          Types of property 'secretOrKey' are incompatible.
+            Type 'string | undefined' is not assignable to type 'string | Buffer<ArrayBufferLike>'.
+              Type 'undefined' is not assignable to type 'string | Buffer<ArrayBufferLike>'.
+
+[7m10[0m     super({
+[7m  [0m [91m          ~[0m
+[7m11[0m       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+[7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m12[0m       secretOrKey: config.get<string>('AT_SECRET'),
+[7m  [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m13[0m     });
+[7m  [0m [91m~~~~~[0m
+[96msrc/modules/auth/strategies/rt.strategy.ts[0m:[93m12[0m:[93m11[0m - [91merror[0m[90m TS2345: [0mArgument of type '[{ jwtFromRequest: JwtFromRequestFunction<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>>; secretOrKey: string | undefined; passReqToCallback: true; }]' is not assignable to parameter of type '[opt: StrategyOptionsWithRequest] | [opt: StrategyOptionsWithoutRequest]'.
+  Type '{ jwtFromRequest: JwtFromRequestFunction<Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>>; secretOrKey: string | undefined; passReqToCallback: true; }' is not assignable to type 'StrategyOptionsWithoutRequest'.
+    Types of property 'passReqToCallback' are incompatible.
+      Type 'true' is not assignable to type 'false'.
+
+[7m 12[0m     super({
+[7m   [0m [91m          ~[0m
+[7m 13[0m       jwtFromRequest: ExtractJwt.fromExtractors([
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 19[0m       passReqToCallback: true,
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 20[0m     });
+[7m   [0m [91m~~~~~[0m
+[96msrc/modules/cycle/cycle.service.ts[0m:[93m53[0m:[93m28[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+  Overload 1 of 5, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'Date | null' is not assignable to parameter of type 'string | number | Date'.
+      Type 'null' is not assignable to type 'string | number | Date'.
+  Overload 2 of 5, '(vd: VarDate): Date', gave the following error.
+    Argument of type 'Date | null' is not assignable to parameter of type 'VarDate'.
+      Type 'null' is not assignable to type 'VarDate'.
+  Overload 3 of 5, '(value: string | number): Date', gave the following error.
+    Argument of type 'Date | null' is not assignable to parameter of type 'string | number'.
+      Type 'null' is not assignable to type 'string | number'.
+
+[7m53[0m       const end = new Date(c.endDate);
+[7m  [0m [91m                           ~~~~~~~~~[0m
+
+[96msrc/modules/report/report.service.ts[0m:[93m38[0m:[93m46[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m38[0m       doc.fontSize(12).text(`Patient Name: ${user.name || 'N/A'}`);
+[7m  [0m [91m                                             ~~~~[0m
+[96msrc/modules/report/report.service.ts[0m:[93m39[0m:[93m34[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m39[0m       doc.text(`Patient Email: ${user.email}`);
+[7m  [0m [91m                                 ~~~~[0m
+
+Found 19 error(s).
+

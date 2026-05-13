@@ -25,7 +25,7 @@ export function ReportPreview({ data }: ReportPreviewProps) {
           </div>
           <div className="p-4 bg-muted/50 rounded-lg">
             <p className="text-muted-foreground font-semibold">Avg. Sleep</p>
-            <p className="text-2xl font-bold">{data.averages.sleep.toFixed(1)}h</p>
+            <p className="text-2xl font-bold">{data.averages?.sleep?.toFixed(1) || '0.0'}h</p>
           </div>
         </div>
 

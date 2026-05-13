@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { subDays, format } from 'date-fns';
 import * as PDFDocument from 'pdfkit';
+// @ts-ignore
+const PDFDoc = PDFDocument.default || PDFDocument;
 
 @Injectable()
 export class ReportService {
@@ -9,6 +11,8 @@ export class ReportService {
 
   async generateDoctorReport(userId: string): Promise<Buffer> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error('User not found');
+    
     const cycles = await this.prisma.cycle.findMany({
       where: { userId },
       orderBy: { startDate: 'desc' },
@@ -24,7 +28,7 @@ export class ReportService {
     });
 
     return new Promise((resolve) => {
-      const doc = new PDFDocument({ size: 'A4', margin: 50 });
+      const doc = new PDFDoc({ size: 'A4', margin: 50 });
       const chunks: Buffer[] = [];
 
       doc.on('data', (chunk) => chunks.push(chunk));

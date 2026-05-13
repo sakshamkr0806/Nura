@@ -22,7 +22,7 @@ export class AlertService {
   }
 
   async evaluateRules(userId: string) {
-    const alerts = [];
+    const alerts: any[] = [];
     
     // 1. Cycle Delay Rule
     const activeCycle = await this.prisma.cycle.findFirst({

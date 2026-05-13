@@ -40,6 +40,9 @@ export class CycleService {
   }
 
   async getPredictions(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error('User not found');
+    
     const cycles = await this.prisma.cycle.findMany({
       where: { userId, endDate: { not: null } },
       orderBy: { startDate: 'desc' },
@@ -50,7 +53,7 @@ export class CycleService {
 
     const lengths = cycles.map(c => {
       const start = new Date(c.startDate);
-      const end = new Date(c.endDate);
+      const end = new Date(c.endDate!);
       return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
     });
 

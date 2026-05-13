@@ -50,7 +50,7 @@ export class AnalyticsService {
 
   async getInsights(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
-    const insights = [];
+    const insights: any[] = [];
 
     if (scoreData.factors.sleep < 70) {
       insights.push({
@@ -79,7 +79,7 @@ export class AnalyticsService {
 
   async getRecommendations(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
-    const recommendations = [];
+    const recommendations: any[] = [];
 
     if (scoreData.factors.sleep < 80) {
       recommendations.push({

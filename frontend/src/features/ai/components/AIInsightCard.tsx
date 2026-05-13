@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, Info, ArrowRight } from "lucide-react"
+import { Sparkles, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 interface AIInsight {

@@ -11,11 +11,9 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
@@ -26,10 +24,10 @@ import { toast } from "sonner"
 import { useEffect } from "react"
 
 const logSchema = z.object({
-  symptoms: z.array(z.string()).default([]),
-  moods: z.array(z.string()).default([]),
-  sleepHours: z.number().min(0).max(24).default(8),
-  waterIntake: z.number().min(0).default(2000),
+  symptoms: z.array(z.string()),
+  moods: z.array(z.string()),
+  sleepHours: z.number().min(0).max(24),
+  waterIntake: z.number().min(0),
   notes: z.string().optional(),
 })
 
@@ -42,7 +40,7 @@ interface LoggingModalProps {
 }
 
 const SYMPTOMS = ["Cramps", "Headache", "Bloating", "Acne", "Tender Breasts"]
-const MOODS = ["Happy", "Sad", "Anxious", "Irritable", "Calm"]
+
 
 export function LoggingModal({ date, isOpen, onClose }: LoggingModalProps) {
   const form = useForm<LogFormValues>({
@@ -156,7 +154,7 @@ export function LoggingModal({ date, isOpen, onClose }: LoggingModalProps) {
                       max={24}
                       step={0.5}
                       defaultValue={[field.value]}
-                      onValueChange={(vals) => field.onChange(vals[0])}
+                      onValueChange={(vals) => field.onChange(Array.isArray(vals) ? vals[0] : vals)}
                     />
                   </FormControl>
                 </FormItem>
@@ -175,7 +173,7 @@ export function LoggingModal({ date, isOpen, onClose }: LoggingModalProps) {
                       max={5000}
                       step={100}
                       defaultValue={[field.value]}
-                      onValueChange={(vals) => field.onChange(vals[0])}
+                      onValueChange={(vals) => field.onChange(Array.isArray(vals) ? vals[0] : vals)}
                     />
                   </FormControl>
                 </FormItem>

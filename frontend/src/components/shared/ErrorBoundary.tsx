@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from "react"
+import { Component } from "react"
+import type { ErrorInfo, ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, RefreshCcw } from "lucide-react"
 
@@ -42,7 +43,7 @@ export class ErrorBoundary extends Component<Props, State> {
               Don't worry, your data is safe.
             </p>
           </div>
-          <Button onClick={handleReset} className="gap-2">
+          <Button onClick={this.handleReset} className="gap-2">
             <RefreshCcw size={18} />
             Return to Dashboard
           </Button>
@@ -53,3 +54,4 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
+

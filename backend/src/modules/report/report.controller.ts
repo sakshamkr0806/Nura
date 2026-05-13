@@ -1,5 +1,5 @@
 import { Controller, Get, Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { GetCurrentUserId } from '../../common/decorators';
 import { ReportService } from './report.service';
 

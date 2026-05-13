@@ -81,7 +81,7 @@ export default function ArticleDetail() {
           <div className="flex items-center gap-2">
             <Tag size={18} className="text-muted-foreground" />
             <div className="flex gap-2">
-              {article.tags.map((tag: string) => (
+              {article.tags?.map((tag: string) => (
                 <Badge key={tag} variant="secondary" className="font-normal">
                   #{tag}
                 </Badge>

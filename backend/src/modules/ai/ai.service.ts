@@ -45,7 +45,7 @@ export class AIService {
         response_format: { type: 'json_object' }
       });
 
-      return JSON.parse(response.choices[0].message.content);
+      return JSON.parse(response.choices[0].message.content || '{}');
     } catch (error) {
       console.error('OpenAI Error:', error);
       return {
