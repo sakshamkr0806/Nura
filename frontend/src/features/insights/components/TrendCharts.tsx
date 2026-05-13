@@ -8,11 +8,17 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-} from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
-import api from "@/api/axios"
-import { format, subDays } from "date-fns"
+} from 'recharts'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { useEffect, useState } from 'react'
+import api from '@/api/axios'
+import { format, subDays } from 'date-fns'
 
 export function TrendCharts() {
   const [data, setData] = useState([])
@@ -20,11 +26,12 @@ export function TrendCharts() {
   useEffect(() => {
     const end = new Date()
     const start = subDays(end, 7)
-    
-    api.get(`/logs/range?start=${start.toISOString()}&end=${end.toISOString()}`)
-      .then(res => {
+
+    api
+      .get(`/logs/range?start=${start.toISOString()}&end=${end.toISOString()}`)
+      .then((res) => {
         const formatted = res.data.map((item: any) => ({
-          name: format(new Date(item.date), "MMM d"),
+          name: format(new Date(item.date), 'MMM d'),
           water: item.waterIntake || 0,
           sleep: item.sleepHours || 0,
         }))
@@ -46,7 +53,11 @@ export function TrendCharts() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="water" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="water"
+                fill="hsl(var(--primary))"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -64,12 +75,12 @@ export function TrendCharts() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="sleep" 
-                stroke="hsl(var(--primary))" 
+              <Line
+                type="monotone"
+                dataKey="sleep"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
-                dot={{ fill: "hsl(var(--primary))" }}
+                dot={{ fill: 'hsl(var(--primary))' }}
               />
             </LineChart>
           </ResponsiveContainer>

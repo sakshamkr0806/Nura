@@ -4,12 +4,12 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { AlertCard } from "./AlertCard"
-import { useEffect, useState } from "react"
-import api from "@/api/axios"
-import { BellOff } from "lucide-react"
+} from '@/components/ui/sheet'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { AlertCard } from './AlertCard'
+import { useEffect, useState } from 'react'
+import api from '@/api/axios'
+import { BellOff } from 'lucide-react'
 
 interface AlertCenterProps {
   isOpen: boolean
@@ -17,7 +17,11 @@ interface AlertCenterProps {
   onUpdateCount: (count: number) => void
 }
 
-export function AlertCenter({ isOpen, onClose, onUpdateCount }: AlertCenterProps) {
+export function AlertCenter({
+  isOpen,
+  onClose,
+  onUpdateCount,
+}: AlertCenterProps) {
   const [alerts, setAlerts] = useState<any[]>([])
 
   const fetchAlerts = async () => {
@@ -26,7 +30,7 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }: AlertCenterProps
       setAlerts(res.data)
       onUpdateCount(res.data.filter((a: any) => !a.isRead).length)
     } catch (err) {
-      console.error("Failed to fetch alerts", err)
+      console.error('Failed to fetch alerts', err)
     }
   }
 
@@ -41,7 +45,7 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }: AlertCenterProps
       await api.patch(`/alerts/${id}/read`)
       fetchAlerts()
     } catch (err) {
-      console.error("Failed to mark alert as read", err)
+      console.error('Failed to mark alert as read', err)
     }
   }
 
@@ -50,14 +54,14 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }: AlertCenterProps
       await api.delete(`/alerts/${id}`)
       fetchAlerts()
     } catch (err) {
-      console.error("Failed to delete alert", err)
+      console.error('Failed to delete alert', err)
     }
   }
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-[400px] sm:w-[540px] p-0 flex flex-col">
-        <SheetHeader className="p-6 border-b">
+      <SheetContent className="flex w-[400px] flex-col p-0 sm:w-[540px]">
+        <SheetHeader className="border-b p-6">
           <SheetTitle>Alert Center</SheetTitle>
           <SheetDescription>
             Proactive warnings and wellness notifications.
@@ -72,9 +76,9 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }: AlertCenterProps
               </div>
             ) : (
               alerts.map((alert) => (
-                <AlertCard 
-                  key={alert.id} 
-                  alert={alert} 
+                <AlertCard
+                  key={alert.id}
+                  alert={alert}
                   onMarkAsRead={handleMarkAsRead}
                   onDelete={handleDelete}
                 />

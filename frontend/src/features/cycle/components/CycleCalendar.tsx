@@ -1,7 +1,12 @@
-
-import { Calendar } from "@/components/ui/calendar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { format } from "date-fns"
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { format } from 'date-fns'
 
 interface CycleCalendarProps {
   selectedDate: Date | undefined
@@ -12,13 +17,19 @@ interface CycleCalendarProps {
   }
 }
 
-export function CycleCalendar({ selectedDate, onDateSelect, highlightedDates }: CycleCalendarProps) {
+export function CycleCalendar({
+  selectedDate,
+  onDateSelect,
+  highlightedDates,
+}: CycleCalendarProps) {
   return (
-    <Card className="w-full h-full">
+    <Card className="h-full w-full">
       <CardHeader>
         <CardTitle>Cycle Calendar</CardTitle>
         <CardDescription>
-          {selectedDate ? format(selectedDate, "PPP") : "Select a day to log symptoms"}
+          {selectedDate
+            ? format(selectedDate, 'PPP')
+            : 'Select a day to log symptoms'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -26,14 +37,20 @@ export function CycleCalendar({ selectedDate, onDateSelect, highlightedDates }: 
           mode="single"
           selected={selectedDate}
           onSelect={onDateSelect}
-          className="rounded-md border shadow w-full flex justify-center"
+          className="flex w-full justify-center rounded-md border shadow"
           modifiers={{
             period: highlightedDates?.period || [],
             prediction: highlightedDates?.prediction || [],
           }}
           modifiersStyles={{
-            period: { backgroundColor: "hsl(var(--destructive))", color: "white" },
-            prediction: { backgroundColor: "hsl(var(--destructive) / 0.3)", color: "inherit" },
+            period: {
+              backgroundColor: 'hsl(var(--destructive))',
+              color: 'white',
+            },
+            prediction: {
+              backgroundColor: 'hsl(var(--destructive) / 0.3)',
+              color: 'inherit',
+            },
           }}
         />
       </CardContent>

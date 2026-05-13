@@ -1,7 +1,7 @@
-import { Component } from "react"
-import type { ErrorInfo, ReactNode } from "react"
-import { Button } from "@/components/ui/button"
-import { AlertTriangle, RefreshCcw } from "lucide-react"
+import { Component } from 'react'
+import type { ErrorInfo, ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
+import { AlertTriangle, RefreshCcw } from 'lucide-react'
 
 interface Props {
   children: ReactNode
@@ -13,7 +13,7 @@ interface State {
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   }
 
   public static getDerivedStateFromError(_: Error): State {
@@ -21,25 +21,25 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo)
+    console.error('Uncaught error:', error, errorInfo)
   }
 
   private handleReset = () => {
     this.setState({ hasError: false })
-    window.location.href = "/dashboard"
+    window.location.href = '/dashboard'
   }
 
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center space-y-6">
-          <div className="p-4 bg-destructive/10 text-destructive rounded-full">
+        <div className="flex min-h-screen flex-col items-center justify-center space-y-6 p-6 text-center">
+          <div className="rounded-full bg-destructive/10 p-4 text-destructive">
             <AlertTriangle size={48} />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Something went wrong</h1>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              We encountered an unexpected error while rendering this page. 
+            <p className="mx-auto max-w-md text-muted-foreground">
+              We encountered an unexpected error while rendering this page.
               Don't worry, your data is safe.
             </p>
           </div>
@@ -54,4 +54,3 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
-

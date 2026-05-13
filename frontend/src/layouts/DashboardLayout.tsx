@@ -1,35 +1,44 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, User, LogOut, FileText, BookOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/store/useAuthStore';
-import api from '@/api/axios';
-import { toast } from 'sonner';
-import { NotificationBell } from '@/features/alerts/components/NotificationBell';
+import { Outlet, Link, useNavigate } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  Calendar,
+  User,
+  LogOut,
+  FileText,
+  BookOpen,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useAuthStore } from '@/store/useAuthStore'
+import api from '@/api/axios'
+import { toast } from 'sonner'
+import { NotificationBell } from '@/features/alerts/components/NotificationBell'
 
 export default function DashboardLayout() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const navigate = useNavigate()
+  const { user, logout } = useAuthStore()
 
   const handleLogout = async () => {
     try {
-      await api.post('/auth/logout');
-      logout();
-      toast.success('Logged out successfully');
-      navigate('/login');
+      await api.post('/auth/logout')
+      logout()
+      toast.success('Logged out successfully')
+      navigate('/login')
     } catch (error) {
-      logout(); // Force logout on client even if server fails
-      navigate('/login');
+      logout() // Force logout on client even if server fails
+      navigate('/login')
     }
-  };
+  }
 
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 border-r bg-card hidden md:flex flex-col">
-        <div className="p-6 border-b">
-          <Link to="/" className="text-2xl font-bold text-primary">CycleWell</Link>
+      <aside className="hidden w-64 flex-col border-r bg-card md:flex">
+        <div className="border-b p-6">
+          <Link to="/" className="text-2xl font-bold text-primary">
+            CycleWell
+          </Link>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 space-y-2 p-4">
           <Link to="/dashboard">
             <Button variant="ghost" className="w-full justify-start gap-3">
               <LayoutDashboard size={20} />
@@ -61,9 +70,9 @@ export default function DashboardLayout() {
             </Button>
           </Link>
         </nav>
-        <div className="p-4 border-t">
-          <Button 
-            variant="ghost" 
+        <div className="border-t p-4">
+          <Button
+            variant="ghost"
             className="w-full justify-start gap-3 text-destructive hover:text-destructive"
             onClick={handleLogout}
           >
@@ -74,14 +83,14 @@ export default function DashboardLayout() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 border-b flex items-center justify-between px-6 bg-card">
-          <div className="md:hidden font-bold text-xl">CycleWell</div>
+        <header className="flex h-16 items-center justify-between border-b bg-card px-6">
+          <div className="text-xl font-bold md:hidden">CycleWell</div>
           <div className="flex-1" />
           <div className="flex items-center gap-4">
             <NotificationBell />
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
               {user?.name?.[0] || user?.email?.[0] || 'U'}
             </div>
           </div>
@@ -93,5 +102,5 @@ export default function DashboardLayout() {
         </main>
       </div>
     </div>
-  );
+  )
 }

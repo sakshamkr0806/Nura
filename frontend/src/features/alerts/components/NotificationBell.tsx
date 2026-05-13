@@ -1,9 +1,9 @@
-import { Bell } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Bell } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
-import { useState, useEffect } from "react"
-import { AlertCenter } from "./AlertCenter"
-import api from "@/api/axios"
+import { useState, useEffect } from 'react'
+import { AlertCenter } from './AlertCenter'
+import api from '@/api/axios'
 
 export function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,29 +18,29 @@ export function NotificationBell() {
       } catch (err) {}
     }
     fetchCount()
-    
+
     // Evaluate rules on mount to potentially generate new alerts
     api.post('/alerts/evaluate').then(() => fetchCount())
   }, [])
 
   return (
     <>
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="relative" 
+      <Button
+        variant="ghost"
+        size="icon"
+        className="relative"
         onClick={() => setIsOpen(true)}
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground animate-in fade-in zoom-in duration-300">
+          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground duration-300 animate-in fade-in zoom-in">
             {unreadCount}
           </span>
         )}
       </Button>
-      <AlertCenter 
-        isOpen={isOpen} 
-        onClose={() => setIsOpen(false)} 
+      <AlertCenter
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
         onUpdateCount={setUnreadCount}
       />
     </>

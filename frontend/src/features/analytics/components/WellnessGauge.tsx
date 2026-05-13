@@ -1,19 +1,20 @@
-
-
 interface WellnessGaugeProps {
   score: number
   label?: string
 }
 
-export function WellnessGauge({ score, label = "Wellness Score" }: WellnessGaugeProps) {
+export function WellnessGauge({
+  score,
+  label = 'Wellness Score',
+}: WellnessGaugeProps) {
   const radius = 45
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (score / 100) * circumference
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="relative w-48 h-48">
-        <svg className="w-full h-full transform -rotate-90">
+      <div className="relative h-48 w-48">
+        <svg className="h-full w-full -rotate-90 transform">
           {/* Background circle */}
           <circle
             cx="96"
@@ -40,7 +41,9 @@ export function WellnessGauge({ score, label = "Wellness Score" }: WellnessGauge
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-4xl font-bold">{score}</span>
-          <span className="text-xs text-muted-foreground uppercase tracking-widest">{label}</span>
+          <span className="text-xs uppercase tracking-widest text-muted-foreground">
+            {label}
+          </span>
         </div>
       </div>
     </div>
