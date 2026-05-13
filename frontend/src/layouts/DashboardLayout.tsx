@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, User, LogOut, FileText } from 'lucide-react';
+import { LayoutDashboard, Calendar, User, LogOut, FileText, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/api/axios';
@@ -46,6 +46,12 @@ export default function DashboardLayout() {
             <Button variant="ghost" className="w-full justify-start gap-3">
               <FileText size={20} />
               Doctor Reports
+            </Button>
+          </Link>
+          <Link to="/education">
+            <Button variant="ghost" className="w-full justify-start gap-3">
+              <BookOpen size={20} />
+              Education Hub
             </Button>
           </Link>
           <Link to="/profile">

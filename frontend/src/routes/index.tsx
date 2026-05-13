@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Dashboard from '@/pages/Dashboard';
 import Reports from '@/pages/Reports';
+import Education from '@/pages/Education';
+import ArticleDetail from '@/pages/ArticleDetail';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import SignupPage from '@/features/auth/pages/SignupPage';
 import ProtectedRoute from '@/components/shared/ProtectedRoute';
@@ -34,6 +36,14 @@ export const router = createBrowserRouter([
       {
         path: 'reports',
         element: <Reports />,
+      },
+      {
+        path: 'education',
+        element: <Education />,
+      },
+      {
+        path: 'education/:slug',
+        element: <ArticleDetail />,
       },
       {
         path: '*',

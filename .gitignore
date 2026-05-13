@@ -67,4 +67,13 @@ coverage/
 exports/
 **/exports/
 
+# Assets & Uploads
+public/uploads/
+**/public/uploads/
+storage/
+**/storage/
+temp/
+**/temp/
+
+
 

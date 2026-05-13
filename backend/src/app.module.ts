@@ -11,6 +11,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AIModule } from './modules/ai/ai.module';
 import { AlertModule } from './modules/alert/alert.module';
 import { ReportModule } from './modules/report/report.module';
+import { ArticleModule } from './modules/article/article.module';
 import { AtGuard } from './modules/auth/guards';
 
 @Module({
@@ -26,6 +27,7 @@ import { AtGuard } from './modules/auth/guards';
     AIModule,
     AlertModule,
     ReportModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [
