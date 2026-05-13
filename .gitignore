@@ -55,11 +55,18 @@ coverage/
 
 # Misc
 .cache/
+**/.cache/
 .npm/
+**/.npm/
 .eslintcache
+**/.eslintcache
 .vercel
+**/.vercel
 .turbo
+**/.turbo
 .next
+**/.next
+
 
 # Exports
 *.pdf

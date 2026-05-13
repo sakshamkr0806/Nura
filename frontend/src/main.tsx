@@ -4,10 +4,13 @@ import { RouterProvider } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import './index.css'
 import { router } from './routes'
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
-    <Toaster position="top-right" richColors />
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" richColors />
+    </ErrorBoundary>
   </StrictMode>,
 )

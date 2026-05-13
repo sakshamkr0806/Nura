@@ -1,21 +1,33 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import DashboardLayout from '@/layouts/DashboardLayout';
-import Dashboard from '@/pages/Dashboard';
-import Reports from '@/pages/Reports';
-import Education from '@/pages/Education';
-import ArticleDetail from '@/pages/ArticleDetail';
-import LoginPage from '@/features/auth/pages/LoginPage';
-import SignupPage from '@/features/auth/pages/SignupPage';
 import ProtectedRoute from '@/components/shared/ProtectedRoute';
+import { LoadingFallback } from '@/components/shared/LoadingFallback';
+
+// Lazy load pages
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Reports = lazy(() => import('@/pages/Reports'));
+const Education = lazy(() => import('@/pages/Education'));
+const ArticleDetail = lazy(() => import('@/pages/ArticleDetail'));
+const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
+const SignupPage = lazy(() => import('@/features/auth/pages/SignupPage'));
 
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <LoginPage />
+      </Suspense>
+    ),
   },
   {
     path: '/signup',
-    element: <SignupPage />,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <SignupPage />
+      </Suspense>
+    ),
   },
   {
     path: '/',
@@ -31,19 +43,35 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <Dashboard />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Dashboard />
+          </Suspense>
+        ),
       },
       {
         path: 'reports',
-        element: <Reports />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Reports />
+          </Suspense>
+        ),
       },
       {
         path: 'education',
-        element: <Education />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Education />
+          </Suspense>
+        ),
       },
       {
         path: 'education/:slug',
-        element: <ArticleDetail />,
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <ArticleDetail />
+          </Suspense>
+        ),
       },
       {
         path: '*',
@@ -52,4 +80,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-
