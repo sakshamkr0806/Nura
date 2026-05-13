@@ -29,23 +29,35 @@ lerna-debug.log*
 
 # OS files
 .DS_Store
+**/.DS_Store
 Thumbs.db
+**/Thumbs.db
 
 # IDEs/Editors
 .vscode/
+**/ .vscode/
 !.vscode/extensions.json
 .idea/
+**/.idea/
 *.swp
 *.swo
 
 # Prisma
 /backend/generated/prisma/
+backend/prisma/migrations/
+backend/prisma/*.db
+backend/prisma/*.db-journal
 
 # Testing
 coverage/
 **/coverage/
+.nyc_output
 
 # Misc
 .cache/
 .npm/
 .eslintcache
+.vercel
+.turbo
+.next
+

@@ -8,6 +8,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { CycleModule } from './modules/cycle/cycle.module';
 import { LogModule } from './modules/log/log.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { AIModule } from './modules/ai/ai.module';
 import { AtGuard } from './modules/auth/guards';
 
 @Module({
@@ -20,6 +21,7 @@ import { AtGuard } from './modules/auth/guards';
     CycleModule,
     LogModule,
     AnalyticsModule,
+    AIModule,
   ],
   controllers: [AppController],
   providers: [
