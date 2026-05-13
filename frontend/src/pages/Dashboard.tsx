@@ -1,13 +1,24 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CycleCalendar } from "@/features/cycle/components/CycleCalendar"
 import { LoggingModal } from "@/features/cycle/components/LoggingModal"
 import { TrendCharts } from "@/features/insights/components/TrendCharts"
+import { WellnessGauge } from "@/features/analytics/components/WellnessGauge"
+import { InsightPanel } from "@/features/analytics/components/InsightPanel"
+import { RecommendationList } from "@/features/analytics/components/RecommendationList"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Droplets, Moon, Utensils, Heart } from "lucide-react"
+import api from "@/api/axios"
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [isLoggingOpen, setIsLoggingOpen] = useState(false)
+  const [analytics, setAnalytics] = useState<any>(null)
+
+  useEffect(() => {
+    api.get('/analytics/summary')
+      .then(res => setAnalytics(res.data))
+      .catch(err => console.error("Failed to fetch analytics", err))
+  }, [])
 
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
@@ -16,10 +27,46 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
-      <header>
-        <h1 className="text-3xl font-bold">Hormonal Wellness</h1>
-        <p className="text-muted-foreground">Log your symptoms and track your cycle.</p>
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Body Literacy Overview</h1>
+          <p className="text-muted-foreground">Understanding your cycle through data.</p>
+        </div>
       </header>
+      
+      {/* Analytics Hero Section */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-1 bg-gradient-to-br from-primary/10 via-background to-background border-primary/20">
+          <CardContent className="pt-6">
+            <WellnessGauge score={analytics?.score?.score || 0} />
+            <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
+              <div className="p-2 bg-muted/50 rounded-lg">
+                <p className="font-semibold text-primary">Sleep</p>
+                <p className="font-bold">{analytics?.score?.factors?.sleep || 0}%</p>
+              </div>
+              <div className="p-2 bg-muted/50 rounded-lg">
+                <p className="font-semibold text-primary">Cycle</p>
+                <p className="font-bold">{analytics?.score?.factors?.cycle || 0}%</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-lg">Key Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <InsightPanel insights={analytics?.insights || []} />
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-1 border-none shadow-none bg-transparent">
+          <CardContent className="p-0">
+            <RecommendationList recommendations={analytics?.recommendations || []} />
+          </CardContent>
+        </Card>
+      </div>
       
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -50,7 +97,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">7.5h</div>
-            <p className="text-xs text-muted-foreground">-0.5h from last week</p>
+            <p className="text-xs text-muted-foreground">Weekly average</p>
           </CardContent>
         </Card>
         <Card>
@@ -60,38 +107,23 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2.1L</div>
-            <p className="text-xs text-muted-foreground">Goal: 2.5L</p>
+            <p className="text-xs text-muted-foreground">Daily average</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-3">
-        {/* Calendar - 2 columns on medium screens */}
-        <div className="md:col-span-2">
+      <div className="grid gap-8 md:grid-cols-2">
+        <div className="md:col-span-1">
           <CycleCalendar 
             selectedDate={selectedDate} 
             onDateSelect={handleDateSelect}
           />
         </div>
-
-        {/* Sidebar Insights or Placeholder */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Daily Tips</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              You're in your follicular phase. High energy levels expected! Great time for high-intensity workouts.
-            </CardContent>
-          </Card>
+        <div className="md:col-span-1 space-y-4">
+          <h2 className="text-2xl font-bold">Health Trends</h2>
+          <TrendCharts />
         </div>
       </div>
-
-      {/* Trends Section */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold">Insights & Trends</h2>
-        <TrendCharts />
-      </section>
 
       <LoggingModal 
         date={selectedDate} 
