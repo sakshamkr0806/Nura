@@ -25,6 +25,7 @@ model User {
 
   cycles     Cycle[]
   dailyLogs  DailyLog[]
+  alerts     Alert[]
 
   @@map("users")
 }
@@ -61,9 +62,31 @@ model DailyLog {
   @@map("daily_logs")
 }
 
+model Alert {
+  id        String     @id @default(uuid())
+  title     String
+  message   String
+  level     AlertLevel
+  isRead    Boolean    @default(false)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("alerts")
+}
+
+enum AlertLevel {
+  INFO
+  ATTENTION
+  MEDICAL_SUGGESTION
+}
+
 enum Role {
   USER
   ADMIN
 }
+
 
 

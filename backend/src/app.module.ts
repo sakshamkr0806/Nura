@@ -9,6 +9,8 @@ import { CycleModule } from './modules/cycle/cycle.module';
 import { LogModule } from './modules/log/log.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AIModule } from './modules/ai/ai.module';
+import { AlertModule } from './modules/alert/alert.module';
+import { ReportModule } from './modules/report/report.module';
 import { AtGuard } from './modules/auth/guards';
 
 @Module({
@@ -22,6 +24,8 @@ import { AtGuard } from './modules/auth/guards';
     LogModule,
     AnalyticsModule,
     AIModule,
+    AlertModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [

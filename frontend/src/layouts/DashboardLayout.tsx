@@ -1,9 +1,10 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Calendar, Settings, User, Bell, LogOut } from 'lucide-react';
+import { LayoutDashboard, Calendar, User, LogOut, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/api/axios';
 import { toast } from 'sonner';
+import { NotificationBell } from '@/features/alerts/components/NotificationBell';
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -41,6 +42,12 @@ export default function DashboardLayout() {
               Cycle Calendar
             </Button>
           </Link>
+          <Link to="/reports">
+            <Button variant="ghost" className="w-full justify-start gap-3">
+              <FileText size={20} />
+              Doctor Reports
+            </Button>
+          </Link>
           <Link to="/profile">
             <Button variant="ghost" className="w-full justify-start gap-3">
               <User size={20} />
@@ -67,9 +74,7 @@ export default function DashboardLayout() {
           <div className="md:hidden font-bold text-xl">CycleWell</div>
           <div className="flex-1" />
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon">
-              <Bell size={20} />
-            </Button>
+            <NotificationBell />
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
               {user?.name?.[0] || user?.email?.[0] || 'U'}
             </div>

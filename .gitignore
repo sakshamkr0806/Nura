@@ -61,3 +61,10 @@ coverage/
 .turbo
 .next
 
+# Exports
+*.pdf
+**/*.pdf
+exports/
+**/exports/
+
+

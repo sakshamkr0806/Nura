@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import Dashboard from '@/pages/Dashboard';
+import Reports from '@/pages/Reports';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import SignupPage from '@/features/auth/pages/SignupPage';
 import ProtectedRoute from '@/components/shared/ProtectedRoute';
@@ -31,9 +32,14 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        path: 'reports',
+        element: <Reports />,
+      },
+      {
         path: '*',
         element: <div className="p-10 text-center">Page Not Found</div>,
       },
     ],
   },
 ]);
+
