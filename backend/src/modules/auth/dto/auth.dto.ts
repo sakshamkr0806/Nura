@@ -1,15 +1,65 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
-export class AuthDto {
+export class SignupDto {
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  name: string;
+
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
+  /**
+   * E.164 phone format: +<country_code><number> (7–15 digits total)
+   * Example: +919876543210
+   */
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @MinLength(6)
-  password: string;
+  @Matches(/^\+[1-9]\d{6,14}$/, {
+    message: 'phoneNumber must be in E.164 format (e.g. +919876543210)',
+  })
+  phoneNumber?: string;
 
   @IsString()
-  name?: string;
+  @IsNotEmpty()
+  @MinLength(8, { message: 'Password must be at least 8 characters' })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#\-_=+<>])[A-Za-z\d@$!%*?&^#\-_=+<>]{8,}$/,
+    {
+      message:
+        'Password must include uppercase, lowercase, a number, and a special character',
+    },
+  )
+  password: string;
+
+  @IsOptional()
+  @IsBoolean()
+  emailNotifications?: boolean;
 }
+
+export class SigninDto {
+  /**
+   * Can be an email address or an E.164 phone number
+   */
+  @IsString()
+  @IsNotEmpty()
+  identifier: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+/**
+ * @deprecated Use SignupDto or SigninDto instead.
+ */
+export class AuthDto extends SignupDto {}

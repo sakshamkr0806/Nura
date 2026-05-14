@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,6 +20,9 @@ model User {
   updatedAt DateTime @updatedAt
 
   refreshToken String?
+
+  phoneNumber        String?  @unique
+  emailNotifications Boolean  @default(false)
 
   cycles     Cycle[]
   dailyLogs  DailyLog[]
@@ -103,7 +104,3 @@ enum Role {
   USER
   ADMIN
 }
-
-
-
-

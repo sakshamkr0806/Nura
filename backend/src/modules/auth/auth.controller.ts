@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { SignupDto, SigninDto } from './dto/auth.dto';
 import { RtGuard } from './guards';
 import {
   GetCurrentUser,
@@ -25,7 +25,7 @@ export class AuthController {
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   async signup(
-    @Body() dto: AuthDto,
+    @Body() dto: SignupDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ access_token: string }> {
     const tokens = await this.authService.signup(dto);
@@ -37,7 +37,7 @@ export class AuthController {
   @Post('signin')
   @HttpCode(HttpStatus.OK)
   async signin(
-    @Body() dto: AuthDto,
+    @Body() dto: SigninDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ access_token: string }> {
     const tokens = await this.authService.signin(dto);

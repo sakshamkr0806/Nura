@@ -1,10 +1,15 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto/auth.dto';
+import { SignupDto, SigninDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { Tokens } from './types/tokens.type';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class AuthService {
@@ -12,9 +17,30 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private config: ConfigService,
+    private notifications: NotificationsService,
   ) {}
 
-  async signup(dto: AuthDto): Promise<Tokens> {
+  async signup(dto: SignupDto): Promise<Tokens> {
+    // Guard: duplicate email
+    const existingEmail = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existingEmail) {
+      throw new ConflictException('An account with this email already exists');
+    }
+
+    // Guard: duplicate phone number (only if provided)
+    if (dto.phoneNumber) {
+      const existingPhone = await this.prisma.user.findUnique({
+        where: { phoneNumber: dto.phoneNumber },
+      });
+      if (existingPhone) {
+        throw new ConflictException(
+          'An account with this phone number already exists',
+        );
+      }
+    }
+
     const hash = await this.hashData(dto.password);
 
     const newUser = await this.prisma.user.create({
@@ -22,6 +48,8 @@ export class AuthService {
         email: dto.email,
         password: hash,
         name: dto.name,
+        phoneNumber: dto.phoneNumber ?? null,
+        emailNotifications: dto.emailNotifications ?? false,
       },
     });
 
@@ -29,16 +57,24 @@ export class AuthService {
       newUser.id,
       newUser.email,
       newUser.role,
+      newUser.phoneNumber ?? undefined,
     );
     await this.updateRtHash(newUser.id, tokens.refresh_token);
+
+    // Fire-and-forget welcome email — does not block signup response
+    void this.notifications.sendWelcomeNotification(
+      newUser.email,
+      newUser.name ?? 'there',
+    );
 
     return tokens;
   }
 
-  async signin(dto: AuthDto): Promise<Tokens> {
-    const user = await this.prisma.user.findUnique({
+  async signin(dto: SigninDto): Promise<Tokens> {
+    // Support login by email OR E.164 phone number
+    const user = await this.prisma.user.findFirst({
       where: {
-        email: dto.email,
+        OR: [{ email: dto.identifier }, { phoneNumber: dto.identifier }],
       },
     });
 
@@ -47,7 +83,12 @@ export class AuthService {
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
+    const tokens = await this.getTokens(
+      user.id,
+      user.email,
+      user.role,
+      user.phoneNumber ?? undefined,
+    );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -79,7 +120,12 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.refreshToken);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
+    const tokens = await this.getTokens(
+      user.id,
+      user.email,
+      user.role,
+      user.phoneNumber ?? undefined,
+    );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -105,30 +151,24 @@ export class AuthService {
     userId: string,
     email: string,
     role: string,
+    phoneNumber?: string,
   ): Promise<Tokens> {
+    const payload = {
+      sub: userId,
+      email,
+      role,
+      ...(phoneNumber ? { phoneNumber } : {}),
+    };
+
     const [at, rt] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-          role,
-        },
-        {
-          secret: this.config.get<string>('AT_SECRET'),
-          expiresIn: '15m',
-        },
-      ),
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          email,
-          role,
-        },
-        {
-          secret: this.config.get<string>('RT_SECRET'),
-          expiresIn: '7d',
-        },
-      ),
+      this.jwtService.signAsync(payload, {
+        secret: this.config.get<string>('AT_SECRET'),
+        expiresIn: '15m',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.config.get<string>('RT_SECRET'),
+        expiresIn: '7d',
+      }),
     ]);
 
     return {

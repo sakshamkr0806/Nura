@@ -13,41 +13,65 @@ export const useAuth = () => {
   } = useAuthStore();
   const navigate = useNavigate();
 
+  /**
+   * Sign in using email OR phone number (identifier) plus password.
+   * @param {{ identifier: string, password: string }} values
+   */
   const login = async (values) => {
     try {
-      const response = await api.post("/auth/signin", values);
+      const response = await api.post("/auth/signin", {
+        identifier: values.identifier,
+        password: values.password,
+      });
       const { access_token } = response.data;
       const payload = JSON.parse(atob(access_token.split(".")[1]));
-      const user = {
+      const loggedInUser = {
         id: payload.sub,
         email: payload.email,
         role: payload.role,
         name: payload.name || "",
+        phoneNumber: payload.phoneNumber || "",
       };
-      setAuth(user, access_token);
-      toast.success("Logged in successfully");
+      setAuth(loggedInUser, access_token);
+      toast.success("Welcome back! 🌸");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed");
+      const msg = error.response?.data?.message;
+      const text = Array.isArray(msg) ? msg.join(". ") : msg || "Login failed";
+      toast.error(text);
     }
   };
 
+  /**
+   * Create a new account. phoneNumber and whatsappNotifications are optional.
+   * @param {{ name: string, email: string, password: string, phoneNumber?: string, whatsappNotifications?: boolean }} values
+   */
   const signup = async (values) => {
     try {
-      const response = await api.post("/auth/signup", values);
-      const { access_token } = response.data;
-      const payload = JSON.parse(atob(access_token.split(".")[1]));
-      const user = {
-        id: payload.sub,
-        email: payload.email,
-        role: payload.role,
+      const payload = {
         name: values.name,
+        email: values.email,
+        password: values.password,
+        emailNotifications: values.emailNotifications ?? false,
+        ...(values.phoneNumber ? { phoneNumber: values.phoneNumber } : {}),
       };
-      setAuth(user, access_token);
-      toast.success("Account created successfully");
+      const response = await api.post("/auth/signup", payload);
+      const { access_token } = response.data;
+      const jwtPayload = JSON.parse(atob(access_token.split(".")[1]));
+      const newUser = {
+        id: jwtPayload.sub,
+        email: jwtPayload.email,
+        role: jwtPayload.role,
+        name: values.name,
+        phoneNumber: jwtPayload.phoneNumber || "",
+      };
+      setAuth(newUser, access_token);
+      toast.success("Account created! Welcome to CycleWell 🌸");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
+      const msg = error.response?.data?.message;
+      const text = Array.isArray(msg) ? msg.join(". ") : msg || "Signup failed";
+      toast.error(text);
     }
   };
 
