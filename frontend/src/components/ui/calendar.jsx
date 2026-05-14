@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useRef, useEffect } from "react";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -181,8 +181,8 @@ function Calendar({
 function CalendarDayButton({ className, day, modifiers, locale, ...props }) {
   const defaultClassNames = getDefaultClassNames();
 
-  const ref = React.useRef(null);
-  React.useEffect(() => {
+  const ref = useRef(null);
+  useEffect(() => {
     if (modifiers.focused) ref.current?.focus();
   }, [modifiers.focused]);
 
