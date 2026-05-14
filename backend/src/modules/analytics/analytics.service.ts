@@ -3,13 +3,13 @@ import { PrismaService } from '../prisma/prisma.service';
 import { DailyLog, Cycle } from '@prisma/client';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
 
-interface Insight {
+export interface Insight {
   title: string;
   description: string;
   type: string;
 }
 
-interface Recommendation {
+export interface Recommendation {
   category: string;
   action: string;
   tip: string;

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev": "concurrently --names \"BACKEND,FRONTEND,INFO\" --prefix-colors \"blue,green,yellow\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\" \"sleep 6 && echo '\\n✅ All servers running:\\n   🌐 Frontend: http://localhost:5173\\n   🚀 Backend:  http://localhost:3000\\n'\"",
     "build": "npm run build --prefix backend && npm run build --prefix frontend",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"

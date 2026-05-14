@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AlertLevel } from '@prisma/client';
 import { subDays, differenceInDays } from 'date-fns';
 
-interface AlertInput {
+export interface AlertInput {
   title: string;
   message: string;
   level: AlertLevel;
