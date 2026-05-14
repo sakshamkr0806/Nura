@@ -18,7 +18,7 @@
     "lint-staged": "^16.4.0"
   },
   "lint-staged": {
-    "frontend/src/**/*.{ts,tsx}": [
+    "frontend/src/**/*.{js,jsx}": [
       "npm --prefix frontend run lint -- --fix",
       "npm --prefix frontend run format"
     ],
