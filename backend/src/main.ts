@@ -2,8 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
-// @ts-expect-error: cookieParser may have default export depending on module resolution
-const cp = cookieParser.default || cookieParser;
+const cp =
+  (cookieParser as unknown as { default?: typeof cookieParser }).default ||
+  cookieParser;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

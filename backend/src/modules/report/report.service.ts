@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { subDays, format } from 'date-fns';
-import * as PDFDocument from 'pdfkit';
-// @ts-expect-error: PDFDocument may have default export depending on module resolution
-const PDFDoc = PDFDocument.default || PDFDocument;
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const PDFDoc = require('pdfkit') as typeof import('pdfkit');
 
 @Injectable()
 export class ReportService {
