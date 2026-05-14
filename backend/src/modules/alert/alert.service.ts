@@ -3,6 +3,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AlertLevel } from '@prisma/client';
 import { subDays, differenceInDays } from 'date-fns';
 
+interface AlertInput {
+  title: string;
+  message: string;
+  level: AlertLevel;
+}
+
 @Injectable()
 export class AlertService {
   constructor(private prisma: PrismaService) {}
@@ -22,8 +28,8 @@ export class AlertService {
   }
 
   async evaluateRules(userId: string) {
-    const alerts: any[] = [];
-    
+    const alerts: AlertInput[] = [];
+
     // 1. Cycle Delay Rule
     const activeCycle = await this.prisma.cycle.findFirst({
       where: { userId, endDate: null },
@@ -32,10 +38,12 @@ export class AlertService {
 
     if (activeCycle) {
       const daysDiff = differenceInDays(new Date(), activeCycle.startDate);
-      if (daysDiff > 35) { // Assuming 35 days as a general threshold for delay alert
+      if (daysDiff > 35) {
+        // Assuming 35 days as a general threshold for delay alert
         alerts.push({
           title: 'Cycle Delay Detected',
-          message: 'Your current cycle has exceeded 35 days. This is for educational awareness and is NOT a medical diagnosis. Please consult a healthcare professional for persistent concerns.',
+          message:
+            'Your current cycle has exceeded 35 days. This is for educational awareness and is NOT a medical diagnosis. Please consult a healthcare professional for persistent concerns.',
           level: AlertLevel.MEDICAL_SUGGESTION,
         });
       }
@@ -49,24 +57,29 @@ export class AlertService {
       },
     });
 
-    const heavySymptomsCount = recentLogs.filter(log => 
-      log.symptoms.includes('Heavy Bleeding') || log.symptoms.length > 3
+    const heavySymptomsCount = recentLogs.filter(
+      (log) =>
+        log.symptoms.includes('Heavy Bleeding') || log.symptoms.length > 3,
     ).length;
 
     if (heavySymptomsCount >= 2) {
       alerts.push({
         title: 'Increased Symptom Intensity',
-        message: 'We noticed a pattern of heavy symptoms over the last 3 days. Focus on rest and hydration.',
+        message:
+          'We noticed a pattern of heavy symptoms over the last 3 days. Focus on rest and hydration.',
         level: AlertLevel.ATTENTION,
       });
     }
 
     // 3. Hydration Rule
-    const lowHydrationCount = recentLogs.filter(log => (log.waterIntake || 0) < 1500).length;
+    const lowHydrationCount = recentLogs.filter(
+      (log) => (log.waterIntake || 0) < 1500,
+    ).length;
     if (lowHydrationCount >= 2) {
       alerts.push({
         title: 'Hydration Goal Missed',
-        message: 'Your water intake has been low lately. Staying hydrated is essential for hormonal health.',
+        message:
+          'Your water intake has been low lately. Staying hydrated is essential for hormonal health.',
         level: AlertLevel.INFO,
       });
     }
@@ -77,8 +90,8 @@ export class AlertService {
         where: {
           userId,
           title: alert.title,
-          createdAt: { gte: subDays(new Date(), 1) }
-        }
+          createdAt: { gte: subDays(new Date(), 1) },
+        },
       });
 
       if (!existing) {

@@ -6,14 +6,16 @@ import {
   Post,
   Res,
   UseGuards,
-  Req,
 } from '@nestjs/common';
-import type { Response, Request } from 'express';
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { Tokens } from './types/tokens.type';
-import { AtGuard, RtGuard } from './guards';
-import { GetCurrentUser, GetCurrentUserId, Public } from '../../common/decorators';
+import { RtGuard } from './guards';
+import {
+  GetCurrentUser,
+  GetCurrentUserId,
+  Public,
+} from '../../common/decorators';
 
 @Controller('auth')
 export class AuthController {

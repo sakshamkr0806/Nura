@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { DailyLog, Cycle } from '@prisma/client';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
+
+interface Insight {
+  title: string;
+  description: string;
+  type: string;
+}
+
+interface Recommendation {
+  category: string;
+  action: string;
+  tip: string;
+}
 
 @Injectable()
 export class AnalyticsService {
@@ -32,9 +45,9 @@ export class AnalyticsService {
     // Weighted average
     const totalScore = Math.round(
       sleepScore * 0.25 +
-      hydrationScore * 0.15 +
-      symptomScore * 0.3 +
-      cycleScore * 0.3
+        hydrationScore * 0.15 +
+        symptomScore * 0.3 +
+        cycleScore * 0.3,
     );
 
     return {
@@ -50,12 +63,13 @@ export class AnalyticsService {
 
   async getInsights(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
-    const insights: any[] = [];
+    const insights: Insight[] = [];
 
     if (scoreData.factors.sleep < 70) {
       insights.push({
         title: 'Sleep Inconsistency',
-        description: 'Your sleep patterns varied significantly this week. Consistency is key for hormonal balance.',
+        description:
+          'Your sleep patterns varied significantly this week. Consistency is key for hormonal balance.',
         type: 'warning',
       });
     } else {
@@ -69,7 +83,8 @@ export class AnalyticsService {
     if (scoreData.factors.hydration < 80) {
       insights.push({
         title: 'Hydration Gap',
-        description: 'You were below your water intake goal on 4 out of 7 days.',
+        description:
+          'You were below your water intake goal on 4 out of 7 days.',
         type: 'info',
       });
     }
@@ -79,7 +94,7 @@ export class AnalyticsService {
 
   async getRecommendations(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
-    const recommendations: any[] = [];
+    const recommendations: Recommendation[] = [];
 
     if (scoreData.factors.sleep < 80) {
       recommendations.push({
@@ -117,30 +132,34 @@ export class AnalyticsService {
     return recommendations;
   }
 
-  private calculateSleepScore(logs: any[]) {
+  private calculateSleepScore(logs: DailyLog[]) {
     if (logs.length === 0) return 0;
-    const avgSleep = logs.reduce((acc, log) => acc + (log.sleepHours || 0), 0) / logs.length;
+    const avgSleep =
+      logs.reduce((acc, log) => acc + (log.sleepHours || 0), 0) / logs.length;
     // Goal: 8 hours
     const score = (avgSleep / 8) * 100;
     return Math.min(100, Math.round(score));
   }
 
-  private calculateHydrationScore(logs: any[]) {
+  private calculateHydrationScore(logs: DailyLog[]) {
     if (logs.length === 0) return 0;
-    const avgHydration = logs.reduce((acc, log) => acc + (log.waterIntake || 0), 0) / logs.length;
+    const avgHydration =
+      logs.reduce((acc, log) => acc + (log.waterIntake || 0), 0) / logs.length;
     // Goal: 2500ml
     const score = (avgHydration / 2500) * 100;
     return Math.min(100, Math.round(score));
   }
 
-  private calculateSymptomScore(logs: any[]) {
+  private calculateSymptomScore(logs: DailyLog[]) {
     if (logs.length === 0) return 100; // No symptoms is good
-    const symptomDays = logs.filter(log => log.symptoms && log.symptoms.length > 0).length;
+    const symptomDays = logs.filter(
+      (log) => log.symptoms && log.symptoms.length > 0,
+    ).length;
     const score = 100 - (symptomDays / 7) * 100;
     return Math.max(0, Math.round(score));
   }
 
-  private calculateCycleScore(cycles: any[]) {
+  private calculateCycleScore(cycles: Cycle[]) {
     if (cycles.length < 2) return 80; // Not enough data, default to good
     // Simplified: check if last 2 cycles have similar length (e.g., within 2 days)
     // For now, return a placeholder based on data presence

@@ -42,7 +42,7 @@ export class CycleService {
   async getPredictions(userId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error('User not found');
-    
+
     const cycles = await this.prisma.cycle.findMany({
       where: { userId, endDate: { not: null } },
       orderBy: { startDate: 'desc' },
@@ -51,7 +51,7 @@ export class CycleService {
 
     if (cycles.length === 0) return null;
 
-    const lengths = cycles.map(c => {
+    const lengths = cycles.map((c) => {
       const start = new Date(c.startDate);
       const end = new Date(c.endDate!);
       return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
@@ -68,4 +68,3 @@ export class CycleService {
     };
   }
 }
-

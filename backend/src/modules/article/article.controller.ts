@@ -8,10 +8,7 @@ export class ArticleController {
 
   @Public()
   @Get()
-  findAll(
-    @Query('q') query?: string,
-    @Query('category') category?: string,
-  ) {
+  findAll(@Query('q') query?: string, @Query('category') category?: string) {
     return this.articleService.findAll(query, category);
   }
 

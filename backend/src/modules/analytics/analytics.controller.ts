@@ -10,7 +10,8 @@ export class AnalyticsController {
   async getSummary(@GetCurrentUserId() userId: string) {
     const score = await this.analyticsService.getWellnessScore(userId);
     const insights = await this.analyticsService.getInsights(userId);
-    const recommendations = await this.analyticsService.getRecommendations(userId);
+    const recommendations =
+      await this.analyticsService.getRecommendations(userId);
 
     return {
       score,

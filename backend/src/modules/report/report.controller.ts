@@ -15,7 +15,7 @@ export class ReportController {
   @Get('export')
   async exportReport(@GetCurrentUserId() userId: string, @Res() res: Response) {
     const buffer = await this.reportService.generateDoctorReport(userId);
-    
+
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename=CycleWell_Doctor_Report.pdf',
