@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { ArticleCard } from "@/features/education/components/ArticleCard";
@@ -21,7 +21,7 @@ export default function Education() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await api.get("/articles", {
@@ -33,12 +33,12 @@ export default function Education() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [search, selectedCategory]);
 
   useEffect(() => {
     const timer = setTimeout(fetchArticles, 300);
     return () => clearTimeout(timer);
-  }, [search, selectedCategory]);
+  }, [fetchArticles]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-6">

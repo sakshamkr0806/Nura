@@ -7,14 +7,14 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertCard } from "./AlertCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "@/api/axios";
 import { BellOff } from "lucide-react";
 
 export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
   const [alerts, setAlerts] = useState([]);
 
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     try {
       const res = await api.get("/alerts");
       setAlerts(res.data);
@@ -22,13 +22,13 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
     } catch (err) {
       console.error("Failed to fetch alerts", err);
     }
-  };
+  }, [onUpdateCount]);
 
   useEffect(() => {
     if (isOpen) {
       fetchAlerts();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchAlerts]);
 
   const handleMarkAsRead = async (id) => {
     try {

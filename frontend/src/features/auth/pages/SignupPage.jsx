@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,8 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format, subYears, isAfter } from "date-fns";
-import { cn } from "@/lib/utils";
+import { format, subYears, isAfter, parse, isValid } from "date-fns";
 import {
   Form,
   FormControl,
@@ -117,6 +116,81 @@ const signupSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+const DateField = ({ field }) => {
+  const [inputValue, setInputValue] = useState(
+    field.value ? format(field.value, "dd/MM/yyyy") : "",
+  );
+
+  useEffect(() => {
+    if (field.value) {
+      const formatted = format(field.value, "dd/MM/yyyy");
+      if (formatted !== inputValue && inputValue.length === 10) {
+        setInputValue(formatted);
+      } else if (!inputValue) {
+        setInputValue(formatted);
+      }
+    }
+  }, [field.value, inputValue]);
+
+  return (
+    <FormItem className="flex flex-col">
+      <FormLabel>Date of Birth</FormLabel>
+      <div className="relative flex items-center">
+        <FormControl>
+          <Input
+            placeholder="DD/MM/YYYY"
+            className="h-10 border-muted-foreground/20 pr-12 focus-visible:ring-primary/30"
+            value={inputValue}
+            onChange={(e) => {
+              const val = e.target.value;
+              setInputValue(val);
+              if (val.length === 10) {
+                const parsedDate = parse(val, "dd/MM/yyyy", new Date());
+                if (isValid(parsedDate)) {
+                  field.onChange(parsedDate);
+                }
+              }
+            }}
+          />
+        </FormControl>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <CalendarIcon className="h-4 w-4" />
+              <span className="sr-only">Pick a date</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              mode="single"
+              selected={field.value}
+              onSelect={(date) => {
+                field.onChange(date);
+                if (date) {
+                  setInputValue(format(date, "dd/MM/yyyy"));
+                }
+              }}
+              disabled={(date) =>
+                date > new Date() || date < new Date("1900-01-01")
+              }
+              initialFocus
+              captionLayout="dropdown-buttons"
+              fromYear={1940}
+              toYear={new Date().getFullYear()}
+              className="rounded-md border shadow"
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+      <FormMessage />
+    </FormItem>
+  );
+};
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -228,47 +302,7 @@ export default function SignupPage() {
               <FormField
                 control={form.control}
                 name="dateOfBirth"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal h-10 border-muted-foreground/20 hover:border-primary/50 transition-colors",
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                          captionLayout="dropdown-buttons"
-                          fromYear={1940}
-                          toYear={new Date().getFullYear()}
-                          className="rounded-md border shadow"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => <DateField field={field} />}
               />
 
               {/* Email */}
