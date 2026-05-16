@@ -35,7 +35,7 @@ export class ReminderService {
 
     const users = await this.prisma.user.findMany({
       where: { emailNotifications: true },
-      select: { email: true, name: true },
+      select: { email: true, fullName: true },
     });
 
     this.logger.log(`Sending reminders to ${users.length} user(s)`);
@@ -43,7 +43,7 @@ export class ReminderService {
     // Fire reminders concurrently but don't let one failure block others
     await Promise.allSettled(
       users.map((user) =>
-        this.email.sendDailyReminderEmail(user.email, user.name ?? 'there'),
+        this.email.sendDailyReminderEmail(user.email, user.fullName || 'there'),
       ),
     );
 
@@ -60,14 +60,14 @@ export class ReminderService {
   async sendCycleAlert(userId: string, daysUntil: number): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { email: true, name: true, emailNotifications: true },
+      select: { email: true, fullName: true, emailNotifications: true },
     });
 
     if (!user || !user.emailNotifications) return;
 
     await this.email.sendCycleAlertEmail(
       user.email,
-      user.name ?? 'there',
+      user.fullName || 'there',
       daysUntil,
     );
   }

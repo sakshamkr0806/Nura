@@ -17,13 +17,13 @@ export class EmailService {
   /**
    * Send a welcome email when a new user signs up.
    */
-  async sendWelcomeEmail(to: string, name: string): Promise<void> {
+  async sendWelcomeEmail(to: string, fullName: string): Promise<void> {
     try {
       await this.resend.emails.send({
         from: this.fromEmail,
         to,
         subject: 'Welcome to CycleWell 🌸',
-        html: this.buildWelcomeHtml(name),
+        html: this.buildWelcomeHtml(fullName),
       });
       this.logger.log(`Welcome email sent → ${to}`);
     } catch (err) {
@@ -35,13 +35,13 @@ export class EmailService {
   /**
    * Send a daily health log reminder email.
    */
-  async sendDailyReminderEmail(to: string, name: string): Promise<void> {
+  async sendDailyReminderEmail(to: string, fullName: string): Promise<void> {
     try {
       await this.resend.emails.send({
         from: this.fromEmail,
         to,
         subject: "🌿 Time to log today's health data — CycleWell",
-        html: this.buildDailyReminderHtml(name),
+        html: this.buildDailyReminderHtml(fullName),
       });
       this.logger.log(`Daily reminder email sent → ${to}`);
     } catch (err) {
@@ -54,7 +54,7 @@ export class EmailService {
    */
   async sendCycleAlertEmail(
     to: string,
-    name: string,
+    fullName: string,
     daysUntil: number,
   ): Promise<void> {
     try {
@@ -62,7 +62,7 @@ export class EmailService {
         from: this.fromEmail,
         to,
         subject: `🌙 Your next cycle is predicted in ${daysUntil} days — CycleWell`,
-        html: this.buildCycleAlertHtml(name, daysUntil),
+        html: this.buildCycleAlertHtml(fullName, daysUntil),
       });
       this.logger.log(`Cycle alert email sent → ${to}`);
     } catch (err) {
@@ -75,7 +75,7 @@ export class EmailService {
    */
   async sendPasswordResetEmail(
     to: string,
-    name: string,
+    fullName: string,
     resetLink: string,
   ): Promise<void> {
     try {
@@ -83,7 +83,7 @@ export class EmailService {
         from: this.fromEmail,
         to,
         subject: 'Reset your CycleWell password',
-        html: this.buildPasswordResetHtml(name, resetLink),
+        html: this.buildPasswordResetHtml(fullName, resetLink),
       });
       this.logger.log(`Password reset email sent → ${to}`);
     } catch (err) {
@@ -93,11 +93,11 @@ export class EmailService {
 
   // ─── HTML Builders ───────────────────────────────────────────────────────────
 
-  private buildWelcomeHtml(name: string): string {
+  private buildWelcomeHtml(fullName: string): string {
     return `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
         <h1 style="color:#7c3aed;margin:0 0 8px">Welcome to CycleWell 🌸</h1>
-        <p style="color:#374151;font-size:15px">Hi ${name},</p>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
         <p style="color:#374151;font-size:15px;line-height:1.6">
           You've successfully created your CycleWell account. Start tracking your cycle, logging daily health data, and getting personalized AI insights.
         </p>
@@ -113,7 +113,7 @@ export class EmailService {
     `;
   }
 
-  private buildDailyReminderHtml(name: string): string {
+  private buildDailyReminderHtml(fullName: string): string {
     const today = new Date().toLocaleDateString('en-IN', {
       weekday: 'long',
       day: 'numeric',
@@ -122,7 +122,7 @@ export class EmailService {
     return `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
         <h2 style="color:#7c3aed;margin:0 0 8px">Daily Health Log Reminder 🌿</h2>
-        <p style="color:#374151;font-size:15px">Hi ${name},</p>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
         <p style="color:#374151;font-size:15px;line-height:1.6">
           It's <strong>${today}</strong>. Don't forget to log your symptoms, mood, and daily wellness data to keep your cycle insights accurate.
         </p>
@@ -138,11 +138,11 @@ export class EmailService {
     `;
   }
 
-  private buildCycleAlertHtml(name: string, daysUntil: number): string {
+  private buildCycleAlertHtml(fullName: string, daysUntil: number): string {
     return `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
         <h2 style="color:#7c3aed;margin:0 0 8px">Cycle Prediction Alert 🌙</h2>
-        <p style="color:#374151;font-size:15px">Hi ${name},</p>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
         <p style="color:#374151;font-size:15px;line-height:1.6">
           Based on your tracked data, your next cycle is predicted to start in <strong>${daysUntil} day${daysUntil !== 1 ? 's' : ''}</strong>.
           Stay prepared and keep logging!
@@ -159,11 +159,11 @@ export class EmailService {
     `;
   }
 
-  private buildPasswordResetHtml(name: string, resetLink: string): string {
+  private buildPasswordResetHtml(fullName: string, resetLink: string): string {
     return `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
         <h2 style="color:#7c3aed;margin:0 0 8px">Reset Your Password 🔐</h2>
-        <p style="color:#374151;font-size:15px">Hi ${name},</p>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
         <p style="color:#374151;font-size:15px;line-height:1.6">
           We received a request to reset your CycleWell password. Click the button below to set a new one. This link expires in 1 hour.
         </p>

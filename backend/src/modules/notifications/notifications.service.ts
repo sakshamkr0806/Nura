@@ -11,28 +11,28 @@ export class NotificationsService {
 
   async sendWelcomeNotification(
     userEmail: string,
-    name: string,
+    fullName: string,
   ): Promise<void> {
-    await this.email.sendWelcomeEmail(userEmail, name);
+    await this.email.sendWelcomeEmail(userEmail, fullName);
   }
 
-  async sendDailyReminder(userEmail: string, name: string): Promise<void> {
-    await this.email.sendDailyReminderEmail(userEmail, name);
+  async sendDailyReminder(userEmail: string, fullName: string): Promise<void> {
+    await this.email.sendDailyReminderEmail(userEmail, fullName);
   }
 
   async sendCycleAlert(
     userEmail: string,
-    name: string,
+    fullName: string,
     daysUntil: number,
   ): Promise<void> {
-    await this.email.sendCycleAlertEmail(userEmail, name, daysUntil);
+    await this.email.sendCycleAlertEmail(userEmail, fullName, daysUntil);
   }
 
   async sendPasswordReset(
     userEmail: string,
-    name: string,
+    fullName: string,
     resetLink: string,
   ): Promise<void> {
-    await this.email.sendPasswordResetEmail(userEmail, name, resetLink);
+    await this.email.sendPasswordResetEmail(userEmail, fullName, resetLink);
   }
 }

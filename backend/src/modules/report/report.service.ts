@@ -36,7 +36,7 @@ export class ReportService {
       // Header
       doc.fontSize(20).text('Hormonal Wellness Report', { align: 'center' });
       doc.moveDown();
-      doc.fontSize(12).text(`Patient Name: ${user.name || 'N/A'}`);
+      doc.fontSize(12).text(`Patient Name: ${user.fullName || 'N/A'}`);
       doc.text(`Patient Email: ${user.email}`);
       doc.text(`Report Date: ${format(new Date(), 'PPP')}`);
       doc.moveDown();

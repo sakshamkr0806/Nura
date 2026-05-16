@@ -82,10 +82,12 @@ export default function LoginPage() {
         id: decoded.sub,
         email: decoded.email,
         role: decoded.role,
-        name: decoded.name || "",
+        fullName: decoded.fullName || "",
         phoneNumber: decoded.phoneNumber || "",
+        dateOfBirth: decoded.dateOfBirth || null,
       };
       setAuth(user, access_token);
+
       toast.success("Welcome back! 🌸");
       navigate("/dashboard");
     } catch (error) {

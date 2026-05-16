@@ -13,8 +13,17 @@ import {
   Mail,
   Lock,
   User,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format, subYears, isAfter } from "date-fns";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -66,11 +75,25 @@ const STRENGTH_COLORS = [
 
 const signupSchema = z
   .object({
-    name: z
+    fullName: z
       .string()
       .trim()
-      .min(2, { message: "Name must be at least 2 characters" }),
+      .min(2, { message: "Full name must be at least 2 characters" }),
     email: z.string().trim().email({ message: "Invalid email address" }),
+    dateOfBirth: z
+      .date({
+        required_error: "Date of birth is required",
+      })
+      .refine(
+        (date) => {
+          const thirteenYearsAgo = subYears(new Date(), 13);
+          return date <= thirteenYearsAgo;
+        },
+        { message: "You must be at least 13 years old" },
+      )
+      .refine((date) => !isAfter(date, new Date()), {
+        message: "Date of birth cannot be in the future",
+      }),
     phoneNumber: z
       .string()
       .trim()
@@ -104,12 +127,13 @@ export default function SignupPage() {
   const form = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: "",
+      fullName: "",
       email: "",
+      dateOfBirth: undefined,
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      emailNotifications: false,
+      emailNotifications: true,
     },
   });
 
@@ -119,8 +143,9 @@ export default function SignupPage() {
   async function onSubmit(values) {
     try {
       const signupPayload = {
-        name: values.name.trim(),
+        fullName: values.fullName.trim(),
         email: values.email.trim().toLowerCase(),
+        dateOfBirth: values.dateOfBirth.toISOString(),
         password: values.password,
         emailNotifications: values.emailNotifications,
         ...(values.phoneNumber
@@ -139,10 +164,12 @@ export default function SignupPage() {
         id: decoded.sub,
         email: decoded.email,
         role: decoded.role,
-        name: decoded.name || values.name,
+        fullName: decoded.fullName || values.fullName,
         phoneNumber: decoded.phoneNumber || "",
+        dateOfBirth: decoded.dateOfBirth,
       };
       setAuth(user, access_token);
+
       toast.success("Account created! Welcome to CycleWell 🌸");
       navigate("/dashboard");
     } catch (error) {
@@ -178,7 +205,7 @@ export default function SignupPage() {
               {/* Full Name */}
               <FormField
                 control={form.control}
-                name="name"
+                name="fullName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
@@ -192,6 +219,53 @@ export default function SignupPage() {
                         />
                       </div>
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Date of Birth */}
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Date of Birth</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal h-10 border-muted-foreground/20 hover:border-primary/50 transition-colors",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                          captionLayout="dropdown-buttons"
+                          fromYear={1940}
+                          toYear={new Date().getFullYear()}
+                          className="rounded-md border shadow"
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

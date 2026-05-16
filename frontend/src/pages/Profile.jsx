@@ -37,10 +37,12 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
-              {user.name?.[0] || user.email?.[0] || "U"}
+              {user.fullName?.[0] || user.email?.[0] || "U"}
             </div>
             <div>
-              <CardTitle className="text-2xl">{user.name || "User"}</CardTitle>
+              <CardTitle className="text-2xl">
+                {user.fullName || "User"}
+              </CardTitle>
               <p className="text-sm text-muted-foreground">
                 Member since {new Date().getFullYear()}
               </p>

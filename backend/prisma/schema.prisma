@@ -14,7 +14,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  name      String?
+  fullName  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -22,7 +22,8 @@ model User {
   refreshToken String?
 
   phoneNumber        String?  @unique
-  emailNotifications Boolean  @default(false)
+  dateOfBirth        DateTime
+  emailNotifications Boolean  @default(true)
 
   cycles     Cycle[]
   dailyLogs  DailyLog[]

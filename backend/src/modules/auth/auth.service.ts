@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignupDto, SigninDto } from './dto/auth.dto';
+import { SignupDto, SigninDto, UpdateDobDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { Tokens } from './types/tokens.type';
 import { JwtService } from '@nestjs/jwt';
@@ -47,9 +47,10 @@ export class AuthService {
       data: {
         email: dto.email.toLowerCase(),
         password: hash,
-        name: dto.name,
+        fullName: dto.fullName,
         phoneNumber: dto.phoneNumber ?? null,
-        emailNotifications: dto.emailNotifications ?? false,
+        dateOfBirth: new Date(dto.dateOfBirth),
+        emailNotifications: dto.emailNotifications ?? true,
       },
     });
 
@@ -57,15 +58,16 @@ export class AuthService {
       newUser.id,
       newUser.email,
       newUser.role,
-      newUser.name ?? '',
+      newUser.fullName,
       newUser.phoneNumber ?? undefined,
+      newUser.dateOfBirth,
     );
     await this.updateRtHash(newUser.id, tokens.refresh_token);
 
     // Fire-and-forget welcome email — does not block signup response
     void this.notifications.sendWelcomeNotification(
       newUser.email,
-      newUser.name ?? 'there',
+      newUser.fullName || 'there',
     );
 
     return tokens;
@@ -89,8 +91,9 @@ export class AuthService {
       user.id,
       user.email,
       user.role,
-      user.name ?? '',
+      user.fullName,
       user.phoneNumber ?? undefined,
+      user.dateOfBirth,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
@@ -127,10 +130,36 @@ export class AuthService {
       user.id,
       user.email,
       user.role,
-      user.name ?? '',
+      user.fullName,
       user.phoneNumber ?? undefined,
+      user.dateOfBirth,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
+
+    return tokens;
+  }
+
+  async updateDob(userId: string, dto: UpdateDobDto) {
+    const dob = new Date(dto.dateOfBirth);
+    if (isNaN(dob.getTime())) {
+      throw new ForbiddenException('Invalid date format');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { dateOfBirth: dob },
+    });
+
+    const tokens = await this.getTokens(
+      updatedUser.id,
+      updatedUser.email,
+      updatedUser.role,
+      updatedUser.fullName,
+      updatedUser.phoneNumber ?? undefined,
+      updatedUser.dateOfBirth,
+    );
+
+    await this.updateRtHash(updatedUser.id, tokens.refresh_token);
 
     return tokens;
   }
@@ -155,15 +184,17 @@ export class AuthService {
     userId: string,
     email: string,
     role: string,
-    name: string,
+    fullName: string,
     phoneNumber?: string,
+    dateOfBirth?: Date | null,
   ): Promise<Tokens> {
     const payload = {
       sub: userId,
       email,
       role,
-      name,
+      fullName,
       ...(phoneNumber ? { phoneNumber } : {}),
+      ...(dateOfBirth ? { dateOfBirth: dateOfBirth.toISOString() } : {}),
     };
 
     const [at, rt] = await Promise.all([

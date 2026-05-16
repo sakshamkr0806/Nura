@@ -4,12 +4,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Patch,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
-import { SignupDto, SigninDto } from './dto/auth.dto';
+import { SignupDto, SigninDto, UpdateDobDto } from './dto/auth.dto';
 import { RtGuard } from './guards';
 import {
   GetCurrentUser,
@@ -41,6 +42,18 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ access_token: string }> {
     const tokens = await this.authService.signin(dto);
+    this.setRefreshTokenCookie(res, tokens.refresh_token);
+    return { access_token: tokens.access_token };
+  }
+
+  @Patch('dob')
+  @HttpCode(HttpStatus.OK)
+  async updateDob(
+    @GetCurrentUserId() userId: string,
+    @Body() dto: UpdateDobDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ access_token: string }> {
+    const tokens = await this.authService.updateDob(userId, dto);
     this.setRefreshTokenCookie(res, tokens.refresh_token);
     return { access_token: tokens.access_token };
   }

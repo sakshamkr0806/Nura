@@ -12,7 +12,11 @@ export class SignupDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
-  name: string;
+  fullName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  dateOfBirth: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -57,6 +61,12 @@ export class SigninDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export class UpdateDobDto {
+  @IsString()
+  @IsNotEmpty()
+  dateOfBirth: string;
 }
 
 /**

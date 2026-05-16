@@ -31,6 +31,7 @@ export const useAuth = () => {
         role: payload.role,
         name: payload.name || "",
         phoneNumber: payload.phoneNumber || "",
+        dateOfBirth: payload.dateOfBirth || null,
       };
       setAuth(loggedInUser, access_token);
       toast.success("Welcome back! 🌸");
@@ -64,6 +65,7 @@ export const useAuth = () => {
         role: jwtPayload.role,
         name: values.name,
         phoneNumber: jwtPayload.phoneNumber || "",
+        dateOfBirth: jwtPayload.dateOfBirth || null,
       };
       setAuth(newUser, access_token);
       toast.success("Account created! Welcome to CycleWell 🌸");
