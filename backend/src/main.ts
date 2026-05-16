@@ -16,13 +16,21 @@ async function bootstrap(): Promise<INestApplication> {
     app.useGlobalPipes(new ValidationPipe());
     app.use(cookieParser());
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     app.enableCors({
-      origin: [
-        frontendUrl,
-        'https://cyclewell.vercel.app',
-        'https://nura-gamma.vercel.app',
-      ],
+      origin: (
+        origin: string | undefined,
+        callback: (err: Error | null, allow?: boolean) => void,
+      ) => {
+        if (
+          !origin ||
+          origin.includes('vercel.app') ||
+          origin.includes('localhost')
+        ) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       credentials: true,
     });
 
