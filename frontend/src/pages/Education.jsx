@@ -41,14 +41,14 @@ export default function Education() {
   }, [fetchArticles]);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-6">
-      <header className="space-y-4">
+    <div className="space-y-10 py-6 font-sans watercolor-bg min-h-screen">
+      <header className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Hormonal Education Hub
+          <h1 className="text-4xl font-serif font-bold text-text-primary tracking-tight">
+            Learn & Empower
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Empower yourself with evidence-based hormonal health knowledge.
+          <p className="text-lg text-text-secondary font-medium italic">
+            Evidence-based hormonal health knowledge, tailored for your journey.
           </p>
         </div>
 

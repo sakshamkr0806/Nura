@@ -14,6 +14,14 @@ const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
 const Calendar = lazy(() => import("@/pages/Calendar"));
 const Profile = lazy(() => import("@/pages/Profile"));
 
+// Placeholders
+import { 
+  LogPlaceholder, 
+  CoachPlaceholder, 
+  SeedsPlaceholder, 
+  CommunityPlaceholder 
+} from "@/pages/Placeholders";
+
 export const router = createBrowserRouter([
   {
     path: "/login",
@@ -82,6 +90,22 @@ export const router = createBrowserRouter([
             <Profile />
           </Suspense>
         ),
+      },
+      {
+        path: "log",
+        element: <LogPlaceholder />,
+      },
+      {
+        path: "coach",
+        element: <CoachPlaceholder />,
+      },
+      {
+        path: "seeds",
+        element: <SeedsPlaceholder />,
+      },
+      {
+        path: "community",
+        element: <CommunityPlaceholder />,
       },
       {
         path: "education/:slug",

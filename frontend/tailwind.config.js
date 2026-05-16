@@ -20,12 +20,25 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        serif: ["Playfair Display", "serif"],
+        sans: ["Poppins", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        peach: "hsl(var(--peach))",
+        lavender: "hsl(var(--lavender))",
+        lilac: "hsl(var(--lilac))",
+        gold: "hsl(var(--gold))",
+        coral: "#F58E7C",
+        "blush-pink": "#FADADD",
+        "sage-green": "#D8E8D5",
+        "text-primary": "#2F2430",
+        "text-secondary": "#6F6460",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

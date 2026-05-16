@@ -39,22 +39,21 @@ export default function Reports() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 p-6">
-      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+    <div className="space-y-10 py-6 font-sans watercolor-bg min-h-screen">
+      <header className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <div>
-          <h1 className="text-3xl font-bold">Doctor-Ready Reports</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-serif font-bold text-text-primary tracking-tight">Clinical Insights & Reports</h1>
+          <p className="text-lg text-text-secondary font-medium italic">
             Export your health data for your next clinical consultation.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="rounded-2xl border-peach/50 bg-white/50 text-text-primary hover:bg-peach/10 gap-2 px-6">
             <Printer size={16} />
             Print
           </Button>
           <Button
-            size="sm"
-            className="gap-2"
+            className="rounded-2xl bg-coral text-white hover:bg-coral/90 gap-2 px-8 premium-shadow transition-all hover:scale-105"
             onClick={handleExport}
             disabled={isLoading}
           >
