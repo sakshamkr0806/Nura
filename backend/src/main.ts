@@ -17,21 +17,10 @@ async function bootstrap(): Promise<INestApplication> {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: (
-        origin: string | undefined,
-        callback: (err: Error | null, allow?: boolean) => void,
-      ) => {
-        if (
-          !origin ||
-          origin.includes('vercel.app') ||
-          origin.includes('localhost')
-        ) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: true,
       credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      allowedHeaders: 'Content-Type, Accept, Authorization',
     });
 
     await app.init();
