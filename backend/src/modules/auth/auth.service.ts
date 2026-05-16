@@ -21,9 +21,9 @@ export class AuthService {
   ) {}
 
   async signup(dto: SignupDto): Promise<Tokens> {
-    // Guard: duplicate email
+    const email = dto.email.toLowerCase();
     const existingEmail = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
     if (existingEmail) {
       throw new ConflictException('An account with this email already exists');
@@ -45,7 +45,7 @@ export class AuthService {
 
     const newUser = await this.prisma.user.create({
       data: {
-        email: dto.email,
+        email: dto.email.toLowerCase(),
         password: hash,
         name: dto.name,
         phoneNumber: dto.phoneNumber ?? null,
@@ -57,6 +57,7 @@ export class AuthService {
       newUser.id,
       newUser.email,
       newUser.role,
+      newUser.name ?? '',
       newUser.phoneNumber ?? undefined,
     );
     await this.updateRtHash(newUser.id, tokens.refresh_token);
@@ -72,9 +73,10 @@ export class AuthService {
 
   async signin(dto: SigninDto): Promise<Tokens> {
     // Support login by email OR E.164 phone number
+    const identifier = dto.identifier.toLowerCase();
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [{ email: dto.identifier }, { phoneNumber: dto.identifier }],
+        OR: [{ email: identifier }, { phoneNumber: dto.identifier }],
       },
     });
 
@@ -87,6 +89,7 @@ export class AuthService {
       user.id,
       user.email,
       user.role,
+      user.name ?? '',
       user.phoneNumber ?? undefined,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
@@ -124,6 +127,7 @@ export class AuthService {
       user.id,
       user.email,
       user.role,
+      user.name ?? '',
       user.phoneNumber ?? undefined,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
@@ -151,12 +155,14 @@ export class AuthService {
     userId: string,
     email: string,
     role: string,
+    name: string,
     phoneNumber?: string,
   ): Promise<Tokens> {
     const payload = {
       sub: userId,
       email,
       role,
+      name,
       ...(phoneNumber ? { phoneNumber } : {}),
     };
 

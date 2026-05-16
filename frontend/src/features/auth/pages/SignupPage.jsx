@@ -36,6 +36,7 @@ import {
 import api from "@/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
+import { decodeJwt } from "@/utils/jwt";
 
 const E164_REGEX = /^\+[1-9]\d{6,14}$/;
 
@@ -65,10 +66,14 @@ const STRENGTH_COLORS = [
 
 const signupSchema = z
   .object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-    email: z.string().email({ message: "Invalid email address" }),
+    name: z
+      .string()
+      .trim()
+      .min(2, { message: "Name must be at least 2 characters" }),
+    email: z.string().trim().email({ message: "Invalid email address" }),
     phoneNumber: z
       .string()
+      .trim()
       .optional()
       .refine((v) => !v || E164_REGEX.test(v), {
         message: "Use E.164 format: +919876543210",
@@ -113,22 +118,29 @@ export default function SignupPage() {
 
   async function onSubmit(values) {
     try {
-      const payload = {
-        name: values.name,
-        email: values.email,
+      const signupPayload = {
+        name: values.name.trim(),
+        email: values.email.trim().toLowerCase(),
         password: values.password,
         emailNotifications: values.emailNotifications,
-        ...(values.phoneNumber ? { phoneNumber: values.phoneNumber } : {}),
+        ...(values.phoneNumber
+          ? { phoneNumber: values.phoneNumber.trim() }
+          : {}),
       };
-      const response = await api.post("/auth/signup", payload);
+      const response = await api.post("/auth/signup", signupPayload);
       const { access_token } = response.data;
-      const jwtPayload = JSON.parse(atob(access_token.split(".")[1]));
+      const decoded = decodeJwt(access_token);
+
+      if (!decoded) {
+        throw new Error("Invalid session token received");
+      }
+
       const user = {
-        id: jwtPayload.sub,
-        email: jwtPayload.email,
-        role: jwtPayload.role,
-        name: values.name,
-        phoneNumber: jwtPayload.phoneNumber || "",
+        id: decoded.sub,
+        email: decoded.email,
+        role: decoded.role,
+        name: decoded.name || values.name,
+        phoneNumber: decoded.phoneNumber || "",
       };
       setAuth(user, access_token);
       toast.success("Account created! Welcome to CycleWell 🌸");

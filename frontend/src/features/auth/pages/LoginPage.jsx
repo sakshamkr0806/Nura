@@ -32,10 +32,12 @@ import {
 import api from "@/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
+import { decodeJwt } from "@/utils/jwt";
 
 const loginSchema = z.object({
   identifier: z
     .string()
+    .trim()
     .min(1, { message: "Email or phone number is required" })
     .refine(
       (v) =>
@@ -64,15 +66,24 @@ export default function LoginPage() {
 
   async function onSubmit(values) {
     try {
-      const response = await api.post("/auth/signin", values);
+      const payload = {
+        ...values,
+        identifier: values.identifier.trim(),
+      };
+      const response = await api.post("/auth/signin", payload);
       const { access_token } = response.data;
-      const payload = JSON.parse(atob(access_token.split(".")[1]));
+      const decoded = decodeJwt(access_token);
+
+      if (!decoded) {
+        throw new Error("Invalid session token received");
+      }
+
       const user = {
-        id: payload.sub,
-        email: payload.email,
-        role: payload.role,
-        name: payload.name || "",
-        phoneNumber: payload.phoneNumber || "",
+        id: decoded.sub,
+        email: decoded.email,
+        role: decoded.role,
+        name: decoded.name || "",
+        phoneNumber: decoded.phoneNumber || "",
       };
       setAuth(user, access_token);
       toast.success("Welcome back! 🌸");
