@@ -29,7 +29,7 @@ export const useAuth = () => {
         id: payload.sub,
         email: payload.email,
         role: payload.role,
-        name: payload.name || "",
+        fullName: payload.fullName || "",
         phoneNumber: payload.phoneNumber || "",
         dateOfBirth: payload.dateOfBirth || null,
       };
@@ -44,16 +44,17 @@ export const useAuth = () => {
   };
 
   /**
-   * Create a new account. phoneNumber and whatsappNotifications are optional.
-   * @param {{ name: string, email: string, password: string, phoneNumber?: string, whatsappNotifications?: boolean }} values
+   * Create a new account. phoneNumber and emailNotifications are optional.
+   * @param {{ fullName: string, email: string, password: string, dateOfBirth: string, phoneNumber?: string, emailNotifications?: boolean }} values
    */
   const signup = async (values) => {
     try {
       const payload = {
-        name: values.name,
+        fullName: values.fullName,
         email: values.email,
+        dateOfBirth: values.dateOfBirth,
         password: values.password,
-        emailNotifications: values.emailNotifications ?? false,
+        emailNotifications: values.emailNotifications ?? true,
         ...(values.phoneNumber ? { phoneNumber: values.phoneNumber } : {}),
       };
       const response = await api.post("/auth/signup", payload);
@@ -63,7 +64,7 @@ export const useAuth = () => {
         id: jwtPayload.sub,
         email: jwtPayload.email,
         role: jwtPayload.role,
-        name: values.name,
+        fullName: values.fullName,
         phoneNumber: jwtPayload.phoneNumber || "",
         dateOfBirth: jwtPayload.dateOfBirth || null,
       };
