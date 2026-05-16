@@ -11,6 +11,8 @@ const Education = lazy(() => import("@/pages/Education"));
 const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
+const Calendar = lazy(() => import("@/pages/Calendar"));
+const Profile = lazy(() => import("@/pages/Profile"));
 
 export const router = createBrowserRouter([
   {
@@ -62,6 +64,22 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <Education />
+          </Suspense>
+        ),
+      },
+      {
+        path: "calendar",
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Calendar />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Profile />
           </Suspense>
         ),
       },
