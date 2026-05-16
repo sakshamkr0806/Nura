@@ -33,7 +33,7 @@ async function bootstrap(): Promise<INestApplication> {
 }
 
 // For local development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const startLocal = async () => {
     const app = await bootstrap();
     const port = process.env.PORT || 3000;
