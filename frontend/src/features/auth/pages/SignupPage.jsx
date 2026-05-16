@@ -22,7 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { format, subYears, isAfter, parse, isValid } from "date-fns";
+import { format, isAfter, parse, isValid } from "date-fns";
 import {
   Form,
   FormControl,
@@ -83,13 +83,6 @@ const signupSchema = z
       .date({
         required_error: "Date of birth is required",
       })
-      .refine(
-        (date) => {
-          const thirteenYearsAgo = subYears(new Date(), 13);
-          return date <= thirteenYearsAgo;
-        },
-        { message: "You must be at least 13 years old" },
-      )
       .refine((date) => !isAfter(date, new Date()), {
         message: "Date of birth cannot be in the future",
       }),
@@ -159,7 +152,7 @@ const DateField = ({ field }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-primary transition-colors"
+              className="absolute right-0 top-0 h-10 w-10 text-muted-foreground hover:text-primary transition-colors"
             >
               <CalendarIcon className="h-4 w-4" />
               <span className="sr-only">Pick a date</span>
