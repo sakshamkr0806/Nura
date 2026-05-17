@@ -40,6 +40,15 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   void startLocal();
 }
 
+// Global error handlers to prevent silent crashes on Vercel
+process.on('uncaughtException', (err) => {
+  console.error('CRITICAL: Uncaught Exception in NestJS:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('CRITICAL: Unhandled Rejection in NestJS:', reason);
+});
+
 import { Request, Response } from 'express';
 
 // Export for Vercel
