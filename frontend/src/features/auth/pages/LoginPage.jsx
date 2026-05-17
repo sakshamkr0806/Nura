@@ -127,15 +127,17 @@ export default function LoginPage() {
         <div className="flex-1 flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md space-y-8">
             {/* Logo */}
-            <div className="flex items-center gap-2.5">
-              <FlowerLogo className="w-10 h-10" />
+            <Link to="/" className="flex items-center gap-2.5 w-fit group">
+              <div className="transition-transform duration-300 group-hover:rotate-12">
+                <FlowerLogo className="w-10 h-10" />
+              </div>
               <span
                 className="text-2xl font-serif font-bold"
                 style={{ color: "#2D1F1A" }}
               >
                 Nura
               </span>
-            </div>
+            </Link>
 
             <div>
               <h1
