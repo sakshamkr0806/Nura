@@ -65,13 +65,6 @@ const CARE = [
   { label: "Rest Well", Icon: MoonStars },
 ];
 
-const AVATARS = [
-  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop&crop=face",
-];
-
 export default function Home() {
   const { user } = useAuthStore();
   const [email, setEmail] = useState("");
@@ -179,36 +172,6 @@ export default function Home() {
                   Explore Features
                 </button>
               </Link>
-            </div>
-
-            {/* Social proof */}
-            <div className="flex items-center gap-4 pt-2">
-              <div className="flex -space-x-2.5">
-                {AVATARS.map((src, i) => (
-                  <img
-                    key={i}
-                    src={src}
-                    alt=""
-                    className="w-9 h-9 rounded-full border-2 border-white object-cover"
-                  />
-                ))}
-                <div
-                  className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white"
-                  style={{
-                    background: "linear-gradient(135deg, #F6A58E, #CDB4F6)",
-                  }}
-                >
-                  +12K
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-bold" style={{ color: "#2D1F1A" }}>
-                  Trusted by thousands of women
-                </p>
-                <p className="text-[10px]" style={{ color: "#8C7B74" }}>
-                  ★★★★★ 5.0 Rating
-                </p>
-              </div>
             </div>
           </div>
 
