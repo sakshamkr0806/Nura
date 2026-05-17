@@ -100,32 +100,36 @@ export default function TopNavbar() {
                 </button>
               </>
             ) : (
-              <>
-                <Link to="/login">
-                  <Button
-                    variant="outline"
-                    className="rounded-full border-[rgba(246,165,142,0.5)] text-[#F6A58E] hover:bg-[rgba(246,165,142,0.08)] h-9 px-5 text-sm font-semibold"
-                  >
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button
-                    className="rounded-full h-9 px-5 text-sm font-semibold text-white"
-                    style={{
-                      background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
-                      boxShadow: "0 2px 12px rgba(246,165,142,0.35)",
-                    }}
-                  >
-                    Sign Up
-                  </Button>
-                </Link>
-              </>
+              <Link to="/signup">
+                <Button
+                  className="rounded-full h-9 px-6 text-sm font-semibold text-white transition-all hover:scale-105"
+                  style={{
+                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                    boxShadow: "0 2px 12px rgba(246,165,142,0.35)",
+                  }}
+                >
+                  Register
+                </Button>
+              </Link>
             )}
           </div>
 
           {/* Mobile toggle */}
           <div className="flex md:hidden items-center gap-2">
+            {!user && (
+              <Link to="/signup">
+                <Button
+                  size="sm"
+                  className="rounded-full h-8 px-4 text-xs font-semibold text-white transition-all hover:scale-105"
+                  style={{
+                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                    boxShadow: "0 2px 8px rgba(246,165,142,0.25)",
+                  }}
+                >
+                  Register
+                </Button>
+              </Link>
+            )}
             {user && <NotificationBell />}
             <button
               onClick={() => setOpen(!open)}
