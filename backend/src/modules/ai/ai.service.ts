@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PrismaService } from '../prisma/prisma.service';
 import { subDays, format } from 'date-fns';
 
 @Injectable()
 export class AIService {
-  private openai: OpenAI;
+  private genAI: GoogleGenerativeAI;
 
   constructor(
     private config: ConfigService,
     private prisma: PrismaService,
   ) {
-    this.openai = new OpenAI({
-      apiKey: this.config.get<string>('OPENAI_API_KEY'),
-    });
+    this.genAI = new GoogleGenerativeAI(
+      this.config.get<string>('GEMINI_API_KEY') || '',
+    );
   }
 
   async generateInsights(userId: string) {
@@ -29,32 +29,25 @@ export class AIService {
       2. DO NOT suggest cures for diseases.
       3. Focus on education, lifestyle habits, and encouragement.
       4. Keep the tone empathetic and professional.
-      5. Output in JSON format with fields: "summary" (string), "recommendations" (array of strings), "educationalNote" (string).
+      5. Output ONLY raw JSON format with fields: "summary" (string), "recommendations" (array of strings), "educationalNote" (string). DO NOT wrap in markdown code blocks.
 
       DATA:
       ${JSON.stringify(context, null, 2)}
     `;
 
     try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a wellness coach. You provide helpful, non-medical advice based on user logs.',
-          },
-          { role: 'user', content: prompt },
-        ],
-        response_format: { type: 'json_object' },
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
       });
 
-      return JSON.parse(response.choices[0].message.content || '{}') as Record<
-        string,
-        unknown
-      >;
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      return JSON.parse(responseText || '{}') as Record<string, unknown>;
     } catch (error) {
-      console.error('OpenAI Error:', error);
+      console.error('Gemini Error:', error);
       return {
         summary:
           'We are unable to generate personalized insights right now, but keep up your consistent logging!',
