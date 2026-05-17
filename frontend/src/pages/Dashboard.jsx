@@ -64,23 +64,29 @@ export default function Dashboard() {
   const metricCards = [
     {
       label: "Cycle Day",
-      value: "Day 14",
-      sub: "Follicular Phase",
+      value: analytics?.metrics?.cycleDay
+        ? `Day ${analytics.metrics.cycleDay}`
+        : "Day 0",
+      sub: analytics?.metrics?.cyclePhase || "No Active Cycle",
       Icon: Droplets,
       color: "#F8B6B6",
       bg: "#FFF0ED",
     },
     {
       label: "Next Period",
-      value: "14 Days",
-      sub: "Predicted: May 28",
+      value: analytics?.metrics?.nextPeriodDays
+        ? `${analytics.metrics.nextPeriodDays} Days`
+        : "0 Days",
+      sub: analytics?.metrics?.predictedDate || "No prediction",
       Icon: Heart,
       color: "#CDB4F6",
       bg: "#F7F3FF",
     },
     {
       label: "Avg Sleep",
-      value: "7.5h",
+      value: analytics?.metrics?.avgSleep
+        ? `${analytics.metrics.avgSleep}h`
+        : "0h",
       sub: "Weekly average",
       Icon: Moon,
       color: "#EADCF8",
@@ -88,7 +94,9 @@ export default function Dashboard() {
     },
     {
       label: "Water Intake",
-      value: "2.1L",
+      value: analytics?.metrics?.avgWater
+        ? `${(analytics.metrics.avgWater / 1000).toFixed(1)}L`
+        : "0L",
       sub: "Daily average",
       Icon: Utensils,
       color: "#DDEAD7",

@@ -12,11 +12,13 @@ export class AnalyticsController {
     const insights = await this.analyticsService.getInsights(userId);
     const recommendations =
       await this.analyticsService.getRecommendations(userId);
+    const metrics = await this.analyticsService.getDashboardMetrics(userId);
 
     return {
       score,
       insights,
       recommendations,
+      metrics,
     };
   }
 }

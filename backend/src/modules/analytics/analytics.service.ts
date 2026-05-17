@@ -132,6 +132,128 @@ export class AnalyticsService {
     return recommendations;
   }
 
+  async getDashboardMetrics(userId: string) {
+    // 1. Cycle Day & Phase
+    const activeCycle = await this.prisma.cycle.findFirst({
+      where: {
+        userId,
+        endDate: null,
+      },
+      orderBy: { startDate: 'desc' },
+    });
+
+    let cycleDay = 0;
+    let cyclePhase = 'No Active Cycle';
+    if (activeCycle) {
+      const today = startOfDay(new Date());
+      const start = startOfDay(new Date(activeCycle.startDate));
+      const diffTime = today.getTime() - start.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      if (diffDays > 0) {
+        cycleDay = diffDays;
+        // Determine phase based on standard lengths
+        if (cycleDay <= 5) {
+          cyclePhase = 'Menstrual Phase';
+        } else if (cycleDay <= 14) {
+          cyclePhase = 'Follicular Phase';
+        } else if (cycleDay <= 16) {
+          cyclePhase = 'Ovulatory Phase';
+        } else {
+          cyclePhase = 'Luteal Phase';
+        }
+      }
+    }
+
+    // 2. Next Period & Predicted Date
+    const cycles = await this.prisma.cycle.findMany({
+      where: { userId, endDate: { not: null } },
+      orderBy: { startDate: 'desc' },
+      take: 3,
+    });
+
+    let nextPeriodDays = 0;
+    let predictedDateStr = 'No prediction';
+
+    // Try ended cycles first
+    let lastCycleStart = activeCycle?.startDate || null;
+    let cycleLength = 28;
+
+    if (cycles.length > 0) {
+      const lengths = cycles.map((c) => {
+        const start = new Date(c.startDate);
+        const end = new Date(c.endDate!);
+        return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+      });
+      cycleLength = Math.round(
+        lengths.reduce((a, b) => a + b, 0) / lengths.length,
+      );
+      lastCycleStart = cycles[0].startDate;
+    }
+
+    if (lastCycleStart) {
+      const predictedDate = new Date(lastCycleStart);
+      predictedDate.setDate(predictedDate.getDate() + cycleLength);
+
+      const today = startOfDay(new Date());
+      const predStart = startOfDay(predictedDate);
+      const diffTime = predStart.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays > 0) {
+        nextPeriodDays = diffDays;
+        predictedDateStr = `Predicted: ${predictedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      } else {
+        nextPeriodDays = 0;
+        predictedDateStr = 'Delayed';
+      }
+    }
+
+    // 3. Avg Sleep & Water Intake (last 7 days)
+    const last7Days = await this.prisma.dailyLog.findMany({
+      where: {
+        userId,
+        date: {
+          gte: startOfDay(subDays(new Date(), 7)),
+          lte: endOfDay(new Date()),
+        },
+      },
+    });
+
+    const sleepLogs = last7Days.filter(
+      (log) => log.sleepHours !== null && log.sleepHours !== undefined,
+    );
+    const avgSleep =
+      sleepLogs.length > 0
+        ? Math.round(
+            (sleepLogs.reduce((acc, log) => acc + log.sleepHours!, 0) /
+              sleepLogs.length) *
+              10,
+          ) / 10
+        : 0;
+
+    const waterLogs = last7Days.filter(
+      (log) => log.waterIntake !== null && log.waterIntake !== undefined,
+    );
+    const avgWater =
+      waterLogs.length > 0
+        ? Math.round(
+            (waterLogs.reduce((acc, log) => acc + log.waterIntake!, 0) /
+              waterLogs.length) *
+              10,
+          ) / 10
+        : 0;
+
+    return {
+      cycleDay,
+      cyclePhase,
+      nextPeriodDays,
+      predictedDate: predictedDateStr,
+      avgSleep,
+      avgWater,
+    };
+  }
+
   private calculateSleepScore(logs: DailyLog[]) {
     if (logs.length === 0) return 0;
     const avgSleep =
