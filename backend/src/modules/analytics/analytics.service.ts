@@ -36,6 +36,19 @@ export class AnalyticsService {
       take: 3,
     });
 
+    // If there is no user data at all in logs or cycles, return 0 for everything
+    if (last7Days.length === 0 && cycles.length === 0) {
+      return {
+        score: 0,
+        factors: {
+          sleep: 0,
+          hydration: 0,
+          symptoms: 0,
+          cycle: 0,
+        },
+      };
+    }
+
     // Scoring factors
     const sleepScore = this.calculateSleepScore(last7Days);
     const hydrationScore = this.calculateHydrationScore(last7Days);
@@ -64,6 +77,17 @@ export class AnalyticsService {
   async getInsights(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
     const insights: Insight[] = [];
+
+    if (scoreData.score === 0) {
+      return [
+        {
+          title: 'Welcome to Nura! 🌱',
+          description:
+            'Your wellness metrics and personalized trends will appear here as soon as you log your first entry.',
+          type: 'info',
+        },
+      ];
+    }
 
     if (scoreData.factors.sleep < 70) {
       insights.push({
@@ -95,6 +119,16 @@ export class AnalyticsService {
   async getRecommendations(userId: string) {
     const scoreData = await this.getWellnessScore(userId);
     const recommendations: Recommendation[] = [];
+
+    if (scoreData.score === 0) {
+      return [
+        {
+          category: 'Wellness',
+          action: 'Log your first daily entry',
+          tip: 'Start logging your symptoms, sleep, and water intake to get personalised health recommendations! 🌸',
+        },
+      ];
+    }
 
     if (scoreData.factors.sleep < 80) {
       recommendations.push({
