@@ -2,58 +2,393 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* ============================================================
+   NURA DESIGN SYSTEM — Pastel Wellness Sanctuary
+   ============================================================ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* --- Tailwind/shadcn token overrides --- */
+    --background: 30 50% 98%;
+    --foreground: 20 15% 20%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 20 15% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
+    --popover-foreground: 20 15% 20%;
+    --primary: 10 82% 75%;          /* coral #F6A58E */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 280 60% 88%;       /* lavender #EADCF8 */
+    --secondary-foreground: 20 15% 20%;
+    --muted: 30 30% 95%;
+    --muted-foreground: 20 10% 50%;
+    --accent: 30 70% 93%;           /* warm beige #FAF2EA */
+    --accent-foreground: 20 15% 20%;
+    --destructive: 355 75% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 25% 90%;
+    --input: 30 25% 92%;
+    --ring: 10 82% 75%;
+    --radius: 1rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 263.4 70% 50.4%;
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #FFF9F7;
+    color: #2D1F1A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings use the serif font */
+  h1, h2, h3, h4 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  ::selection {
+    background-color: #F8B6B6;
+    color: #2D1F1A;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #FFF9F7; }
+  ::-webkit-scrollbar-thumb { background: #F8B6B6; border-radius: 100px; }
+  ::-webkit-scrollbar-thumb:hover { background: #F6A58E; }
+}
+
+/* ============================================================
+   NURA BRAND TOKENS (CSS custom properties)
+   ============================================================ */
+:root {
+  --nura-cream:      #FFF9F7;
+  --nura-blush:      #F8B6B6;
+  --nura-peach:      #F6A58E;
+  --nura-lavender:   #EADCF8;
+  --nura-lilac:      #CDB4F6;
+  --nura-beige:      #FAF2EA;
+  --nura-sage:       #DDEAD7;
+  --nura-sage-dark:  #BDD7B3;
+  --nura-text:       #2D1F1A;
+  --nura-text-muted: #8C7B74;
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+@layer utilities {
+  /* Colours */
+  .bg-cream      { background-color: var(--nura-cream); }
+  .bg-blush      { background-color: var(--nura-blush); }
+  .bg-peach      { background-color: var(--nura-peach); }
+  .bg-lavender   { background-color: var(--nura-lavender); }
+  .bg-lilac      { background-color: var(--nura-lilac); }
+  .bg-nura-beige { background-color: var(--nura-beige); }
+  .bg-sage       { background-color: var(--nura-sage); }
+
+  .text-coral    { color: var(--nura-peach); }
+  .text-blush    { color: var(--nura-blush); }
+  .text-lilac    { color: var(--nura-lilac); }
+  .text-lavender-dark { color: #9B6FD4; }
+  .text-sage-green    { color: #7FAD73; }
+  .text-sage-green-dark { color: #5A8A4E; }
+  .text-gold     { color: #E8C07A; }
+  .text-text-primary  { color: var(--nura-text); }
+  .text-text-secondary { color: var(--nura-text-muted); }
+
+  /* Shadow system */
+  .premium-shadow {
+    box-shadow:
+      0 4px 6px -1px rgba(246, 165, 142, 0.08),
+      0 10px 30px -5px rgba(246, 165, 142, 0.12),
+      0 0 0 1px rgba(255, 249, 247, 0.8);
+  }
+  .card-shadow {
+    box-shadow: 0 2px 20px rgba(200, 150, 130, 0.1), 0 1px 3px rgba(200, 150, 130, 0.06);
+  }
+
+  /* Border colours */
+  .border-peach  { border-color: var(--nura-peach); }
+  .border-blush  { border-color: var(--nura-blush); }
+  .border-lavender { border-color: var(--nura-lavender); }
+  .border-sage-green { border-color: var(--nura-sage); }
+
+  /* Backgrounds with opacity */
+  .bg-coral\/10 { background-color: rgba(246, 165, 142, 0.1); }
+  .bg-coral\/20 { background-color: rgba(246, 165, 142, 0.2); }
+  .bg-coral\/25 { background-color: rgba(246, 165, 142, 0.25); }
+  .bg-coral\/40 { background-color: rgba(246, 165, 142, 0.4); }
+  .bg-coral { background-color: var(--nura-peach); }
+  .hover\:bg-coral\/10:hover { background-color: rgba(246, 165, 142, 0.1); }
+  .hover\:bg-coral\/20:hover { background-color: rgba(246, 165, 142, 0.2); }
+  .hover\:bg-coral\/90:hover { background-color: rgba(246, 165, 142, 0.9); }
+  .hover\:bg-coral\/95:hover { background-color: rgba(246, 165, 142, 0.95); }
+  .hover\:text-coral:hover { color: var(--nura-peach); }
+
+  .bg-lavender\/10 { background-color: rgba(234, 220, 248, 0.1); }
+  .bg-lavender\/30 { background-color: rgba(234, 220, 248, 0.3); }
+  .bg-lavender\/40 { background-color: rgba(234, 220, 248, 0.4); }
+  .bg-lavender    { background-color: var(--nura-lavender); }
+
+  .bg-sage-green\/30 { background-color: rgba(221, 234, 215, 0.3); }
+  .text-gold { color: #D4A843; }
+
+  .border-coral\/20 { border-color: rgba(246, 165, 142, 0.2); }
+  .border-coral\/30 { border-color: rgba(246, 165, 142, 0.3); }
+  .border-coral\/60 { border-color: rgba(246, 165, 142, 0.6); }
+  .border-lavender\/20 { border-color: rgba(234, 220, 248, 0.2); }
+  .border-lavender\/60 { border-color: rgba(234, 220, 248, 0.6); }
+  .border-peach\/10 { border-color: rgba(246, 165, 142, 0.1); }
+  .border-peach\/15 { border-color: rgba(246, 165, 142, 0.15); }
+  .border-peach\/20 { border-color: rgba(246, 165, 142, 0.2); }
+  .border-gold\/20  { border-color: rgba(212, 168, 67, 0.2); }
+  .border-sage-green\/20 { border-color: rgba(221, 234, 215, 0.2); }
+
+  .from-coral { --tw-gradient-from: var(--nura-peach); }
+  .to-peach   { --tw-gradient-to: var(--nura-blush); }
+  .via-cream  { --tw-gradient-via: var(--nura-cream); }
+
+  .text-coral { color: var(--nura-peach); }
+  .hover\:text-coral:hover { color: var(--nura-peach); }
+  .text-coral\/65 { color: rgba(246, 165, 142, 0.65); }
+  .text-coral\/75 { color: rgba(246, 165, 142, 0.75); }
+
+  /* font-serif shortcut */
+  .font-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  /* Animation delays */
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-4000 { animation-delay: 4s; }
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes floating {
+  0%   { transform: translateY(0px) rotate(0deg); }
+  33%  { transform: translateY(-10px) rotate(3deg); }
+  66%  { transform: translateY(-6px) rotate(-2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@layer utilities {
+  .floating {
+    animation: floating 6s ease-in-out infinite;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+  .animate-slide-in {
+    animation: slide-in-right 0.4s ease-out both;
+  }
+  .animate-gentle-pulse {
+    animation: gentle-pulse 3s ease-in-out infinite;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
+/* ============================================================
+   COMPONENT OVERRIDES
+   ============================================================ */
+
+/* shadcn/ui Card → pastel card */
+.card-nura {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 249, 247, 0.9);
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(200, 150, 130, 0.10);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-nura:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(200, 150, 130, 0.16);
+}
+
+/* Inputs — soft pastel styling */
+input, textarea, select {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Buttons */
+.btn-primary-nura {
+  background: linear-gradient(135deg, #F6A58E, #F8B6B6);
+  color: white;
+  border-radius: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(246, 165, 142, 0.30);
+  transition: all 0.25s ease;
+}
+.btn-primary-nura:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(246, 165, 142, 0.40);
+}
+
+/* Badge override */
+.badge-pastel {
+  background: rgba(234, 220, 248, 0.4);
+  color: #7B5EA7;
+  border: 1px solid rgba(234, 220, 248, 0.6);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.nura-navbar {
+  background: rgba(255, 249, 247, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(246, 165, 142, 0.12);
+  box-shadow: 0 2px 20px rgba(200, 150, 130, 0.07);
+}
+
+.nav-link-active {
+  background: linear-gradient(135deg, #F6A58E, #F8B6B6);
+  color: #fff;
+  border-radius: 100px;
+}
+
+.nav-link-idle {
+  color: #8C7B74;
+  border-radius: 100px;
+  transition: all 0.2s ease;
+}
+.nav-link-idle:hover {
+  background: rgba(246, 165, 142, 0.12);
+  color: #2D1F1A;
+}
+
+/* ============================================================
+   PAGES & SECTIONS
+   ============================================================ */
+
+/* Page hero banners */
+.page-hero {
+  background: linear-gradient(135deg, rgba(248, 182, 182, 0.15) 0%, rgba(234, 220, 248, 0.15) 100%);
+  border-radius: 32px;
+  padding: 40px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(246, 165, 142, 0.2), transparent 70%);
+  border-radius: 50%;
+}
+
+/* Metric cards */
+.metric-card {
+  border-radius: 24px;
+  padding: 20px 24px;
+  border: 1.5px solid rgba(246, 165, 142, 0.12);
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(200, 150, 130, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(200, 150, 130, 0.14);
+}
+
+/* ============================================================
+   CALENDAR OVERRIDES (pastel cells)
+   ============================================================ */
+.rdp-day_selected:not([disabled]) {
+  background: linear-gradient(135deg, #F6A58E, #F8B6B6) !important;
+  color: white !important;
+  border-radius: 12px !important;
+}
+.rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
+  background: rgba(246, 165, 142, 0.12) !important;
+  border-radius: 12px !important;
+}
+.rdp-nav_button:hover {
+  background: rgba(246, 165, 142, 0.12) !important;
+}
+.rdp-head_cell {
+  color: #F6A58E !important;
+  font-weight: 700 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+/* ============================================================
+   LOADING / SKELETON
+   ============================================================ */
+.skeleton-nura {
+  background: linear-gradient(90deg, #FFF5F2 25%, #FDEAE4 50%, #FFF5F2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 12px;
+}
+
+/* ============================================================
+   DIALOG / MODAL
+   ============================================================ */
+[role="dialog"] {
+  border-radius: 28px !important;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+[role="tablist"] {
+  background: rgba(250, 242, 234, 0.6) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+}
+[role="tab"][data-state="active"] {
+  background: #fff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 8px rgba(200,150,130,0.12) !important;
+  color: #F6A58E !important;
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   MOBILE TWEAKS
+   ============================================================ */
+@media (max-width: 640px) {
+  .page-hero {
+    padding: 24px 20px;
+    border-radius: 20px;
   }
 }

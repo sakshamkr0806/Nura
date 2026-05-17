@@ -1,8 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Search } from "lucide-react";
 import { ArticleCard } from "@/features/education/components/ArticleCard";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import api from "@/api/axios";
 
@@ -41,56 +40,78 @@ export default function Education() {
   }, [fetchArticles]);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 p-6">
-      <header className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Hormonal Education Hub
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Empower yourself with evidence-based hormonal health knowledge.
-          </p>
+    <div className="space-y-8">
+      {/* Hero */}
+      <div className="page-hero">
+        <h1
+          className="font-serif font-bold text-4xl"
+          style={{ color: "#2D1F1A" }}
+        >
+          Education Hub 📚
+        </h1>
+        <p className="mt-1 text-sm font-medium" style={{ color: "#8C7B74" }}>
+          Empower yourself with evidence-based hormonal health knowledge.
+        </p>
+      </div>
+
+      {/* Search + Filters */}
+      <div className="space-y-4">
+        <div className="relative max-w-xl">
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4"
+            style={{ color: "#F6A58E" }}
+          />
+          <Input
+            placeholder="Search articles, guides, myths..."
+            className="pl-11 h-12 rounded-2xl border text-sm"
+            style={{
+              borderColor: "rgba(246,165,142,0.25)",
+              background: "white",
+              boxShadow: "0 2px 12px rgba(200,150,130,0.08)",
+            }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
 
-        <div className="flex flex-col gap-4 md:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search articles, guides, myths..."
-              className="h-11 bg-background pl-10"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <ScrollArea className="w-full whitespace-nowrap pb-1">
+          <div className="flex gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className="px-5 py-2 rounded-full text-xs font-bold tracking-wide transition-all duration-200 shrink-0"
+                style={
+                  selectedCategory === cat
+                    ? {
+                        background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                        color: "white",
+                        boxShadow: "0 2px 10px rgba(246,165,142,0.3)",
+                      }
+                    : {
+                        background: "white",
+                        color: "#8C7B74",
+                        border: "1.5px solid rgba(246,165,142,0.2)",
+                      }
+                }
+              >
+                {cat}
+              </button>
+            ))}
           </div>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <Filter size={16} className="shrink-0 text-muted-foreground" />
-          <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex gap-2 pb-2">
-              {CATEGORIES.map((cat) => (
-                <Badge
-                  key={cat}
-                  variant={selectedCategory === cat ? "default" : "outline"}
-                  className="cursor-pointer px-4 py-1.5 text-sm transition-all hover:bg-primary/90 hover:text-primary-foreground"
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat}
-                </Badge>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-      </header>
-
+      {/* Articles grid */}
       <section>
         {isLoading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-[280px] animate-pulse rounded-xl bg-muted"
+                className="h-64 animate-pulse rounded-3xl"
+                style={{ background: "#FFF0ED" }}
               />
             ))}
           </div>
@@ -101,9 +122,16 @@ export default function Education() {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed bg-muted/20 py-20 text-center">
-            <p className="text-muted-foreground">
-              No articles found matching your criteria.
+          <div
+            className="rounded-3xl border-2 border-dashed py-20 text-center"
+            style={{
+              borderColor: "rgba(246,165,142,0.2)",
+              background: "rgba(255,255,255,0.5)",
+            }}
+          >
+            <p className="text-2xl mb-3">🌸</p>
+            <p className="text-sm font-medium" style={{ color: "#8C7B74" }}>
+              No articles found matching your search.
             </p>
           </div>
         )}

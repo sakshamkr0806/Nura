@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CycleCalendar } from "@/features/cycle/components/CycleCalendar";
 import { LoggingModal } from "@/features/cycle/components/LoggingModal";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FloralDecoration } from "@/components/shared/Illustrations";
 import api from "@/api/axios";
 
 export default function CalendarPage() {
@@ -19,7 +19,6 @@ export default function CalendarPage() {
           api.get("/cycles"),
           api.get("/cycles/predictions"),
         ]);
-
         const periods = [];
         cyclesRes.data.forEach((cycle) => {
           const start = new Date(cycle.startDate);
@@ -30,27 +29,20 @@ export default function CalendarPage() {
             current.setDate(current.getDate() + 1);
           }
         });
-
         const predictions = [];
         if (predictionsRes.data?.predictedNextPeriod) {
           const predStart = new Date(predictionsRes.data.predictedNextPeriod);
-          // Highlight 5 days of prediction
           for (let i = 0; i < 5; i++) {
             const d = new Date(predStart);
             d.setDate(d.getDate() + i);
             predictions.push(d);
           }
         }
-
-        setHighlightedDates({
-          period: periods,
-          prediction: predictions,
-        });
+        setHighlightedDates({ period: periods, prediction: predictions });
       } catch (err) {
         console.error("Failed to fetch cycle data", err);
       }
     };
-
     fetchCycleData();
   }, []);
 
@@ -60,36 +52,121 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Cycle Calendar</h1>
-        <p className="text-muted-foreground">
-          Track your cycle and log daily health metrics.
+    <div className="space-y-8">
+      {/* Hero banner */}
+      <div className="page-hero">
+        <h1
+          className="font-serif font-bold text-4xl"
+          style={{ color: "#2D1F1A" }}
+        >
+          Cycle Calendar 🌙
+        </h1>
+        <p className="mt-1 text-sm font-medium" style={{ color: "#8C7B74" }}>
+          Track your cycle phases and log daily health metrics.
         </p>
-      </header>
+      </div>
 
-      <div className="grid gap-6">
-        <CycleCalendar
-          selectedDate={selectedDate}
-          onDateSelect={handleDateSelect}
-          highlightedDates={highlightedDates}
-        />
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Calendar */}
+        <div
+          className="lg:col-span-2 rounded-3xl overflow-hidden border"
+          style={{
+            borderColor: "rgba(246,165,142,0.12)",
+            boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+          }}
+        >
+          <CycleCalendar
+            selectedDate={selectedDate}
+            onDateSelect={handleDateSelect}
+            highlightedDates={highlightedDates}
+          />
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Legend</CardTitle>
-          </CardHeader>
-          <CardContent className="flex gap-6">
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded-full bg-destructive" />
-              <span className="text-sm">Period</span>
+        {/* Legend + Tips */}
+        <div className="space-y-5">
+          <div
+            className="rounded-3xl p-6 border"
+            style={{
+              background: "white",
+              borderColor: "rgba(246,165,142,0.12)",
+              boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+            }}
+          >
+            <h3
+              className="font-serif font-bold text-lg mb-4"
+              style={{ color: "#2D1F1A" }}
+            >
+              Legend
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full"
+                  style={{ background: "#F8B6B6" }}
+                />
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#2D1F1A" }}
+                >
+                  Period Days
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full border-2 border-dashed"
+                  style={{ borderColor: "#F8B6B6" }}
+                />
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#2D1F1A" }}
+                >
+                  Predicted Period
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full"
+                  style={{
+                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                  }}
+                />
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#2D1F1A" }}
+                >
+                  Selected Day
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded-full bg-destructive/30" />
-              <span className="text-sm">Prediction</span>
+          </div>
+
+          <div
+            className="rounded-3xl p-6 border relative overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(248,182,182,0.1), rgba(234,220,248,0.1))",
+              borderColor: "rgba(205,180,246,0.2)",
+              boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+            }}
+          >
+            <div className="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
+              <FloralDecoration className="w-32 h-32" />
             </div>
-          </CardContent>
-        </Card>
+            <h3
+              className="font-serif font-bold text-lg mb-3"
+              style={{ color: "#2D1F1A" }}
+            >
+              Tap a day
+            </h3>
+            <p
+              className="text-sm font-medium leading-relaxed"
+              style={{ color: "#8C7B74" }}
+            >
+              Select any date to log symptoms, energy levels, sleep quality, and
+              water intake for that day.
+            </p>
+          </div>
+        </div>
       </div>
 
       <LoggingModal

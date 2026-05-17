@@ -33,18 +33,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import api from "@/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { decodeJwt } from "@/utils/jwt";
+import {
+  FlowerLogo,
+  FloralDecoration,
+} from "@/components/shared/Illustrations";
 
 const E164_REGEX = /^\+[1-9]\d{6,14}$/;
 
@@ -58,18 +54,17 @@ const PASSWORD_RULES = [
 
 function getPasswordStrength(password) {
   if (!password) return 0;
-  const passed = PASSWORD_RULES.filter((r) => r.test(password)).length;
-  return passed;
+  return PASSWORD_RULES.filter((r) => r.test(password)).length;
 }
 
 const STRENGTH_LABELS = ["", "Weak", "Fair", "Good", "Strong", "Very Strong"];
 const STRENGTH_COLORS = [
   "",
-  "bg-red-500",
-  "bg-orange-400",
-  "bg-yellow-400",
-  "bg-blue-500",
-  "bg-green-500",
+  "#EF4444",
+  "#F97316",
+  "#EAB308",
+  "#3B82F6",
+  "#22C55E",
 ];
 
 const signupSchema = z
@@ -80,9 +75,7 @@ const signupSchema = z
       .min(2, { message: "Full name must be at least 2 characters" }),
     email: z.string().trim().email({ message: "Invalid email address" }),
     dateOfBirth: z
-      .date({
-        required_error: "Date of birth is required",
-      })
+      .date({ required_error: "Date of birth is required" })
       .refine((date) => !isAfter(date, new Date()), {
         message: "Date of birth cannot be in the future",
       }),
@@ -114,35 +107,43 @@ const DateField = ({ field }) => {
   const [inputValue, setInputValue] = useState(
     field.value ? format(field.value, "dd/MM/yyyy") : "",
   );
-
   useEffect(() => {
     if (field.value) {
       const formatted = format(field.value, "dd/MM/yyyy");
-      if (formatted !== inputValue && inputValue.length === 10) {
+      if (formatted !== inputValue && inputValue.length === 10)
         setInputValue(formatted);
-      } else if (!inputValue) {
-        setInputValue(formatted);
-      }
+      else if (!inputValue) setInputValue(formatted);
     }
   }, [field.value, inputValue]);
 
+  const inputClass =
+    "h-11 rounded-xl text-sm border pr-12 focus:ring-2 focus:ring-[rgba(246,165,142,0.3)]";
+  const inputStyle = {
+    borderColor: "rgba(246,165,142,0.2)",
+    background: "#FFFAF8",
+  };
+
   return (
     <FormItem className="flex flex-col">
-      <FormLabel>Date of Birth</FormLabel>
+      <FormLabel
+        className="text-xs font-bold uppercase tracking-wider"
+        style={{ color: "#8C7B74" }}
+      >
+        Date of Birth
+      </FormLabel>
       <div className="relative flex items-center">
         <FormControl>
           <Input
             placeholder="DD/MM/YYYY"
-            className="h-10 border-muted-foreground/20 pr-12 focus-visible:ring-primary/30"
+            className={inputClass}
+            style={inputStyle}
             value={inputValue}
             onChange={(e) => {
               const val = e.target.value;
               setInputValue(val);
               if (val.length === 10) {
                 const parsedDate = parse(val, "dd/MM/yyyy", new Date());
-                if (isValid(parsedDate)) {
-                  field.onChange(parsedDate);
-                }
+                if (isValid(parsedDate)) field.onChange(parsedDate);
               }
             }}
           />
@@ -152,7 +153,8 @@ const DateField = ({ field }) => {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-10 w-10 text-muted-foreground hover:text-primary transition-colors"
+              className="absolute right-0 top-0 h-11 w-11 transition-colors"
+              style={{ color: "#8C7B74" }}
             >
               <CalendarIcon className="h-4 w-4" />
               <span className="sr-only">Pick a date</span>
@@ -164,9 +166,7 @@ const DateField = ({ field }) => {
               selected={field.value}
               onSelect={(date) => {
                 field.onChange(date);
-                if (date) {
-                  setInputValue(format(date, "dd/MM/yyyy"));
-                }
+                if (date) setInputValue(format(date, "dd/MM/yyyy"));
               }}
               disabled={(date) =>
                 date > new Date() || date < new Date("1900-01-01")
@@ -175,7 +175,7 @@ const DateField = ({ field }) => {
               captionLayout="dropdown-buttons"
               fromYear={1940}
               toYear={new Date().getFullYear()}
-              className="rounded-md border shadow"
+              className="rounded-2xl border shadow"
             />
           </PopoverContent>
         </Popover>
@@ -222,11 +222,7 @@ export default function SignupPage() {
       const response = await api.post("/auth/signup", signupPayload);
       const { access_token } = response.data;
       const decoded = decodeJwt(access_token);
-
-      if (!decoded) {
-        throw new Error("Invalid session token received");
-      }
-
+      if (!decoded) throw new Error("Invalid session token received");
       const user = {
         id: decoded.sub,
         email: decoded.email,
@@ -236,51 +232,89 @@ export default function SignupPage() {
         dateOfBirth: decoded.dateOfBirth,
       };
       setAuth(user, access_token);
-
-      toast.success("Account created! Welcome to CycleWell 🌸");
+      toast.success("Welcome to Nura! 🌸");
       navigate("/dashboard");
     } catch (error) {
       const msg = error.response?.data?.message;
-      const text = Array.isArray(msg) ? msg.join(". ") : msg || "Signup failed";
-      toast.error(text);
+      toast.error(Array.isArray(msg) ? msg.join(". ") : msg || "Signup failed");
     }
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4 py-10">
-      <Card className="w-full max-w-md shadow-lg border-0 ring-1 ring-border/50">
-        <CardHeader className="space-y-1 pb-4">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-primary text-lg">🌸</span>
-            </div>
-            <span className="text-sm font-medium text-muted-foreground">
-              CycleWell
-            </span>
-          </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Create your account
-          </CardTitle>
-          <CardDescription>
-            Join CycleWell and take control of your health journey
-          </CardDescription>
-        </CardHeader>
+  const inputClass =
+    "pl-10 h-11 rounded-xl text-sm border focus:ring-2 focus:ring-[rgba(246,165,142,0.3)]";
+  const inputStyle = {
+    borderColor: "rgba(246,165,142,0.2)",
+    background: "#FFFAF8",
+  };
+  const labelClass = "text-xs font-bold uppercase tracking-wider";
+  const labelStyle = { color: "#8C7B74" };
 
-        <CardContent className="pt-0">
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12 relative"
+      style={{ background: "#FFF9F7" }}
+    >
+      {/* Bg deco */}
+      <div className="absolute -left-12 -top-12 opacity-8 pointer-events-none">
+        <FloralDecoration className="w-64 h-64" />
+      </div>
+      <div className="absolute -right-12 -bottom-12 opacity-8 pointer-events-none rotate-180">
+        <FloralDecoration className="w-64 h-64" />
+      </div>
+
+      <div className="w-full max-w-md space-y-8 relative z-10">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <FlowerLogo className="w-10 h-10" />
+          <span
+            className="text-2xl font-serif font-bold"
+            style={{ color: "#2D1F1A" }}
+          >
+            Nura
+          </span>
+        </div>
+
+        <div>
+          <h1
+            className="font-serif font-bold text-3xl"
+            style={{ color: "#2D1F1A" }}
+          >
+            Create your sanctuary 🌸
+          </h1>
+          <p className="mt-1 text-sm font-medium" style={{ color: "#8C7B74" }}>
+            Join Nura and take control of your hormonal health journey.
+          </p>
+        </div>
+
+        {/* Form card */}
+        <div
+          className="rounded-3xl border p-8"
+          style={{
+            background: "white",
+            borderColor: "rgba(246,165,142,0.15)",
+            boxShadow: "0 4px 32px rgba(200,150,130,0.1)",
+          }}
+        >
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               {/* Full Name */}
               <FormField
                 control={form.control}
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Full Name
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <User
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                          style={{ color: "#F6A58E" }}
+                        />
                         <Input
-                          className="pl-9"
+                          className={inputClass}
+                          style={inputStyle}
                           placeholder="Jane Doe"
                           {...field}
                         />
@@ -304,12 +338,18 @@ export default function SignupPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Email
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Mail
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                          style={{ color: "#F6A58E" }}
+                        />
                         <Input
-                          className="pl-9"
+                          className={inputClass}
+                          style={inputStyle}
                           placeholder="jane@example.com"
                           type="email"
                           {...field}
@@ -321,23 +361,30 @@ export default function SignupPage() {
                 )}
               />
 
-              {/* Phone Number */}
+              {/* Phone */}
               <FormField
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Phone Number{" "}
-                      <span className="text-muted-foreground font-normal text-xs">
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Phone{" "}
+                      <span
+                        className="normal-case font-normal"
+                        style={{ color: "#8C7B74" }}
+                      >
                         (optional)
                       </span>
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Phone
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                          style={{ color: "#F6A58E" }}
+                        />
                         <Input
-                          className="pl-9"
+                          className={inputClass}
+                          style={inputStyle}
                           placeholder="+91 98765 43210"
                           type="tel"
                           {...field}
@@ -345,7 +392,7 @@ export default function SignupPage() {
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs" style={{ color: "#8C7B74" }}>
                       Include country code, e.g. +91 for India
                     </p>
                   </FormItem>
@@ -358,12 +405,18 @@ export default function SignupPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Lock
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                          style={{ color: "#F6A58E" }}
+                        />
                         <Input
-                          className="pl-9 pr-10"
+                          className={`${inputClass} pr-10`}
+                          style={inputStyle}
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
                           {...field}
@@ -371,7 +424,8 @@ export default function SignupPage() {
                         <button
                           type="button"
                           onClick={() => setShowPassword((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                          style={{ color: "#8C7B74" }}
                           aria-label={
                             showPassword ? "Hide password" : "Show password"
                           }
@@ -384,24 +438,27 @@ export default function SignupPage() {
                         </button>
                       </div>
                     </FormControl>
-
-                    {/* Password strength bar */}
                     {watchedPassword && (
                       <div className="mt-2 space-y-2">
                         <div className="flex gap-1">
                           {[1, 2, 3, 4, 5].map((i) => (
                             <div
                               key={i}
-                              className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                                i <= strength
-                                  ? STRENGTH_COLORS[strength]
-                                  : "bg-muted"
-                              }`}
+                              className="h-1.5 flex-1 rounded-full transition-all duration-300"
+                              style={{
+                                background:
+                                  i <= strength
+                                    ? STRENGTH_COLORS[strength]
+                                    : "#E5E7EB",
+                              }}
                             />
                           ))}
                         </div>
                         <p
-                          className={`text-xs font-medium ${strength < 3 ? "text-red-500" : strength < 5 ? "text-yellow-600" : "text-green-600"}`}
+                          className="text-xs font-bold"
+                          style={{
+                            color: STRENGTH_COLORS[strength] || "#8C7B74",
+                          }}
                         >
                           {STRENGTH_LABELS[strength]}
                         </p>
@@ -411,11 +468,10 @@ export default function SignupPage() {
                             return (
                               <li
                                 key={rule.label}
-                                className={`flex items-center gap-1.5 text-xs transition-colors ${
-                                  passed
-                                    ? "text-green-600"
-                                    : "text-muted-foreground"
-                                }`}
+                                className="flex items-center gap-1.5 text-xs transition-colors"
+                                style={{
+                                  color: passed ? "#22C55E" : "#8C7B74",
+                                }}
                               >
                                 {passed ? (
                                   <Check className="h-3 w-3 shrink-0" />
@@ -440,12 +496,18 @@ export default function SignupPage() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Confirm Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Lock
+                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                          style={{ color: "#F6A58E" }}
+                        />
                         <Input
-                          className="pl-9 pr-10"
+                          className={`${inputClass} pr-10`}
+                          style={inputStyle}
                           type={showConfirm ? "text" : "password"}
                           placeholder="••••••••"
                           {...field}
@@ -453,12 +515,9 @@ export default function SignupPage() {
                         <button
                           type="button"
                           onClick={() => setShowConfirm((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                          aria-label={
-                            showConfirm
-                              ? "Hide confirm password"
-                              : "Show confirm password"
-                          }
+                          className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                          style={{ color: "#8C7B74" }}
+                          aria-label={showConfirm ? "Hide" : "Show"}
                         >
                           {showConfirm ? (
                             <EyeOff className="h-4 w-4" />
@@ -473,12 +532,18 @@ export default function SignupPage() {
                 )}
               />
 
-              {/* Email notification opt-in */}
+              {/* Email opt-in */}
               <FormField
                 control={form.control}
                 name="emailNotifications"
                 render={({ field }) => (
-                  <FormItem className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
+                  <FormItem
+                    className="flex items-start gap-3 rounded-2xl border p-4"
+                    style={{
+                      borderColor: "rgba(246,165,142,0.15)",
+                      background: "rgba(255,249,247,0.6)",
+                    }}
+                  >
                     <FormControl>
                       <Checkbox
                         id="email-notifications-opt-in"
@@ -490,13 +555,17 @@ export default function SignupPage() {
                     <div className="space-y-0.5">
                       <FormLabel
                         htmlFor="email-notifications-opt-in"
-                        className="cursor-pointer font-medium text-sm leading-none"
+                        className="cursor-pointer text-sm font-semibold"
+                        style={{ color: "#2D1F1A" }}
                       >
                         📧 Email Health Reminders
                       </FormLabel>
-                      <p className="text-xs text-muted-foreground leading-snug">
+                      <p
+                        className="text-xs leading-snug"
+                        style={{ color: "#8C7B74" }}
+                      >
                         Receive cycle predictions and daily log reminders via
-                        email
+                        email.
                       </p>
                     </div>
                   </FormItem>
@@ -506,13 +575,17 @@ export default function SignupPage() {
               <Button
                 id="signup-submit-btn"
                 type="submit"
-                className="w-full gap-2 font-semibold"
+                className="w-full h-12 rounded-2xl text-white font-bold text-sm gap-2"
+                style={{
+                  background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                  boxShadow: "0 4px 16px rgba(246,165,142,0.35)",
+                }}
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating account...
+                    <Loader2 className="h-4 w-4 animate-spin" /> Creating
+                    account...
                   </>
                 ) : (
                   "Create Account"
@@ -520,20 +593,22 @@ export default function SignupPage() {
               </Button>
             </form>
           </Form>
-        </CardContent>
 
-        <CardFooter className="flex flex-wrap items-center justify-center gap-2 pt-0">
-          <div className="text-sm text-muted-foreground">
+          <p
+            className="text-center text-sm font-medium mt-5"
+            style={{ color: "#8C7B74" }}
+          >
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-primary font-medium hover:underline"
+              className="font-bold hover:underline"
+              style={{ color: "#F6A58E" }}
             >
               Sign in
             </Link>
-          </div>
-        </CardFooter>
-      </Card>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
