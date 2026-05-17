@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import TopNavbar from "@/components/shared/TopNavbar";
 import Footer from "@/components/shared/Footer";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -66,8 +66,15 @@ const CARE = [
 ];
 
 export default function Home() {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
