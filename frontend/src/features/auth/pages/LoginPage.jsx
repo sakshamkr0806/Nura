@@ -91,15 +91,45 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="min-h-screen flex" style={{ background: "#FFF9F7" }}>
-        {/* Left illustration panel — hidden on mobile */}
+      <div className="min-h-screen relative flex items-center justify-center px-6 py-12" style={{ backgroundColor: "#FFF9F7" }}>
+        {/* Decorative background image - full page center */}
         <div
-          className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center p-12"
+          className="absolute inset-0 pointer-events-none z-0"
           style={{
-            background:
-              "linear-gradient(135deg, rgba(248,182,182,0.15), rgba(234,220,248,0.2))",
+            backgroundImage: "url('/images/home-bg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.3,
           }}
-        >
+        />
+
+        {/* Left illustration overlay — hidden on mobile */}
+        <div className="absolute inset-0 pointer-events-none hidden lg:block z-10 overflow-hidden">
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(135deg, rgba(248,182,182,0.15), rgba(234,220,248,0.2))",
+          }} />
+          {/* Top left content */}
+          <div className="absolute top-8 left-8 space-y-4 w-56 text-left">
+            <img 
+              src="/images/login-bg-transparent.png" 
+              alt="Woman holding cup" 
+              className="w-56 object-contain"
+              style={{ backgroundColor: "transparent", border: "none", boxShadow: "none" }} 
+            />
+            <div className="space-y-2">
+              <h2
+                className="font-serif font-bold text-xl leading-tight"
+                style={{ color: "#2D1F1A" }}
+              >
+                Your wellness sanctuary awaits
+              </h2>
+              <p className="text-xs font-medium leading-relaxed" style={{ color: "#8C7B74" }}>
+                Track your cycle, understand your hormones, and live in harmony
+                with your body.
+              </p>
+            </div>
+          </div>
+
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -left-16 -top-16 opacity-15">
               <FloralDecoration className="w-64 h-64" />
@@ -108,25 +138,11 @@ export default function LoginPage() {
               <FloralDecoration className="w-64 h-64" />
             </div>
           </div>
-          <div className="relative z-10 text-center space-y-6 max-w-sm">
-            <CalmWomanIllustration className="w-full max-w-xs mx-auto" />
-            <h2
-              className="font-serif font-bold text-3xl"
-              style={{ color: "#2D1F1A" }}
-            >
-              Your wellness sanctuary awaits
-            </h2>
-            <p className="text-sm font-medium" style={{ color: "#8C7B74" }}>
-              Track your cycle, understand your hormones, and live in harmony
-              with your body.
-            </p>
-          </div>
         </div>
 
-        {/* Right form panel */}
-        <div className="flex-1 flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-md space-y-8">
-            {/* Logo */}
+        {/* Center form panel */}
+        <div className="relative z-20 w-full max-w-md space-y-8">
+          {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 w-fit group">
               <div className="transition-transform duration-300 group-hover:rotate-12">
                 <FlowerLogo className="w-10 h-10" />

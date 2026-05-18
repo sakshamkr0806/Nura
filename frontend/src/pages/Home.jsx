@@ -85,9 +85,22 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "#FFF9F7", fontFamily: "'Inter', sans-serif" }}
+      className="min-h-screen relative"
+      style={{ backgroundColor: "#FFF9F7", fontFamily: "'Inter', sans-serif" }}
     >
+      {/* Decorative background image */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: "url('/images/home-bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.15,
+          zIndex: 0,
+        }}
+      />
+
+      <div className="relative z-10">
       <TopNavbar />
 
       {/* ─── HERO ─── */}
@@ -182,17 +195,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right column — illustration */}
+          {/* Right column — empty to maintain grid layout, illustration removed as requested */}
           <div className="relative flex justify-center lg:justify-end z-0">
-            <div className="relative w-full max-w-sm lg:max-w-md">
-              <div
-                className="absolute inset-0 rounded-full blur-3xl opacity-30"
-                style={{
-                  background: "radial-gradient(circle, #F8B6B6, #EADCF8)",
-                }}
-              />
-              <CalmWomanIllustration className="w-full h-auto relative z-10 drop-shadow-xl" />
-            </div>
           </div>
         </div>
       </section>
@@ -505,6 +509,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      </div>
     </div>
   );
 }
