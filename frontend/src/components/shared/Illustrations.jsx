@@ -9,48 +9,17 @@ export function FlowerLogo({ className = "w-8 h-8" }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <ellipse cx="40" cy="22" rx="10" ry="16" fill="#F8B6B6" opacity="0.9" />
-      <ellipse cx="40" cy="58" rx="10" ry="16" fill="#F8B6B6" opacity="0.9" />
-      <ellipse cx="22" cy="40" rx="16" ry="10" fill="#FAF2EA" opacity="0.9" />
-      <ellipse cx="58" cy="40" rx="16" ry="10" fill="#FAF2EA" opacity="0.9" />
-      <ellipse
-        cx="26"
-        cy="26"
-        rx="10"
-        ry="15"
-        transform="rotate(45 26 26)"
-        fill="#EADCF8"
-        opacity="0.85"
-      />
-      <ellipse
-        cx="54"
-        cy="54"
-        rx="10"
-        ry="15"
-        transform="rotate(45 54 54)"
-        fill="#EADCF8"
-        opacity="0.85"
-      />
-      <ellipse
-        cx="54"
-        cy="26"
-        rx="10"
-        ry="15"
-        transform="rotate(-45 54 26)"
-        fill="#DDEAD7"
-        opacity="0.85"
-      />
-      <ellipse
-        cx="26"
-        cy="54"
-        rx="10"
-        ry="15"
-        transform="rotate(-45 26 54)"
-        fill="#DDEAD7"
-        opacity="0.85"
-      />
-      <circle cx="40" cy="40" r="9" fill="#F6A58E" />
-      <circle cx="40" cy="40" r="4" fill="#FAF2EA" opacity="0.6" />
+      <g transform="translate(40, 40)">
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" />
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(60)" />
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(120)" />
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(180)" />
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(240)" />
+        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(300)" />
+        
+        <circle cx="0" cy="0" r="7" fill="#F6A58E" />
+        <circle cx="0" cy="0" r="3" fill="#FFFBF0" />
+      </g>
     </svg>
   );
 }
