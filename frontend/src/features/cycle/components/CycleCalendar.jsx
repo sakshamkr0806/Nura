@@ -32,16 +32,7 @@ export function CycleCalendar({
           modifiers={{
             period: highlightedDates?.period || [],
             prediction: highlightedDates?.prediction || [],
-          }}
-          modifiersStyles={{
-            period: {
-              backgroundColor: "hsl(var(--destructive))",
-              color: "white",
-            },
-            prediction: {
-              backgroundColor: "hsl(var(--destructive) / 0.3)",
-              color: "inherit",
-            },
+            logged: highlightedDates?.logged || [],
           }}
         />
       </CardContent>

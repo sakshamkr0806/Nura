@@ -12,9 +12,11 @@ const Reports = lazy(() => import("@/pages/Reports"));
 const Education = lazy(() => import("@/pages/Education"));
 const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
 const Profile = lazy(() => import("@/pages/Profile"));
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
 const PlaceholderPage = lazy(() => import("@/pages/PlaceholderPage"));
+const Seeds = lazy(() => import("@/pages/Seeds"));
 
 const wrap = (Component, props = {}) => (
   <Suspense fallback={<LoadingFallback />}>
@@ -58,14 +60,7 @@ export const router = createBrowserRouter([
             "Your personalised botanical advisor — conversational hormone coaching, nutritional guidance, and cycle education coming soon.",
         }),
       },
-      {
-        path: "seeds",
-        element: wrap(PlaceholderPage, {
-          title: "Seed Cycling Hub",
-          description:
-            "Track your daily seed ritual — flax, pumpkin, sesame, and sunflower — to naturally harmonise estrogen and progesterone.",
-        }),
-      },
+      { path: "seeds", element: wrap(Seeds) },
       {
         path: "community",
         element: wrap(PlaceholderPage, {

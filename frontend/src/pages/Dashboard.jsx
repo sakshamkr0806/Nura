@@ -24,6 +24,11 @@ export default function Dashboard() {
   const { user } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isLoggingOpen, setIsLoggingOpen] = useState(false);
+  const [highlightedDates, setHighlightedDates] = useState({
+    period: [],
+    prediction: [],
+    logged: [],
+  });
   const [analytics, setAnalytics] = useState(null);
   const [aiInsight, setAiInsight] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -49,9 +54,50 @@ export default function Dashboard() {
     }
   };
 
+  const fetchCycleData = async () => {
+    try {
+      const currentYear = new Date().getFullYear();
+      const [cyclesRes, predictionsRes, logsRes] = await Promise.all([
+        api.get("/cycles"),
+        api.get("/cycles/predictions"),
+        api.get(`/logs/range?start=${currentYear - 2}-01-01&end=${currentYear + 2}-12-31`),
+      ]);
+      const periods = [];
+      cyclesRes.data.forEach((cycle) => {
+        const start = new Date(cycle.startDate);
+        const end = cycle.endDate ? new Date(cycle.endDate) : new Date();
+        let current = new Date(start);
+        while (current <= end) {
+          periods.push(new Date(current));
+          current.setDate(current.getDate() + 1);
+        }
+      });
+      const predictions = [];
+      if (predictionsRes.data?.predictedNextPeriod) {
+        const predStart = new Date(predictionsRes.data.predictedNextPeriod);
+        for (let i = 0; i < 5; i++) {
+          const d = new Date(predStart);
+          d.setDate(d.getDate() + i);
+          predictions.push(d);
+        }
+      }
+      const logged = [];
+      logsRes.data?.forEach((log) => {
+        const d = new Date(log.date);
+        logged.push(d);
+        if (log.symptoms?.includes("Period Day")) periods.push(d);
+        if (log.symptoms?.includes("Predicted Period")) predictions.push(d);
+      });
+      setHighlightedDates({ period: periods, prediction: predictions, logged });
+    } catch (err) {
+      console.error("Failed to fetch cycle data", err);
+    }
+  };
+
   useEffect(() => {
     fetchAnalytics();
     fetchAIInsights();
+    fetchCycleData();
   }, []);
 
   const handleDateSelect = (date) => {
@@ -323,6 +369,7 @@ export default function Dashboard() {
           <CycleCalendar
             selectedDate={selectedDate}
             onDateSelect={handleDateSelect}
+            highlightedDates={highlightedDates}
           />
         </div>
         <div
@@ -347,6 +394,10 @@ export default function Dashboard() {
         date={selectedDate}
         isOpen={isLoggingOpen}
         onClose={() => setIsLoggingOpen(false)}
+        onSave={() => {
+          fetchCycleData();
+          fetchAnalytics();
+        }}
       />
     </div>
   );

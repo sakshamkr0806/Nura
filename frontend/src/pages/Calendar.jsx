@@ -10,39 +10,50 @@ export default function CalendarPage() {
   const [highlightedDates, setHighlightedDates] = useState({
     period: [],
     prediction: [],
+    logged: [],
   });
 
-  useEffect(() => {
-    const fetchCycleData = async () => {
-      try {
-        const [cyclesRes, predictionsRes] = await Promise.all([
-          api.get("/cycles"),
-          api.get("/cycles/predictions"),
-        ]);
-        const periods = [];
-        cyclesRes.data.forEach((cycle) => {
-          const start = new Date(cycle.startDate);
-          const end = cycle.endDate ? new Date(cycle.endDate) : new Date();
-          let current = new Date(start);
-          while (current <= end) {
-            periods.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-          }
-        });
-        const predictions = [];
-        if (predictionsRes.data?.predictedNextPeriod) {
-          const predStart = new Date(predictionsRes.data.predictedNextPeriod);
-          for (let i = 0; i < 5; i++) {
-            const d = new Date(predStart);
-            d.setDate(d.getDate() + i);
-            predictions.push(d);
-          }
+  const fetchCycleData = async () => {
+    try {
+      const currentYear = new Date().getFullYear();
+      const [cyclesRes, predictionsRes, logsRes] = await Promise.all([
+        api.get("/cycles"),
+        api.get("/cycles/predictions"),
+        api.get(`/logs/range?start=${currentYear - 2}-01-01T00:00:00.000Z&end=${currentYear + 2}-12-31T23:59:59.000Z`),
+      ]);
+      const periods = [];
+      cyclesRes.data.forEach((cycle) => {
+        const start = new Date(cycle.startDate);
+        const end = cycle.endDate ? new Date(cycle.endDate) : new Date();
+        let current = new Date(start);
+        while (current <= end) {
+          periods.push(new Date(current));
+          current.setDate(current.getDate() + 1);
         }
-        setHighlightedDates({ period: periods, prediction: predictions });
-      } catch (err) {
-        console.error("Failed to fetch cycle data", err);
+      });
+      const predictions = [];
+      if (predictionsRes.data?.predictedNextPeriod) {
+        const predStart = new Date(predictionsRes.data.predictedNextPeriod);
+        for (let i = 0; i < 5; i++) {
+          const d = new Date(predStart);
+          d.setDate(d.getDate() + i);
+          predictions.push(d);
+        }
       }
-    };
+      const logged = [];
+      logsRes.data?.forEach((log) => {
+        const d = new Date(log.date);
+        logged.push(d);
+        if (log.symptoms?.includes("Period Day")) periods.push(d);
+        if (log.symptoms?.includes("Predicted Period")) predictions.push(d);
+      });
+      setHighlightedDates({ period: periods, prediction: predictions, logged });
+    } catch (err) {
+      console.error("Failed to fetch cycle data", err);
+    }
+  };
+
+  useEffect(() => {
     fetchCycleData();
   }, []);
 
@@ -137,6 +148,18 @@ export default function CalendarPage() {
                   Selected Day
                 </span>
               </div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full"
+                  style={{ background: "#CDB4F6" }}
+                />
+                <span
+                  className="text-sm font-medium"
+                  style={{ color: "#2D1F1A" }}
+                >
+                  Logged Day
+                </span>
+              </div>
             </div>
           </div>
 
@@ -162,8 +185,8 @@ export default function CalendarPage() {
               className="text-sm font-medium leading-relaxed"
               style={{ color: "#8C7B74" }}
             >
-              Select any date to log symptoms, energy levels, sleep quality, and
-              water intake for that day.
+              Select any date to log symptoms, sleep, period days, and
+              predicted period for that day.
             </p>
           </div>
         </div>
@@ -173,6 +196,7 @@ export default function CalendarPage() {
         date={selectedDate}
         isOpen={isLoggingOpen}
         onClose={() => setIsLoggingOpen(false)}
+        onSave={fetchCycleData}
       />
     </div>
   );
