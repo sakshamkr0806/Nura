@@ -301,7 +301,7 @@ export class AnalyticsService {
     if (logs.length === 0) return 0;
     const avgHydration =
       logs.reduce((acc, log) => acc + (log.waterIntake || 0), 0) / logs.length;
-    
+
     if (avgHydration >= 2000) return 100;
     if (avgHydration >= 1500) return 75;
     if (avgHydration >= 1000) return 50;

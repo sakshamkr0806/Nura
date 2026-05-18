@@ -42,7 +42,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Understanding Your Menstrual Phase',
         slug: 'understanding-menstrual-phase',
-        excerpt: 'Your period begins. Learn what’s happening in your body and how to support yourself during this phase.',
+        excerpt:
+          'Your period begins. Learn what’s happening in your body and how to support yourself during this phase.',
         content: `
 <h2>What happens</h2>
 <p class="mb-6">Uterine lining sheds, estrogen & progesterone are at their lowest.</p>
@@ -70,7 +71,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Understanding Your Follicular Phase',
         slug: 'understanding-follicular-phase',
-        excerpt: 'Energy rises and estrogen builds. Discover how to make the most of this high-energy phase.',
+        excerpt:
+          'Energy rises and estrogen builds. Discover how to make the most of this high-energy phase.',
         content: `
 <h2>What happens</h2>
 <p class="mb-6">FSH stimulates follicle growth, estrogen rises, uterine lining rebuilds.</p>
@@ -98,7 +100,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Understanding Your Ovulatory Phase',
         slug: 'understanding-ovulatory-phase',
-        excerpt: 'Your most fertile window. Learn what ovulation means for your body, energy, and mood.',
+        excerpt:
+          'Your most fertile window. Learn what ovulation means for your body, energy, and mood.',
         content: `
 <h2>What happens</h2>
 <p class="mb-6">LH surge triggers egg release, estrogen peaks, progesterone begins to rise.</p>
@@ -126,7 +129,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Understanding Your Luteal Phase',
         slug: 'understanding-luteal-phase',
-        excerpt: 'Progesterone rises and PMS may set in. Here’s how to navigate the second half of your cycle with ease.',
+        excerpt:
+          'Progesterone rises and PMS may set in. Here’s how to navigate the second half of your cycle with ease.',
         content: `
 <h2>What happens</h2>
 <p class="mb-6">Progesterone peaks then drops if no pregnancy, body prepares to shed lining.</p>
@@ -155,7 +159,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'What to Eat During Your Period',
         slug: 'nutrition-menstrual-phase',
-        excerpt: 'Ease cramps and replenish lost iron with the right foods during your menstrual phase.',
+        excerpt:
+          'Ease cramps and replenish lost iron with the right foods during your menstrual phase.',
         content: `
 <h2>Nutrition for Your Menstrual Phase (Day 1–5)</h2>
 <p class="mb-6"><strong>Focus:</strong> Replenish iron, reduce inflammation, ease cramps.</p>
@@ -183,7 +188,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Fuel Your Rise: Eating for the Follicular Phase',
         slug: 'nutrition-follicular-phase',
-        excerpt: 'Your energy is climbing — here’s what to eat to support estrogen and feel your best.',
+        excerpt:
+          'Your energy is climbing — here’s what to eat to support estrogen and feel your best.',
         content: `
 <h2>Nutrition for Your Follicular Phase (Day 6–13)</h2>
 <p class="mb-6"><strong>Focus:</strong> Support estrogen production, boost energy, gut health.</p>
@@ -211,7 +217,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Eat to Ovulate: Nutrition for Your Peak Phase',
         slug: 'nutrition-ovulatory-phase',
-        excerpt: 'Support ovulation and keep energy high with anti-inflammatory, hormone-friendly foods.',
+        excerpt:
+          'Support ovulation and keep energy high with anti-inflammatory, hormone-friendly foods.',
         content: `
 <h2>Nutrition for Your Ovulatory Phase (Day 14–16)</h2>
 <p class="mb-6"><strong>Focus:</strong> Support progesterone rise, antioxidants, reduce estrogen dominance.</p>
@@ -239,7 +246,8 @@ export class ArticleService implements OnModuleInit {
       {
         title: 'Beat PMS with Food: Luteal Phase Nutrition',
         slug: 'nutrition-luteal-phase',
-        excerpt: 'Manage bloating, mood swings and cravings with magnesium-rich, comforting foods.',
+        excerpt:
+          'Manage bloating, mood swings and cravings with magnesium-rich, comforting foods.',
         content: `
 <h2>Nutrition for Your Luteal Phase (Day 17–28)</h2>
 <p class="mb-6"><strong>Focus:</strong> Stabilise mood, reduce bloating, manage cravings, support progesterone.</p>
@@ -263,18 +271,18 @@ export class ArticleService implements OnModuleInit {
         `,
         category: 'Nutrition',
         tags: ['Nutrition', 'Luteal', 'PMS'],
-      }
+      },
     ];
 
     for (const article of articles) {
       await this.prisma.article.upsert({
         where: { slug: article.slug },
-        update: { 
+        update: {
           title: article.title,
           excerpt: article.excerpt,
           content: article.content,
           category: article.category,
-          tags: article.tags
+          tags: article.tags,
         },
         create: article,
       });
