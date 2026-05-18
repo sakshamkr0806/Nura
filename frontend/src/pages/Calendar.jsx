@@ -185,7 +185,7 @@ export default function CalendarPage() {
               className="text-sm font-medium leading-relaxed"
               style={{ color: "#8C7B74" }}
             >
-              Select any date to log symptoms, sleep, period days, and
+              Select any date to log symptoms, sleep, water intake, period days, and
               predicted period for that day.
             </p>
           </div>

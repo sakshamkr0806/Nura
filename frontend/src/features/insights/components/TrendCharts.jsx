@@ -55,7 +55,7 @@ export function TrendCharts() {
               <Tooltip />
               <Bar
                 dataKey="water"
-                fill="hsl(var(--primary))"
+                fill="#0ea5e9"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

@@ -154,11 +154,9 @@ export default function ArticleDetail() {
         }}
       >
         <div
-          className="text-base leading-relaxed whitespace-pre-wrap font-medium"
-          style={{ color: "#2D1F1A" }}
-        >
-          {article.content}
-        </div>
+          className="text-base leading-relaxed font-medium prose prose-stone max-w-none prose-headings:font-serif prose-headings:text-[#2D1F1A] prose-p:text-[#5C4D47] prose-li:text-[#5C4D47]"
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
       </div>
 
       {/* Tags */}

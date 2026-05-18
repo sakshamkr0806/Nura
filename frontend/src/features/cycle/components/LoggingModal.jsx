@@ -29,6 +29,7 @@ const logSchema = z.object({
   sleepHours: z.number().min(0).max(24),
   isPeriodDay: z.boolean().default(false),
   isPredictedPeriod: z.boolean().default(false),
+  waterIntake: z.number().min(0).default(0),
   notes: z.string().optional(),
 });
 
@@ -44,6 +45,15 @@ const SLEEP_OPTIONS = [
   { value: 10, label: "10+" },
 ];
 
+const WATER_OPTIONS = [
+  { value: 500, label: "500ml" },
+  { value: 1000, label: "1L" },
+  { value: 1500, label: "1.5L" },
+  { value: 2000, label: "2L" },
+  { value: 2500, label: "2.5L" },
+  { value: 3000, label: "3L+" },
+];
+
 export function LoggingModal({ date, isOpen, onClose, onSave }) {
   const form = useForm({
     resolver: zodResolver(logSchema),
@@ -51,7 +61,7 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
       symptoms: [],
       moods: [],
       sleepHours: 8,
-      waterIntake: 2000,
+      waterIntake: 0,
       notes: "",
     },
   });
@@ -66,6 +76,7 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
             isPredictedPeriod: res.data.symptoms?.includes("Predicted Period") || false,
             moods: res.data.moods || [],
             sleepHours: res.data.sleepHours || 8,
+            waterIntake: res.data.waterIntake || 0,
             notes: res.data.notes || "",
           });
         } else {
@@ -75,6 +86,7 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
             isPredictedPeriod: false,
             moods: [],
             sleepHours: 8,
+            waterIntake: 0,
             notes: "",
           });
         }
@@ -171,6 +183,33 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                           onClick={() => field.onChange(option.value)}
                           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${field.value === option.value
                               ? "bg-[#F6A58E] text-white shadow-sm"
+                              : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                            }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="waterIntake"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Water Intake</FormLabel>
+                  <FormControl>
+                    <div className="flex flex-wrap gap-2">
+                      {WATER_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => field.onChange(option.value)}
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${field.value === option.value
+                              ? "bg-[#8BC0D0] text-white shadow-sm"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
                             }`}
                         >

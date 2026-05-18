@@ -301,9 +301,12 @@ export class AnalyticsService {
     if (logs.length === 0) return 0;
     const avgHydration =
       logs.reduce((acc, log) => acc + (log.waterIntake || 0), 0) / logs.length;
-    // Goal: 2500ml
-    const score = (avgHydration / 2500) * 100;
-    return Math.min(100, Math.round(score));
+    
+    if (avgHydration >= 2000) return 100;
+    if (avgHydration >= 1500) return 75;
+    if (avgHydration >= 1000) return 50;
+    if (avgHydration >= 500) return 25;
+    return 0;
   }
 
   private calculateSymptomScore(logs: DailyLog[]) {
