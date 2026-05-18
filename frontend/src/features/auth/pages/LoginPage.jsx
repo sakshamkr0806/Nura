@@ -99,7 +99,7 @@ export default function LoginPage() {
             backgroundImage: "url('/images/home-bg.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            opacity: 0.3,
+            opacity: 0.45,
           }}
         />
 
