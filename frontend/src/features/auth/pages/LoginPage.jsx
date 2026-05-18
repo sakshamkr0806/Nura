@@ -319,7 +319,6 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Forgot Password Dialog */}
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
