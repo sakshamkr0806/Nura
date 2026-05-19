@@ -10,19 +10,19 @@
   :root {
     /* --- Tailwind/shadcn token overrides --- */
     --background: 30 50% 98%;
-    --foreground: 20 15% 20%;
+    --foreground: 20 15% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 20 15% 20%;
+    --card-foreground: 20 15% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 15% 20%;
+    --popover-foreground: 20 15% 10%;
     --primary: 10 82% 75%; /* coral #F6A58E */
     --primary-foreground: 0 0% 100%;
     --secondary: 280 60% 88%; /* lavender #EADCF8 */
-    --secondary-foreground: 20 15% 20%;
+    --secondary-foreground: 20 15% 10%;
     --muted: 30 30% 95%;
-    --muted-foreground: 20 10% 50%;
+    --muted-foreground: 20 12% 28%;
     --accent: 30 70% 93%; /* warm beige #FAF2EA */
-    --accent-foreground: 20 15% 20%;
+    --accent-foreground: 20 15% 10%;
     --destructive: 355 75% 65%;
     --destructive-foreground: 0 0% 100%;
     --border: 30 25% 90%;
@@ -39,7 +39,7 @@
   body {
     font-family: "Inter", system-ui, sans-serif;
     background-color: #fff9f7;
-    color: #2d1f1a;
+    color: #160d0b;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -50,11 +50,12 @@
   h3,
   h4 {
     font-family: "Cormorant Garamond", Georgia, serif;
+    color: #160d0b;
   }
 
   ::selection {
     background-color: #f8b6b6;
-    color: #2d1f1a;
+    color: #160d0b;
   }
 
   /* Custom scrollbar */
@@ -85,8 +86,8 @@
   --nura-beige: #faf2ea;
   --nura-sage: #ddead7;
   --nura-sage-dark: #bdd7b3;
-  --nura-text: #2d1f1a;
-  --nura-text-muted: #8c7b74;
+  --nura-text: #160d0b;
+  --nura-text-muted: #4f403c;
 }
 
 /* ============================================================
@@ -438,13 +439,14 @@ select {
 }
 
 .nav-link-idle {
-  color: #8c7b74;
+  color: #2d1f1a;
+  font-weight: 500;
   border-radius: 100px;
   transition: all 0.2s ease;
 }
 .nav-link-idle:hover {
   background: rgba(246, 165, 142, 0.12);
-  color: #2d1f1a;
+  color: #160d0b;
 }
 
 /* ============================================================
@@ -558,4 +560,78 @@ select {
     padding: 24px 20px;
     border-radius: 20px;
   }
+}
+
+/* ============================================================
+   GLOBAL READABILITY & CONTRAST OVERRIDES
+   ============================================================ */
+
+/* Force inline styles targeting light colors to use darker equivalents */
+[style*="color: #8c7b74" i],
+[style*="color: #8C7B74" i] {
+  color: #4a4a4a !important;
+}
+
+[style*="color: #2d1f1a" i],
+[style*="color: #2D1F1A" i] {
+  color: #160d0b !important;
+}
+
+/* Force compiled arbitrary Tailwind text classes for light colors to be darker */
+.text-\[\#8C7B74\],
+.text-\[\#8c7b74\],
+.text-text-secondary {
+  color: #4a4a4a !important;
+}
+
+.text-\[\#2D1F1A\],
+.text-\[\#2d1f1a\],
+.text-text-primary {
+  color: #160d0b !important;
+}
+
+.text-\[\#5C4D47\],
+.text-\[\#5c4d47\] {
+  color: #3d3d3d !important;
+}
+
+.text-\[\#4A3B32\],
+.text-\[\#4a3b32\] {
+  color: #241c18 !important;
+}
+
+.text-\[\#A68A6C\],
+.text-\[\#a68a6c\] {
+  color: #6e543c !important;
+}
+
+/* Make sure all base paragraphs and list items in markdown prose are readable */
+.prose p,
+.prose li,
+.prose ul,
+.prose ol {
+  color: #3d3d3d !important;
+}
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: #160d0b !important;
+}
+
+/* Specific metric card readability enhancements */
+.metric-card span {
+  color: #333333 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+}
+
+.metric-card p.font-serif {
+  color: #111111 !important;
+  font-weight: 800 !important;
+}
+
+.metric-card p:not(.font-serif) {
+  color: #4a4a4a !important;
 }
