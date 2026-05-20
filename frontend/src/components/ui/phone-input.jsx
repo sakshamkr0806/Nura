@@ -164,19 +164,18 @@ export const PhoneInput = React.forwardRef(
     );
 
     return (
-      <div className={cn("flex w-full items-center", className)}>
-        <PhoneInputWithCountry
-          international={false}
-          defaultCountry="IN"
-          value={value}
-          onChange={onChange}
-          inputComponent={CustomInput}
-          countrySelectComponent={CountrySelectWithError}
-          error={error} // Passed to CustomInput
-          ref={ref}
-          {...props}
-        />
-      </div>
+      <PhoneInputWithCountry
+        className={cn("flex w-full items-center", className)}
+        international={false}
+        defaultCountry="IN"
+        value={value}
+        onChange={onChange}
+        inputComponent={CustomInput}
+        countrySelectComponent={CountrySelectWithError}
+        error={error} // Passed to CustomInput
+        ref={ref}
+        {...props}
+      />
     );
   },
 );
