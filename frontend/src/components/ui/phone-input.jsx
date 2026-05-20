@@ -166,7 +166,7 @@ export const PhoneInput = React.forwardRef(
     return (
       <div className={cn("flex w-full items-center", className)}>
         <PhoneInputWithCountry
-          international
+          international={false}
           defaultCountry="IN"
           value={value}
           onChange={onChange}
