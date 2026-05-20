@@ -27,7 +27,6 @@ import { toast } from "sonner";
 import { decodeJwt } from "@/utils/jwt";
 import {
   FlowerLogo,
-  CalmWomanIllustration,
   FloralDecoration,
 } from "@/components/shared/Illustrations";
 
@@ -91,7 +90,10 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="min-h-screen relative flex items-center justify-center px-6 py-12" style={{ backgroundColor: "#FFF9F7" }}>
+      <div
+        className="min-h-screen relative flex items-center justify-center px-6 py-12"
+        style={{ backgroundColor: "#FFF9F7" }}
+      >
         {/* Decorative background image - full page center */}
         <div
           className="absolute inset-0 pointer-events-none z-0"
@@ -105,16 +107,24 @@ export default function LoginPage() {
 
         {/* Left illustration overlay — hidden on mobile */}
         <div className="absolute inset-0 pointer-events-none hidden lg:block z-10 overflow-hidden">
-          <div className="absolute inset-0" style={{
-            background: "linear-gradient(135deg, rgba(248,182,182,0.15), rgba(234,220,248,0.2))",
-          }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(248,182,182,0.15), rgba(234,220,248,0.2))",
+            }}
+          />
           {/* Top left content */}
           <div className="absolute top-8 left-8 space-y-4 w-56 text-left">
-            <img 
-              src="/images/login-bg-transparent.png" 
-              alt="Woman holding cup" 
+            <img
+              src="/images/login-bg-transparent.png"
+              alt="Woman holding cup"
               className="w-56 object-contain"
-              style={{ backgroundColor: "transparent", border: "none", boxShadow: "none" }} 
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                boxShadow: "none",
+              }}
             />
             <div className="space-y-2">
               <h2
@@ -123,7 +133,10 @@ export default function LoginPage() {
               >
                 Your wellness sanctuary awaits
               </h2>
-              <p className="text-xs font-medium leading-relaxed" style={{ color: "#8C7B74" }}>
+              <p
+                className="text-xs font-medium leading-relaxed"
+                style={{ color: "#8C7B74" }}
+              >
                 Track your cycle, understand your hormones, and live in harmony
                 with your body.
               </p>
@@ -143,182 +156,181 @@ export default function LoginPage() {
         {/* Center form panel */}
         <div className="relative z-20 w-full max-w-md space-y-8">
           {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 w-fit group">
-              <div className="transition-transform duration-300 group-hover:rotate-12">
-                <FlowerLogo className="w-10 h-10" />
-              </div>
-              <span
-                className="text-2xl font-serif font-bold"
-                style={{ color: "#2D1F1A" }}
-              >
-                Nura
-              </span>
-            </Link>
-
-            <div>
-              <h1
-                className="font-serif font-bold text-3xl"
-                style={{ color: "#2D1F1A" }}
-              >
-                Welcome back 🌸
-              </h1>
-              <p
-                className="mt-1 text-sm font-medium"
-                style={{ color: "#8C7B74" }}
-              >
-                Sign in with your email or phone number
-              </p>
+          <Link to="/" className="flex items-center gap-2.5 w-fit group">
+            <div className="transition-transform duration-300 group-hover:rotate-12">
+              <FlowerLogo className="w-10 h-10" />
             </div>
-
-            {/* Form card */}
-            <div
-              className="rounded-3xl border p-8 space-y-6"
-              style={{
-                background: "white",
-                borderColor: "rgba(246,165,142,0.15)",
-                boxShadow: "0 4px 32px rgba(200,150,130,0.1)",
-              }}
+            <span
+              className="text-2xl font-serif font-bold"
+              style={{ color: "#2D1F1A" }}
             >
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-5"
-                >
-                  <FormField
-                    control={form.control}
-                    name="identifier"
-                    render={({ field }) => (
-                      <FormItem>
+              Nura
+            </span>
+          </Link>
+
+          <div>
+            <h1
+              className="font-serif font-bold text-3xl"
+              style={{ color: "#2D1F1A" }}
+            >
+              Welcome back 🌸
+            </h1>
+            <p
+              className="mt-1 text-sm font-medium"
+              style={{ color: "#8C7B74" }}
+            >
+              Sign in with your email or phone number
+            </p>
+          </div>
+
+          {/* Form card */}
+          <div
+            className="rounded-3xl border p-8 space-y-6"
+            style={{
+              background: "white",
+              borderColor: "rgba(246,165,142,0.15)",
+              boxShadow: "0 4px 32px rgba(200,150,130,0.1)",
+            }}
+          >
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-5"
+              >
+                <FormField
+                  control={form.control}
+                  name="identifier"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel
+                        className="text-xs font-bold uppercase tracking-wider"
+                        style={{ color: "#8C7B74" }}
+                      >
+                        Email or Phone
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <div
+                            className="absolute left-3 top-1/2 -translate-y-1/2"
+                            style={{ color: "#F6A58E" }}
+                          >
+                            {field.value && /^\+/.test(field.value) ? (
+                              <Phone className="h-4 w-4" />
+                            ) : (
+                              <Mail className="h-4 w-4" />
+                            )}
+                          </div>
+                          <Input
+                            id="login-identifier"
+                            className={inputClass}
+                            style={inputStyle}
+                            placeholder="jane@example.com or +919876543210"
+                            autoComplete="username"
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
                         <FormLabel
                           className="text-xs font-bold uppercase tracking-wider"
                           style={{ color: "#8C7B74" }}
                         >
-                          Email or Phone
+                          Password
                         </FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <div
-                              className="absolute left-3 top-1/2 -translate-y-1/2"
-                              style={{ color: "#F6A58E" }}
-                            >
-                              {field.value && /^\+/.test(field.value) ? (
-                                <Phone className="h-4 w-4" />
-                              ) : (
-                                <Mail className="h-4 w-4" />
-                              )}
-                            </div>
-                            <Input
-                              id="login-identifier"
-                              className={inputClass}
-                              style={inputStyle}
-                              placeholder="jane@example.com or +919876543210"
-                              autoComplete="username"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel
-                            className="text-xs font-bold uppercase tracking-wider"
-                            style={{ color: "#8C7B74" }}
-                          >
-                            Password
-                          </FormLabel>
+                        <button
+                          type="button"
+                          onClick={() => setForgotOpen(true)}
+                          id="forgot-password-btn"
+                          className="text-xs font-bold hover:underline"
+                          style={{ color: "#F6A58E" }}
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock
+                            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                            style={{ color: "#F6A58E" }}
+                          />
+                          <Input
+                            id="login-password"
+                            className={`${inputClass} pr-10`}
+                            style={inputStyle}
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            autoComplete="current-password"
+                            {...field}
+                          />
                           <button
                             type="button"
-                            onClick={() => setForgotOpen(true)}
-                            id="forgot-password-btn"
-                            className="text-xs font-bold hover:underline"
-                            style={{ color: "#F6A58E" }}
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                            style={{ color: "#8C7B74" }}
+                            aria-label={
+                              showPassword ? "Hide password" : "Show password"
+                            }
                           >
-                            Forgot password?
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </button>
                         </div>
-                        <FormControl>
-                          <div className="relative">
-                            <Lock
-                              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                              style={{ color: "#F6A58E" }}
-                            />
-                            <Input
-                              id="login-password"
-                              className={`${inputClass} pr-10`}
-                              style={inputStyle}
-                              type={showPassword ? "text" : "password"}
-                              placeholder="••••••••"
-                              autoComplete="current-password"
-                              {...field}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword((v) => !v)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
-                              style={{ color: "#8C7B74" }}
-                              aria-label={
-                                showPassword ? "Hide password" : "Show password"
-                              }
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <Button
-                    id="login-submit-btn"
-                    type="submit"
-                    className="w-full h-12 rounded-2xl text-white font-bold text-sm gap-2"
-                    style={{
-                      background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
-                      boxShadow: "0 4px 16px rgba(246,165,142,0.35)",
-                    }}
-                    disabled={form.formState.isSubmitting}
-                  >
-                    {form.formState.isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Signing
-                        in...
-                      </>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
-                </form>
-              </Form>
-
-              <p
-                className="text-center text-sm font-medium"
-                style={{ color: "#8C7B74" }}
-              >
-                Don&apos;t have an account?{" "}
-                <Link
-                  to="/signup"
-                  className="font-bold hover:underline"
-                  style={{ color: "#F6A58E" }}
+                <Button
+                  id="login-submit-btn"
+                  type="submit"
+                  className="w-full h-12 rounded-2xl text-white font-bold text-sm gap-2"
+                  style={{
+                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                    boxShadow: "0 4px 16px rgba(246,165,142,0.35)",
+                  }}
+                  disabled={form.formState.isSubmitting}
                 >
-                  Create one
-                </Link>
-              </p>
-            </div>
+                  {form.formState.isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Signing in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
+            </Form>
+
+            <p
+              className="text-center text-sm font-medium"
+              style={{ color: "#8C7B74" }}
+            >
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-bold hover:underline"
+                style={{ color: "#F6A58E" }}
+              >
+                Create one
+              </Link>
+            </p>
           </div>
         </div>
+      </div>
 
       {/* Forgot Password Dialog */}
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>

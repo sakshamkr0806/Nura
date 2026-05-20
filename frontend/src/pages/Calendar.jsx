@@ -19,7 +19,9 @@ export default function CalendarPage() {
       const [cyclesRes, predictionsRes, logsRes] = await Promise.all([
         api.get("/cycles"),
         api.get("/cycles/predictions"),
-        api.get(`/logs/range?start=${currentYear - 2}-01-01T00:00:00.000Z&end=${currentYear + 2}-12-31T23:59:59.000Z`),
+        api.get(
+          `/logs/range?start=${currentYear - 2}-01-01T00:00:00.000Z&end=${currentYear + 2}-12-31T23:59:59.000Z`,
+        ),
       ]);
       const periods = [];
       cyclesRes.data.forEach((cycle) => {
@@ -185,8 +187,8 @@ export default function CalendarPage() {
               className="text-sm font-medium leading-relaxed"
               style={{ color: "#8C7B74" }}
             >
-              Select any date to log symptoms, sleep, water intake, period days, and
-              predicted period for that day.
+              Select any date to log symptoms, sleep, water intake, period days,
+              and predicted period for that day.
             </p>
           </div>
         </div>

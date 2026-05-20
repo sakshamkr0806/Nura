@@ -11,12 +11,47 @@ export function FlowerLogo({ className = "w-8 h-8" }) {
     >
       <g transform="translate(40, 40)">
         <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" />
-        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(60)" />
-        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(120)" />
-        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(180)" />
-        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(240)" />
-        <ellipse cx="0" cy="-18" rx="11" ry="18" fill="#F8B6B6" transform="rotate(300)" />
-        
+        <ellipse
+          cx="0"
+          cy="-18"
+          rx="11"
+          ry="18"
+          fill="#F8B6B6"
+          transform="rotate(60)"
+        />
+        <ellipse
+          cx="0"
+          cy="-18"
+          rx="11"
+          ry="18"
+          fill="#F8B6B6"
+          transform="rotate(120)"
+        />
+        <ellipse
+          cx="0"
+          cy="-18"
+          rx="11"
+          ry="18"
+          fill="#F8B6B6"
+          transform="rotate(180)"
+        />
+        <ellipse
+          cx="0"
+          cy="-18"
+          rx="11"
+          ry="18"
+          fill="#F8B6B6"
+          transform="rotate(240)"
+        />
+        <ellipse
+          cx="0"
+          cy="-18"
+          rx="11"
+          ry="18"
+          fill="#F8B6B6"
+          transform="rotate(300)"
+        />
+
         <circle cx="0" cy="0" r="7" fill="#F6A58E" />
         <circle cx="0" cy="0" r="3" fill="#FFFBF0" />
       </g>

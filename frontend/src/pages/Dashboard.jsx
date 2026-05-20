@@ -60,7 +60,9 @@ export default function Dashboard() {
       const [cyclesRes, predictionsRes, logsRes] = await Promise.all([
         api.get("/cycles"),
         api.get("/cycles/predictions"),
-        api.get(`/logs/range?start=${currentYear - 2}-01-01&end=${currentYear + 2}-12-31`),
+        api.get(
+          `/logs/range?start=${currentYear - 2}-01-01&end=${currentYear + 2}-12-31`,
+        ),
       ]);
       const periods = [];
       cyclesRes.data.forEach((cycle) => {

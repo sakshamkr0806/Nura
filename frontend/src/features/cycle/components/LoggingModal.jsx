@@ -16,7 +16,6 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import api from "@/api/axios";
@@ -68,29 +67,35 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
 
   useEffect(() => {
     if (isOpen && date) {
-      api.get(`/logs/by-date?date=${format(date, "yyyy-MM-dd")}`).then((res) => {
-        if (res.data) {
-          form.reset({
-            symptoms: res.data.symptoms?.filter(s => s !== "Period Day" && s !== "Predicted Period") || [],
-            isPeriodDay: res.data.symptoms?.includes("Period Day") || false,
-            isPredictedPeriod: res.data.symptoms?.includes("Predicted Period") || false,
-            moods: res.data.moods || [],
-            sleepHours: res.data.sleepHours || 8,
-            waterIntake: res.data.waterIntake || 0,
-            notes: res.data.notes || "",
-          });
-        } else {
-          form.reset({
-            symptoms: [],
-            isPeriodDay: false,
-            isPredictedPeriod: false,
-            moods: [],
-            sleepHours: 8,
-            waterIntake: 0,
-            notes: "",
-          });
-        }
-      });
+      api
+        .get(`/logs/by-date?date=${format(date, "yyyy-MM-dd")}`)
+        .then((res) => {
+          if (res.data) {
+            form.reset({
+              symptoms:
+                res.data.symptoms?.filter(
+                  (s) => s !== "Period Day" && s !== "Predicted Period",
+                ) || [],
+              isPeriodDay: res.data.symptoms?.includes("Period Day") || false,
+              isPredictedPeriod:
+                res.data.symptoms?.includes("Predicted Period") || false,
+              moods: res.data.moods || [],
+              sleepHours: res.data.sleepHours || 8,
+              waterIntake: res.data.waterIntake || 0,
+              notes: res.data.notes || "",
+            });
+          } else {
+            form.reset({
+              symptoms: [],
+              isPeriodDay: false,
+              isPredictedPeriod: false,
+              moods: [],
+              sleepHours: 8,
+              waterIntake: 0,
+              notes: "",
+            });
+          }
+        });
     }
   }, [isOpen, date, form]);
 
@@ -102,7 +107,7 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
       if (values.isPredictedPeriod) finalSymptoms.push("Predicted Period");
 
       // Extract isPeriodDay and isPredictedPeriod so they don't get sent to backend
-      const { isPeriodDay, isPredictedPeriod, ...payload } = values;
+      const { isPeriodDay: _, isPredictedPeriod: __, ...payload } = values;
 
       await api.post("/logs", {
         ...payload,
@@ -149,10 +154,10 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                                   return checked
                                     ? field.onChange([...field.value, symptom])
                                     : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== symptom,
-                                      ),
-                                    );
+                                        field.value?.filter(
+                                          (value) => value !== symptom,
+                                        ),
+                                      );
                                 }}
                               />
                             </FormControl>
@@ -181,10 +186,11 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                           key={option.value}
                           type="button"
                           onClick={() => field.onChange(option.value)}
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${field.value === option.value
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                            field.value === option.value
                               ? "bg-[#F6A58E] text-white shadow-sm"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-                            }`}
+                          }`}
                         >
                           {option.label}
                         </button>
@@ -208,10 +214,11 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                           key={option.value}
                           type="button"
                           onClick={() => field.onChange(option.value)}
-                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${field.value === option.value
+                          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                            field.value === option.value
                               ? "bg-[#8BC0D0] text-white shadow-sm"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
-                            }`}
+                          }`}
                         >
                           {option.label}
                         </button>
@@ -229,15 +236,19 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm bg-white">
                     <div className="space-y-0.5">
-                      <FormLabel className="font-medium text-sm text-[#2D1F1A]">Period Day</FormLabel>
+                      <FormLabel className="font-medium text-sm text-[#2D1F1A]">
+                        Period Day
+                      </FormLabel>
                     </div>
                     <FormControl>
                       <button
                         type="button"
                         onClick={() => field.onChange(!field.value)}
-                        className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${field.value ? 'bg-[#F8B6B6]' : 'bg-gray-200'}`}
+                        className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${field.value ? "bg-[#F8B6B6]" : "bg-gray-200"}`}
                       >
-                        <span className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${field.value ? 'translate-x-6' : 'translate-x-1'}`} />
+                        <span
+                          className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${field.value ? "translate-x-6" : "translate-x-1"}`}
+                        />
                       </button>
                     </FormControl>
                   </FormItem>
@@ -250,15 +261,19 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm bg-white">
                     <div className="space-y-0.5">
-                      <FormLabel className="font-medium text-sm text-[#2D1F1A]">Predicted Period</FormLabel>
+                      <FormLabel className="font-medium text-sm text-[#2D1F1A]">
+                        Predicted Period
+                      </FormLabel>
                     </div>
                     <FormControl>
                       <button
                         type="button"
                         onClick={() => field.onChange(!field.value)}
-                        className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${field.value ? 'bg-[#F8B6B6]' : 'bg-gray-200'}`}
+                        className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${field.value ? "bg-[#F8B6B6]" : "bg-gray-200"}`}
                       >
-                        <span className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${field.value ? 'translate-x-6' : 'translate-x-1'}`} />
+                        <span
+                          className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${field.value ? "translate-x-6" : "translate-x-1"}`}
+                        />
                       </button>
                     </FormControl>
                   </FormItem>

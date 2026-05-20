@@ -53,11 +53,7 @@ export function TrendCharts() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar
-                dataKey="water"
-                fill="#0ea5e9"
-                radius={[4, 4, 0, 0]}
-              />
+              <Bar dataKey="water" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
