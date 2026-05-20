@@ -7,22 +7,27 @@ import { ChevronDown, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 // Custom Input for the phone number part
-const CustomInput = React.forwardRef(({ className, ...props }, ref) => {
+const CustomInput = React.forwardRef(({ className, error, ...props }, ref) => {
   return (
     <Input
       className={cn(
         "rounded-r-xl rounded-l-none border-l-0 h-11 text-sm border focus-visible:ring-2 focus-visible:ring-[rgba(246,165,142,0.3)] transition-all",
-        className
+        className,
       )}
       style={{
-        borderColor: "rgba(246,165,142,0.2)",
+        borderColor: error ? "#EF4444" : "rgba(246,165,142,0.2)",
         background: "#FFFAF8",
         color: "#2D1F1A",
+        boxShadow: error ? "0 0 0 1px #EF4444" : "none",
       }}
       ref={ref}
       {...props}
@@ -32,13 +37,17 @@ const CustomInput = React.forwardRef(({ className, ...props }, ref) => {
 CustomInput.displayName = "CustomInput";
 
 // Custom Country Select Dropdown
-const CountrySelect = ({ value, onChange, options, disabled }) => {
+const CountrySelect = ({ value, onChange, options, disabled, error }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isOpen, setIsOpen] = React.useState(false);
 
   const selectedCountry = options.find((opt) => opt.value === value);
-  const SelectedFlag = selectedCountry?.value ? flags[selectedCountry.value] : null;
-  const selectedDialCode = selectedCountry?.value ? getCountryCallingCode(selectedCountry.value) : "";
+  const SelectedFlag = selectedCountry?.value
+    ? flags[selectedCountry.value]
+    : null;
+  const selectedDialCode = selectedCountry?.value
+    ? getCountryCallingCode(selectedCountry.value)
+    : "";
 
   // Prepare and filter country list
   const countriesList = React.useMemo(() => {
@@ -55,10 +64,11 @@ const CountrySelect = ({ value, onChange, options, disabled }) => {
           Flag: flags[countryCode],
         };
       })
-      .filter((c) =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.dialCode.includes(searchQuery) ||
-        c.code.toLowerCase().includes(searchQuery.toLowerCase())
+      .filter(
+        (c) =>
+          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          c.dialCode.includes(searchQuery) ||
+          c.code.toLowerCase().includes(searchQuery.toLowerCase()),
       )
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [options, searchQuery]);
@@ -68,13 +78,13 @@ const CountrySelect = ({ value, onChange, options, disabled }) => {
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant="outline"
           disabled={disabled}
           className="flex gap-2 rounded-l-xl rounded-r-none border-r-0 h-11 px-3 focus-visible:ring-2 focus-visible:ring-[rgba(246,165,142,0.3)] transition-all border shrink-0 hover:bg-[#FFF9F7] active:scale-[0.98]"
           style={{
-            borderColor: "rgba(246,165,142,0.2)",
+            borderColor: error ? "#EF4444" : "rgba(246,165,142,0.2)",
             background: "#FFFAF8",
             color: "#2D1F1A",
+            boxShadow: error ? "0 0 0 1px #EF4444" : "none",
           }}
         >
           {SelectedFlag ? (
@@ -119,7 +129,8 @@ const CountrySelect = ({ value, onChange, options, disabled }) => {
                     }}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 py-2 text-sm rounded-xl text-left transition-colors duration-150 hover:bg-[#FFF4F0] text-[#2D1F1A] font-medium",
-                      value === country.code && "bg-[#FFEBE5] text-[#2D1F1A] font-bold"
+                      value === country.code &&
+                        "bg-[#FFEBE5] text-[#2D1F1A] font-bold",
                     )}
                   >
                     {CountryFlag && (
@@ -145,7 +156,13 @@ const CountrySelect = ({ value, onChange, options, disabled }) => {
 };
 
 export const PhoneInput = React.forwardRef(
-  ({ className, value, onChange, ...props }, ref) => {
+  ({ className, value, onChange, error, ...props }, ref) => {
+    // Custom CountrySelect wrapper that receives error
+    const CountrySelectWithError = React.useCallback(
+      (selectProps) => <CountrySelect {...selectProps} error={error} />,
+      [error],
+    );
+
     return (
       <div className={cn("flex w-full items-center", className)}>
         <PhoneInputWithCountry
@@ -154,12 +171,13 @@ export const PhoneInput = React.forwardRef(
           value={value}
           onChange={onChange}
           inputComponent={CustomInput}
-          countrySelectComponent={CountrySelect}
+          countrySelectComponent={CountrySelectWithError}
+          error={error} // Passed to CustomInput
           ref={ref}
           {...props}
         />
       </div>
     );
-  }
+  },
 );
 PhoneInput.displayName = "PhoneInput";

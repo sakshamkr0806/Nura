@@ -1,20 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Check,
-  X,
-  Mail,
-  Lock,
-  User,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Check, X, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { format, isAfter, subYears } from "date-fns";
+import { isAfter, subYears } from "date-fns";
 import {
   Form,
   FormControl,
@@ -82,15 +73,25 @@ const signupSchema = z
         },
         {
           message: "You must be at least 13 years old to sign up",
-        }
+        },
       ),
     phoneNumber: z
       .string()
-      .trim()
       .optional()
-      .refine((v) => !v || (isValidPhoneNumber(v) && E164_REGEX.test(v)), {
-        message: "Invalid international phone number. Use e.g., +919876543210",
-      }),
+      .or(z.literal(""))
+      .refine(
+        (v) => {
+          if (!v || v.trim() === "") return true;
+          const trimmed = v.trim();
+          const isJustCountryCode = /^\+[1-9]\d{0,2}$/.test(trimmed);
+          if (isJustCountryCode) return true;
+          return isValidPhoneNumber(trimmed) && E164_REGEX.test(trimmed);
+        },
+        {
+          message:
+            "Invalid international phone number. Use e.g., +919876543210",
+        },
+      ),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -298,6 +299,7 @@ export default function SignupPage() {
                       <PhoneInput
                         value={field.value}
                         onChange={field.onChange}
+                        error={form.formState.errors.phoneNumber}
                       />
                     </FormControl>
                     <FormMessage />
