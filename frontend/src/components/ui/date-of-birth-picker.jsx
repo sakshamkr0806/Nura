@@ -13,7 +13,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -182,7 +181,7 @@ export function DateOfBirthPicker({
                 size="sm"
                 className="w-[125px] h-9 rounded-lg border border-rose-100 bg-[#FFFAF8] text-xs font-semibold text-[#8C7B74] focus:ring-1 focus:ring-[#F6A58E]"
               >
-                <SelectValue placeholder="Month" />
+                <span>{MONTHS[currentMonthVal]}</span>
               </SelectTrigger>
               <SelectContent className="max-h-56 overflow-y-auto bg-white rounded-lg border shadow-lg">
                 {MONTHS.map((m, idx) => (
