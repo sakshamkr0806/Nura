@@ -9,20 +9,12 @@ import {
   Loader2,
   Check,
   X,
-  Phone,
   Mail,
   Lock,
   User,
-  Calendar as CalendarIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format, isAfter, parse, isValid } from "date-fns";
+import { format, isAfter, subYears } from "date-fns";
 import {
   Form,
   FormControl,
@@ -41,6 +33,9 @@ import {
   FlowerLogo,
   FloralDecoration,
 } from "@/components/shared/Illustrations";
+import { DateOfBirthPicker } from "@/components/ui/date-of-birth-picker";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 const E164_REGEX = /^\+[1-9]\d{6,14}$/;
 
@@ -78,13 +73,23 @@ const signupSchema = z
       .date({ required_error: "Date of birth is required" })
       .refine((date) => !isAfter(date, new Date()), {
         message: "Date of birth cannot be in the future",
-      }),
+      })
+      .refine(
+        (date) => {
+          const today = new Date();
+          const minAgeDate = subYears(today, 13);
+          return date <= minAgeDate;
+        },
+        {
+          message: "You must be at least 13 years old to sign up",
+        }
+      ),
     phoneNumber: z
       .string()
       .trim()
       .optional()
-      .refine((v) => !v || E164_REGEX.test(v), {
-        message: "Use E.164 format: +919876543210",
+      .refine((v) => !v || (isValidPhoneNumber(v) && E164_REGEX.test(v)), {
+        message: "Invalid international phone number. Use e.g., +919876543210",
       }),
     password: z
       .string()
@@ -102,88 +107,6 @@ const signupSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-
-const DateField = ({ field }) => {
-  const [inputValue, setInputValue] = useState(
-    field.value ? format(field.value, "dd/MM/yyyy") : "",
-  );
-  useEffect(() => {
-    if (field.value) {
-      const formatted = format(field.value, "dd/MM/yyyy");
-      if (formatted !== inputValue && inputValue.length === 10)
-        setInputValue(formatted);
-      else if (!inputValue) setInputValue(formatted);
-    }
-  }, [field.value, inputValue]);
-
-  const inputClass =
-    "h-11 rounded-xl text-sm border pr-12 focus:ring-2 focus:ring-[rgba(246,165,142,0.3)]";
-  const inputStyle = {
-    borderColor: "rgba(246,165,142,0.2)",
-    background: "#FFFAF8",
-  };
-
-  return (
-    <FormItem className="flex flex-col">
-      <FormLabel
-        className="text-xs font-bold uppercase tracking-wider"
-        style={{ color: "#8C7B74" }}
-      >
-        Date of Birth
-      </FormLabel>
-      <div className="relative flex items-center">
-        <FormControl>
-          <Input
-            placeholder="DD/MM/YYYY"
-            className={inputClass}
-            style={inputStyle}
-            value={inputValue}
-            onChange={(e) => {
-              const val = e.target.value;
-              setInputValue(val);
-              if (val.length === 10) {
-                const parsedDate = parse(val, "dd/MM/yyyy", new Date());
-                if (isValid(parsedDate)) field.onChange(parsedDate);
-              }
-            }}
-          />
-        </FormControl>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-11 w-11 transition-colors"
-              style={{ color: "#8C7B74" }}
-            >
-              <CalendarIcon className="h-4 w-4" />
-              <span className="sr-only">Pick a date</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={field.value}
-              onSelect={(date) => {
-                field.onChange(date);
-                if (date) setInputValue(format(date, "dd/MM/yyyy"));
-              }}
-              disabled={(date) =>
-                date > new Date() || date < new Date("1900-01-01")
-              }
-              initialFocus
-              captionLayout="dropdown-buttons"
-              fromYear={1940}
-              toYear={new Date().getFullYear()}
-              className="rounded-2xl border shadow"
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      <FormMessage />
-    </FormItem>
-  );
-};
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -327,13 +250,6 @@ export default function SignupPage() {
                 )}
               />
 
-              {/* Date of Birth */}
-              <FormField
-                control={form.control}
-                name="dateOfBirth"
-                render={({ field }) => <DateField field={field} />}
-              />
-
               {/* Email */}
               <FormField
                 control={form.control}
@@ -368,7 +284,7 @@ export default function SignupPage() {
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel className={labelClass} style={labelStyle}>
                       Phone{" "}
                       <span
@@ -379,24 +295,33 @@ export default function SignupPage() {
                       </span>
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Phone
-                          className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                          style={{ color: "#F6A58E" }}
-                        />
-                        <Input
-                          className={inputClass}
-                          style={inputStyle}
-                          placeholder="+91 98765 43210"
-                          type="tel"
-                          {...field}
-                        />
-                      </div>
+                      <PhoneInput
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
-                    <p className="text-xs" style={{ color: "#8C7B74" }}>
-                      Include country code, e.g. +91 for India
-                    </p>
+                  </FormItem>
+                )}
+              />
+
+              {/* Date of Birth */}
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className={labelClass} style={labelStyle}>
+                      Date of Birth
+                    </FormLabel>
+                    <FormControl>
+                      <DateOfBirthPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={form.formState.errors.dateOfBirth}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
