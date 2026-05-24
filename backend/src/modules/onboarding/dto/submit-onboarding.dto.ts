@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -79,7 +80,23 @@ export class MoodEnergyDto {
   anxietyFrequency?: string;
 }
 
+export class PersonalDetailsDto {
+  @IsDateString()
+  dateOfBirth: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^\+[1-9]\d{6,14}$/, {
+    message: 'phoneNumber must be in E.164 format (e.g. +919876543210)',
+  })
+  phoneNumber?: string;
+}
+
 export class SubmitOnboardingDto {
+  @ValidateNested()
+  @Type(() => PersonalDetailsDto)
+  personalDetails: PersonalDetailsDto;
+
   @ValidateNested()
   @Type(() => MenstrualHealthDto)
   menstrualHealth: MenstrualHealthDto;

@@ -49,7 +49,7 @@ export class AuthService {
         password: hash,
         fullName: dto.fullName,
         phoneNumber: dto.phoneNumber ?? null,
-        dateOfBirth: new Date(dto.dateOfBirth),
+        dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : null,
         emailNotifications: dto.emailNotifications ?? true,
       },
     });

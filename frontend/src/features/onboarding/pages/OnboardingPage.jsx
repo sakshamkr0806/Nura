@@ -18,9 +18,14 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { decodeJwt } from "@/utils/jwt";
+import { DateOfBirthPicker } from "@/components/ui/date-of-birth-picker";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import { isAfter, subYears } from "date-fns";
 
 const STEPS = [
   { id: "welcome", title: "Welcome" },
+  { id: "personalDetails", title: "Personal Details" },
   { id: "menstrual", title: "Menstrual Health" },
   { id: "lifestyle", title: "Lifestyle Habits" },
   { id: "health", title: "Health History" },
@@ -94,7 +99,7 @@ export default function OnboardingPage() {
     return () => clearInterval(interval);
   }, [isSubmitting]);
 
-  const { control, handleSubmit, watch, getValues } = useForm({
+  const { control, handleSubmit, watch, getValues, trigger } = useForm({
     defaultValues: answers,
   });
 
@@ -109,8 +114,17 @@ export default function OnboardingPage() {
     }
   }, [currentSection, currentSectionValuesStr, updateSection]);
 
-  const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
+  const handleNext = async () => {
+    let isValid = true;
+    if (currentStep === 1) {
+      isValid = await trigger([
+        "personalDetails.dateOfBirth",
+        "personalDetails.phoneNumber",
+      ]);
+    } else if (currentStep === 2) {
+      isValid = await trigger(["menstrualHealth.lastPeriodDate"]);
+    }
+    if (isValid && currentStep < STEPS.length - 1) {
       setStep(currentStep + 1);
     }
   };
@@ -254,8 +268,121 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 1: MENSTRUAL HEALTH */}
+          {/* STEP 1: PERSONAL DETAILS */}
           {currentStep === 1 && (
+            <motion.div
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="space-y-6"
+            >
+              <div>
+                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
+                  <Heart className="text-[#F6A58E]" size={22} />A little about
+                  yourself
+                </h2>
+                <p className="text-[#8C7B74] text-xs mt-1">
+                  We use your details to customize predictions and insights.
+                </p>
+              </div>
+
+              {/* Date of Birth Picker */}
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-semibold text-[#2D1F1A]">
+                  Date of Birth
+                </label>
+                <Controller
+                  control={control}
+                  name="personalDetails.dateOfBirth"
+                  rules={{
+                    required: "Date of birth is required",
+                    validate: (val) => {
+                      if (!val) return "Date of birth is required";
+                      const date = new Date(val);
+                      if (isNaN(date.getTime())) return "Invalid date format";
+                      if (isAfter(date, new Date())) {
+                        return "Date of birth cannot be in the future";
+                      }
+                      const today = new Date();
+                      const minAgeDate = subYears(today, 13);
+                      if (date > minAgeDate) {
+                        return "You must be at least 13 years old to use Nura";
+                      }
+                      return true;
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className="flex flex-col gap-1 w-full">
+                      <DateOfBirthPicker
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(date) =>
+                          field.onChange(date ? date.toISOString() : "")
+                        }
+                        error={error}
+                      />
+                      {error && (
+                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                          {error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+
+              {/* Phone Input */}
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-semibold text-[#2D1F1A]">
+                  Phone Number{" "}
+                  <span
+                    className="normal-case font-normal text-xs"
+                    style={{ color: "#8C7B74" }}
+                  >
+                    (optional)
+                  </span>
+                </label>
+                <Controller
+                  control={control}
+                  name="personalDetails.phoneNumber"
+                  rules={{
+                    validate: (val) => {
+                      if (!val || val.trim() === "") return true;
+                      const trimmed = val.trim();
+                      const isJustCountryCode = /^\+[1-9]\d{0,2}$/.test(
+                        trimmed,
+                      );
+                      if (isJustCountryCode) return true;
+                      const isValid =
+                        isValidPhoneNumber(trimmed) &&
+                        /^\+[1-9]\d{6,14}$/.test(trimmed);
+                      return (
+                        isValid ||
+                        "Invalid phone number format (e.g. +919876543210)"
+                      );
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className="flex flex-col gap-1 w-full">
+                      <PhoneInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={error}
+                      />
+                      {error && (
+                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                          {error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {/* STEP 2: MENSTRUAL HEALTH */}
+          {currentStep === 2 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -437,8 +564,8 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 2: LIFESTYLE HABITS */}
-          {currentStep === 2 && (
+          {/* STEP 3: LIFESTYLE HABITS */}
+          {currentStep === 3 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -600,8 +727,8 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 3: HEALTH HISTORY */}
-          {currentStep === 3 && (
+          {/* STEP 4: HEALTH HISTORY */}
+          {currentStep === 4 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -696,8 +823,8 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 4: WELLNESS GOALS */}
-          {currentStep === 4 && (
+          {/* STEP 5: WELLNESS GOALS */}
+          {currentStep === 5 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -751,8 +878,8 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 5: MOOD & ENERGY */}
-          {currentStep === 5 && (
+          {/* STEP 6: MOOD & ENERGY */}
+          {currentStep === 6 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -874,8 +1001,8 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 6: SUMMARY & REVIEW */}
-          {currentStep === 6 && (
+          {/* STEP 7: SUMMARY & REVIEW */}
+          {currentStep === 7 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -895,6 +1022,30 @@ export default function OnboardingPage() {
               </div>
 
               <div className="bg-[#FFFAF8] border border-rose-100 rounded-3xl p-5 space-y-4 text-xs font-semibold text-[#8C7B74] max-h-72 overflow-y-auto">
+                <div>
+                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
+                    Personal Details
+                  </h4>
+                  <p>
+                    Date of Birth:{" "}
+                    <span className="text-[#2D1F1A]">
+                      {getValues("personalDetails.dateOfBirth")
+                        ? new Date(
+                            getValues("personalDetails.dateOfBirth"),
+                          ).toLocaleDateString()
+                        : "Not set"}
+                    </span>
+                  </p>
+                  {getValues("personalDetails.phoneNumber") && (
+                    <p>
+                      Phone Number:{" "}
+                      <span className="text-[#2D1F1A]">
+                        {getValues("personalDetails.phoneNumber")}
+                      </span>
+                    </p>
+                  )}
+                </div>
+
                 <div>
                   <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
                     Menstrual Cycle

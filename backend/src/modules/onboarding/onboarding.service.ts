@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AIService } from '../ai/ai.service';
 import { AuthService } from '../auth/auth.service';
@@ -13,7 +17,45 @@ export class OnboardingService {
   ) {}
 
   async submitOnboarding(userId: string, dto: SubmitOnboardingDto) {
-    const { menstrualHealth, lifestyle, healthHistory, wellnessGoals } = dto;
+    const {
+      menstrualHealth,
+      lifestyle,
+      healthHistory,
+      wellnessGoals,
+      personalDetails,
+    } = dto;
+
+    if (!personalDetails) {
+      throw new BadRequestException('Personal details are required');
+    }
+
+    const dob = new Date(personalDetails.dateOfBirth);
+    if (isNaN(dob.getTime())) {
+      throw new BadRequestException('Invalid date of birth');
+    }
+    const today = new Date();
+    const thirteenYearsAgo = new Date(
+      today.getFullYear() - 13,
+      today.getMonth(),
+      today.getDate(),
+    );
+    if (dob > thirteenYearsAgo) {
+      throw new BadRequestException('You must be at least 13 years old');
+    }
+
+    if (personalDetails.phoneNumber) {
+      const existingPhone = await this.prisma.user.findFirst({
+        where: {
+          phoneNumber: personalDetails.phoneNumber,
+          NOT: { id: userId },
+        },
+      });
+      if (existingPhone) {
+        throw new ConflictException(
+          'An account with this phone number already exists',
+        );
+      }
+    }
 
     // 1. Save or update UserLifestyle
     await this.prisma.userLifestyle.upsert({
@@ -99,11 +141,13 @@ export class OnboardingService {
       }
     }
 
-    // 6. Update user's onboarding completed status
+    // 6. Update user's onboarding completed status, dateOfBirth, and phoneNumber
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
         onboardingCompleted: true,
+        dateOfBirth: dob,
+        phoneNumber: personalDetails.phoneNumber || null,
       },
     });
 

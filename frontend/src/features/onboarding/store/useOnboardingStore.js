@@ -2,6 +2,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_ANSWERS = {
+  personalDetails: {
+    dateOfBirth: "",
+    phoneNumber: "",
+  },
   menstrualHealth: {
     averageCycleLength: 28,
     lastPeriodDate: "",

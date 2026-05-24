@@ -14,9 +14,9 @@ export class SignupDto {
   @MinLength(2)
   fullName: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  dateOfBirth: string;
+  dateOfBirth?: string;
 
   @IsEmail()
   @IsNotEmpty()

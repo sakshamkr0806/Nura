@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Eye, EyeOff, Loader2, Check, X, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { isAfter, subYears } from "date-fns";
+
 import {
   Form,
   FormControl,
@@ -24,11 +24,6 @@ import {
   FlowerLogo,
   FloralDecoration,
 } from "@/components/shared/Illustrations";
-import { DateOfBirthPicker } from "@/components/ui/date-of-birth-picker";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { isValidPhoneNumber } from "react-phone-number-input";
-
-const E164_REGEX = /^\+[1-9]\d{6,14}$/;
 
 const PASSWORD_RULES = [
   { label: "At least 8 characters", test: (v) => v.length >= 8 },
@@ -60,38 +55,6 @@ const signupSchema = z
       .trim()
       .min(2, { message: "Full name must be at least 2 characters" }),
     email: z.string().trim().email({ message: "Invalid email address" }),
-    dateOfBirth: z
-      .date({ required_error: "Date of birth is required" })
-      .refine((date) => !isAfter(date, new Date()), {
-        message: "Date of birth cannot be in the future",
-      })
-      .refine(
-        (date) => {
-          const today = new Date();
-          const minAgeDate = subYears(today, 13);
-          return date <= minAgeDate;
-        },
-        {
-          message: "You must be at least 13 years old to sign up",
-        },
-      ),
-    phoneNumber: z
-      .string()
-      .optional()
-      .or(z.literal(""))
-      .refine(
-        (v) => {
-          if (!v || v.trim() === "") return true;
-          const trimmed = v.trim();
-          const isJustCountryCode = /^\+[1-9]\d{0,2}$/.test(trimmed);
-          if (isJustCountryCode) return true;
-          return isValidPhoneNumber(trimmed) && E164_REGEX.test(trimmed);
-        },
-        {
-          message:
-            "Invalid international phone number. Use e.g., +919876543210",
-        },
-      ),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -120,8 +83,6 @@ export default function SignupPage() {
     defaultValues: {
       fullName: "",
       email: "",
-      dateOfBirth: undefined,
-      phoneNumber: "",
       password: "",
       confirmPassword: "",
       emailNotifications: true,
@@ -136,12 +97,8 @@ export default function SignupPage() {
       const signupPayload = {
         fullName: values.fullName.trim(),
         email: values.email.trim().toLowerCase(),
-        dateOfBirth: values.dateOfBirth.toISOString(),
         password: values.password,
         emailNotifications: values.emailNotifications,
-        ...(values.phoneNumber
-          ? { phoneNumber: values.phoneNumber.trim() }
-          : {}),
       };
       const response = await api.post("/auth/signup", signupPayload);
       const { access_token } = response.data;
@@ -153,7 +110,7 @@ export default function SignupPage() {
         role: decoded.role,
         fullName: decoded.fullName || values.fullName,
         phoneNumber: decoded.phoneNumber || "",
-        dateOfBirth: decoded.dateOfBirth,
+        dateOfBirth: decoded.dateOfBirth || null,
         onboardingCompleted: decoded.onboardingCompleted || false,
       };
       setAuth(user, access_token);
@@ -275,54 +232,6 @@ export default function SignupPage() {
                           {...field}
                         />
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Phone */}
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className={labelClass} style={labelStyle}>
-                      Phone{" "}
-                      <span
-                        className="normal-case font-normal"
-                        style={{ color: "#8C7B74" }}
-                      >
-                        (optional)
-                      </span>
-                    </FormLabel>
-                    <FormControl>
-                      <PhoneInput
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={form.formState.errors.phoneNumber}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Date of Birth */}
-              <FormField
-                control={form.control}
-                name="dateOfBirth"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className={labelClass} style={labelStyle}>
-                      Date of Birth
-                    </FormLabel>
-                    <FormControl>
-                      <DateOfBirthPicker
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={form.formState.errors.dateOfBirth}
-                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -23,7 +23,7 @@ model User {
   refreshToken String?
 
   phoneNumber        String?  @unique
-  dateOfBirth        DateTime
+  dateOfBirth        DateTime?
   emailNotifications Boolean  @default(true)
 
   onboardingCompleted Boolean  @default(false)
