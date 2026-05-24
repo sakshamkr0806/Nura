@@ -88,6 +88,15 @@ export class AuthService {
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches) throw new ForbiddenException('Access Denied');
 
+    let onboardingCompleted = user.onboardingCompleted;
+    if (!onboardingCompleted && user.dateOfBirth !== null) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { onboardingCompleted: true },
+      });
+      onboardingCompleted = true;
+    }
+
     const tokens = await this.getTokens(
       user.id,
       user.email,
@@ -95,7 +104,7 @@ export class AuthService {
       user.fullName,
       user.phoneNumber ?? undefined,
       user.dateOfBirth,
-      user.onboardingCompleted,
+      onboardingCompleted,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
@@ -128,6 +137,15 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.refreshToken);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
+    let onboardingCompleted = user.onboardingCompleted;
+    if (!onboardingCompleted && user.dateOfBirth !== null) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { onboardingCompleted: true },
+      });
+      onboardingCompleted = true;
+    }
+
     const tokens = await this.getTokens(
       user.id,
       user.email,
@@ -135,7 +153,7 @@ export class AuthService {
       user.fullName,
       user.phoneNumber ?? undefined,
       user.dateOfBirth,
-      user.onboardingCompleted,
+      onboardingCompleted,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
