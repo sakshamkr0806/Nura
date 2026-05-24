@@ -74,8 +74,11 @@ const LOADING_PHASES = [
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { user, setAuth } = useAuthStore();
-  const { answers, currentStep, setStep, updateSection, resetOnboarding } =
-    useOnboardingStore();
+  const currentStep = useOnboardingStore((state) => state.currentStep);
+  const setStep = useOnboardingStore((state) => state.setStep);
+  const updateSection = useOnboardingStore((state) => state.updateSection);
+  const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
+  const [answers] = useState(() => useOnboardingStore.getState().answers);
 
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,16 +98,16 @@ export default function OnboardingPage() {
     defaultValues: answers,
   });
 
-  // Watch form fields to save progress to Zustand local storage
-  const formValues = watch();
+  // Watch form fields of the current section to save progress to Zustand store in real-time
+  const currentSection = STEPS[currentStep]?.id;
+  const currentSectionValues = watch(currentSection);
+  const currentSectionValuesStr = JSON.stringify(currentSectionValues);
+
   useEffect(() => {
-    if (STEPS[currentStep]) {
-      const currentSection = STEPS[currentStep].id;
-      if (formValues[currentSection]) {
-        updateSection(currentSection, formValues[currentSection]);
-      }
+    if (currentSection && currentSectionValues) {
+      updateSection(currentSection, currentSectionValues);
     }
-  }, [formValues, currentStep, updateSection]);
+  }, [currentSection, currentSectionValuesStr, updateSection]);
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
