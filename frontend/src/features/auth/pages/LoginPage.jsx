@@ -25,10 +25,7 @@ import api from "@/api/axios";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { decodeJwt } from "@/utils/jwt";
-import {
-  FlowerLogo,
-  FloralDecoration,
-} from "@/components/shared/Illustrations";
+import { FlowerLogo } from "@/components/shared/Illustrations";
 
 const loginSchema = z.object({
   identifier: z
@@ -105,54 +102,6 @@ export default function LoginPage() {
             opacity: 0.45,
           }}
         />
-
-        {/* Left illustration overlay — hidden on mobile */}
-        <div className="absolute inset-0 pointer-events-none hidden lg:block z-10 overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(248,182,182,0.15), rgba(234,220,248,0.2))",
-            }}
-          />
-          {/* Top left content */}
-          <div className="absolute top-8 left-8 space-y-4 w-56 text-left">
-            <img
-              src="/images/login-bg-transparent.png"
-              alt="Woman holding cup"
-              className="w-56 object-contain"
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                boxShadow: "none",
-              }}
-            />
-            <div className="space-y-2">
-              <h2
-                className="font-serif font-bold text-xl leading-tight"
-                style={{ color: "#2D1F1A" }}
-              >
-                Your wellness sanctuary awaits
-              </h2>
-              <p
-                className="text-xs font-medium leading-relaxed"
-                style={{ color: "#8C7B74" }}
-              >
-                Track your cycle, understand your hormones, and live in harmony
-                with your body.
-              </p>
-            </div>
-          </div>
-
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -left-16 -top-16 opacity-15">
-              <FloralDecoration className="w-64 h-64" />
-            </div>
-            <div className="absolute -right-16 -bottom-16 opacity-15 rotate-180">
-              <FloralDecoration className="w-64 h-64" />
-            </div>
-          </div>
-        </div>
 
         {/* Center form panel */}
         <div className="relative z-20 w-full max-w-md space-y-8">
