@@ -152,9 +152,42 @@ export class AIService {
   }
 
   async getHealthProfile(userId: string) {
-    return this.prisma.healthProfile.findUnique({
+    const profile = await this.prisma.healthProfile.findUnique({
       where: { userId },
     });
+
+    if (profile) return profile;
+
+    // Return a default placeholder so the Dashboard always renders the wellness section
+    return {
+      wellnessScore: 0,
+      cycleHealthScore: 0,
+      sleepScore: 0,
+      stressScore: 0,
+      stressIndicator: 'Unknown',
+      sleepAnalysis:
+        'Start logging your daily data so we can analyze your sleep patterns.',
+      stressAnalysis:
+        'Log your moods and symptoms daily to get a personalized stress analysis.',
+      cycleInsights:
+        'Track your cycle and symptoms consistently to unlock AI-powered insights.',
+      hydrationRecs: [
+        'Aim for 2-3 liters of water daily',
+        'Start your morning with a glass of warm water',
+      ],
+      nutritionRecs: [
+        'Eat a balanced diet rich in whole foods',
+        'Include iron-rich foods during your period',
+      ],
+      actionPlan: [
+        'Log your symptoms daily in the calendar',
+        'Click "Refresh AI Insights" after a few days of logging',
+      ],
+      dailyRecs: [
+        'Drink a glass of water first thing in the morning',
+        'Take a 5-minute breathing break',
+      ],
+    };
   }
 
   async reAnalyzeProfile(userId: string) {
