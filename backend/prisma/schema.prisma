@@ -47,7 +47,7 @@ model Cycle {
   startDate DateTime
   endDate   DateTime?
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -59,7 +59,7 @@ model DailyLog {
   id           String   @id @default(uuid())
   date         DateTime
   userId       String
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   symptoms     String[]
   moods        String[]
@@ -86,7 +86,7 @@ model Alert {
   level     AlertLevel
   isRead    Boolean    @default(false)
   userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
