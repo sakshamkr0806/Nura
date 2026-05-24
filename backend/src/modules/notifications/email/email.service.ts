@@ -91,6 +91,64 @@ export class EmailService {
     }
   }
 
+  /**
+   * Send a weekly wellness summary email.
+   */
+  async sendWeeklySummaryEmail(
+    to: string,
+    fullName: string,
+    summary: string,
+  ): Promise<void> {
+    try {
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to,
+        subject: '🌿 Your Weekly Hormonal Wellness Summary — CycleWell',
+        html: this.buildWeeklySummaryHtml(fullName, summary),
+      });
+      this.logger.log(`Weekly summary email sent → ${to}`);
+    } catch (err) {
+      this.logger.error(`Failed to send weekly summary to ${to}`, err);
+    }
+  }
+
+  /**
+   * Send a hydration reminder email.
+   */
+  async sendHydrationReminderEmail(
+    to: string,
+    fullName: string,
+  ): Promise<void> {
+    try {
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to,
+        subject: '💧 Stay Hydrated — CycleWell',
+        html: this.buildHydrationReminderHtml(fullName),
+      });
+      this.logger.log(`Hydration reminder email sent → ${to}`);
+    } catch (err) {
+      this.logger.error(`Failed to send hydration reminder to ${to}`, err);
+    }
+  }
+
+  /**
+   * Send a sleep reminder email.
+   */
+  async sendSleepReminderEmail(to: string, fullName: string): Promise<void> {
+    try {
+      await this.resend.emails.send({
+        from: this.fromEmail,
+        to,
+        subject: '🌙 Wind Down for Quality Sleep — CycleWell',
+        html: this.buildSleepReminderHtml(fullName),
+      });
+      this.logger.log(`Sleep reminder email sent → ${to}`);
+    } catch (err) {
+      this.logger.error(`Failed to send sleep reminder to ${to}`, err);
+    }
+  }
+
   // ─── HTML Builders ───────────────────────────────────────────────────────────
 
   private buildWelcomeHtml(fullName: string): string {
@@ -173,6 +231,61 @@ export class EmailService {
         </a>
         <p style="margin-top:16px;color:#6b7280;font-size:13px">
           If you didn't request this, please ignore this email. Your password will not change.
+        </p>
+      </div>
+    `;
+  }
+
+  private buildWeeklySummaryHtml(fullName: string, summary: string): string {
+    return `
+      <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
+        <h2 style="color:#7c3aed;margin:0 0 8px">Weekly Wellness Summary 🌿</h2>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
+        <p style="color:#374151;font-size:15px;line-height:1.6">
+          Here is your AI-analyzed wellness summary and progress for the week:
+        </p>
+        <div style="background:#faf8ff;border-left:4px solid #7c3aed;padding:16px;margin:16px 0;font-size:14px;color:#4b5563;line-height:1.6;border-radius:0 8px 8px 0">
+          ${summary.replace(/\n/g, '<br/>')}
+        </div>
+        <a href="${this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173'}/dashboard"
+           style="display:inline-block;margin-top:16px;padding:12px 24px;background:#7c3aed;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px">
+          View Complete Insights →
+        </a>
+        <p style="margin-top:32px;color:#9ca3af;font-size:12px">
+          You're receiving this because you opted in to wellness summaries.<br/>
+          <a href="${this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173'}/settings" style="color:#9ca3af">Manage notification preferences</a>
+        </p>
+      </div>
+    `;
+  }
+
+  private buildHydrationReminderHtml(fullName: string): string {
+    return `
+      <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
+        <h2 style="color:#2563eb;margin:0 0 8px">Hydration Check 💧</h2>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
+        <p style="color:#374151;font-size:15px;line-height:1.6">
+          Hormonal balance starts with cellular hydration! Take a moment to drink a glass of fresh water. Keeping hydrated supports liver detoxification, helping to clear excess estrogen.
+        </p>
+        <p style="margin-top:32px;color:#9ca3af;font-size:12px">
+          You received this hydration reminder from CycleWell.<br/>
+          <a href="${this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173'}/settings" style="color:#9ca3af">Manage notification preferences</a>
+        </p>
+      </div>
+    `;
+  }
+
+  private buildSleepReminderHtml(fullName: string): string {
+    return `
+      <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px;border:1px solid #f0e6ff">
+        <h2 style="color:#1e1b4b;margin:0 0 8px">Time to Wind Down 🌙</h2>
+        <p style="color:#374151;font-size:15px">Hi ${fullName},</p>
+        <p style="color:#374151;font-size:15px;line-height:1.6">
+          A consistent sleep routine is the cornerstone of cortisol management and progesterone production. It's time to dim screen brightness, make a cup of herbal tea, and prepare for rest.
+        </p>
+        <p style="margin-top:32px;color:#9ca3af;font-size:12px">
+          You received this sleep reminder from CycleWell.<br/>
+          <a href="${this.config.get<string>('FRONTEND_URL') ?? 'http://localhost:5173'}/settings" style="color:#9ca3af">Manage notification preferences</a>
         </p>
       </div>
     `;

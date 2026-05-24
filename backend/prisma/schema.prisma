@@ -26,9 +26,18 @@ model User {
   dateOfBirth        DateTime
   emailNotifications Boolean  @default(true)
 
-  cycles     Cycle[]
-  dailyLogs  DailyLog[]
-  alerts     Alert[]
+  onboardingCompleted Boolean  @default(false)
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+
+  cycles        Cycle[]
+  dailyLogs     DailyLog[]
+  alerts        Alert[]
+  lifestyle     UserLifestyle?
+  healthHistory UserHealthHistory?
+  goals         UserGoals?
+  symptoms      UserSymptoms?
+  healthProfile HealthProfile?
 
   @@map("users")
 }
@@ -57,6 +66,11 @@ model DailyLog {
   sleepHours   Float?
   waterIntake  Int?     // in ml
   notes        String?
+
+  energyLevel     Int?
+  stressLevel     Int?
+  exerciseMinutes Int?
+  nutritionNotes  String?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -105,4 +119,78 @@ model Article {
 enum Role {
   USER
   ADMIN
+}
+
+model UserLifestyle {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sleepHours    Float
+  waterIntake   Int
+  activityLevel String
+  stressLevel   String
+  screenTime    Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("user_lifestyles")
+}
+
+model UserHealthHistory {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hasPcos              Boolean
+  hasThyroid           Boolean
+  hasHormonalImbalance Boolean
+  medications          String[]
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("user_health_histories")
+}
+
+model UserGoals {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goals     String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_goals")
+}
+
+model UserSymptoms {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  symptoms     String[]
+  painSeverity String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("user_symptoms")
+}
+
+model HealthProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wellnessScore    Int
+  cycleHealthScore Int
+  sleepScore       Int
+  stressScore      Int
+  stressIndicator  String
+  sleepAnalysis    String
+  stressAnalysis   String
+  cycleInsights    String
+  hydrationRecs    String[]
+  nutritionRecs    String[]
+  actionPlan       String[]
+  dailyRecs        String[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("health_profiles")
 }

@@ -3,10 +3,6 @@ import { CycleCalendar } from "@/features/cycle/components/CycleCalendar";
 import { LoggingModal } from "@/features/cycle/components/LoggingModal";
 import { TrendCharts } from "@/features/insights/components/TrendCharts";
 import { WellnessGauge } from "@/features/analytics/components/WellnessGauge";
-import { InsightPanel } from "@/features/analytics/components/InsightPanel";
-import { RecommendationList } from "@/features/analytics/components/RecommendationList";
-import { AIInsightCard } from "@/features/ai/components/AIInsightCard";
-import { AIInsightSkeleton } from "@/features/ai/components/AIInsightSkeleton";
 import {
   Droplets,
   Moon,
@@ -14,11 +10,18 @@ import {
   Heart,
   RefreshCcw,
   Sparkles,
+  Award,
+  Zap,
+  Target,
+  Smile,
+  CheckSquare,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { FloralDecoration } from "@/components/shared/Illustrations";
 import api from "@/api/axios";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -30,8 +33,9 @@ export default function Dashboard() {
     logged: [],
   });
   const [analytics, setAnalytics] = useState(null);
-  const [aiInsight, setAiInsight] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [checkedTasks, setCheckedTasks] = useState({});
 
   const fetchAnalytics = async () => {
     try {
@@ -42,15 +46,12 @@ export default function Dashboard() {
     }
   };
 
-  const fetchAIInsights = async () => {
-    setIsAiLoading(true);
+  const fetchProfile = async () => {
     try {
-      const res = await api.get("/ai/insights");
-      setAiInsight(res.data);
+      const res = await api.get("/ai/profile");
+      setProfile(res.data);
     } catch (err) {
-      console.error("Failed to fetch AI insights", err);
-    } finally {
-      setIsAiLoading(false);
+      console.error("Failed to fetch AI health profile", err);
     }
   };
 
@@ -96,15 +97,36 @@ export default function Dashboard() {
     }
   };
 
+  const handleRefreshAI = async () => {
+    setIsAiLoading(true);
+    try {
+      await api.post("/ai/re-analyze");
+      toast.success("AI Profile updated successfully! ✨");
+      await Promise.all([fetchProfile(), fetchAnalytics(), fetchCycleData()]);
+    } catch (err) {
+      console.error("Failed to refresh AI profile", err);
+      toast.error("Failed to refresh insights. Log more daily data first!");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAnalytics();
-    fetchAIInsights();
+    fetchProfile();
     fetchCycleData();
   }, []);
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     if (date) setIsLoggingOpen(true);
+  };
+
+  const toggleTask = (task) => {
+    setCheckedTasks((prev) => ({
+      ...prev,
+      [task]: !prev[task],
+    }));
   };
 
   const firstName = user?.fullName?.split(" ")[0] || "Lovely";
@@ -131,6 +153,14 @@ export default function Dashboard() {
       bg: "#F7F3FF",
     },
     {
+      label: "Log Streak",
+      value: `${user?.currentStreak || 0} Days`,
+      sub: `Best: ${user?.longestStreak || 0} days`,
+      Icon: Zap,
+      color: "#F6A58E",
+      bg: "#FFF5F2",
+    },
+    {
       label: "Avg Sleep",
       value: analytics?.metrics?.avgSleep
         ? `${analytics.metrics.avgSleep}h`
@@ -150,20 +180,12 @@ export default function Dashboard() {
       color: "#DDEAD7",
       bg: "#F0FFF4",
     },
-    {
-      label: "Wellness",
-      value: `${analytics?.score?.score ?? 0}%`,
-      sub: "Body score",
-      Icon: Sparkles,
-      color: "#F6A58E",
-      bg: "#FFF5F2",
-    },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-12">
       {/* ── PAGE HEADER ── */}
-      <div className="page-hero flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="page-hero flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative">
         <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
           <FloralDecoration className="w-40 h-40" />
         </div>
@@ -172,10 +194,10 @@ export default function Dashboard() {
             className="font-serif font-bold text-4xl"
             style={{ color: "#2D1F1A" }}
           >
-            Welcome back, {firstName} 🌸
+            Welcome, {firstName} 🌸
           </h1>
           <p className="mt-1 text-sm font-medium" style={{ color: "#8C7B74" }}>
-            Your personalised hormonal wellness overview for today.
+            Your personalized AI hormonal health sanctuary.
           </p>
         </div>
         <Button
@@ -183,42 +205,20 @@ export default function Dashboard() {
           size="sm"
           className="gap-2 rounded-2xl shrink-0"
           style={{ borderColor: "rgba(246,165,142,0.3)", color: "#F6A58E" }}
-          onClick={fetchAIInsights}
+          onClick={handleRefreshAI}
           disabled={isAiLoading}
         >
           <RefreshCcw size={15} className={isAiLoading ? "animate-spin" : ""} />
-          Refresh AI
+          Refresh AI Insights
         </Button>
       </div>
-
-      {/* ── AI INSIGHT CARD ── */}
-      <section>
-        {isAiLoading ? (
-          <AIInsightSkeleton />
-        ) : aiInsight ? (
-          <AIInsightCard insight={aiInsight} />
-        ) : (
-          <div
-            className="rounded-3xl border-2 border-dashed p-10 text-center"
-            style={{
-              borderColor: "rgba(246,165,142,0.2)",
-              background: "rgba(255,255,255,0.5)",
-            }}
-          >
-            <p className="text-sm font-medium" style={{ color: "#8C7B74" }}>
-              No AI insights yet — log more data to unlock personalised coaching
-              🌱
-            </p>
-          </div>
-        )}
-      </section>
 
       {/* ── METRIC CARDS ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {metricCards.map((card) => (
           <div
             key={card.label}
-            className="metric-card"
+            className="metric-card rounded-3xl p-5 border border-transparent shadow-sm flex flex-col justify-between"
             style={{ background: card.bg }}
           >
             <div className="flex items-center justify-between mb-3">
@@ -251,10 +251,9 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* ── ANALYTICS GRID ── */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Wellness Gauge */}
-        <div
+      {/* ── HEALTH PROFILE SCORES ── */}
+      {profile && (
+        <section
           className="rounded-3xl p-6 border"
           style={{
             background:
@@ -263,106 +262,216 @@ export default function Dashboard() {
             boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
           }}
         >
-          <h3
-            className="font-serif font-bold text-lg mb-4"
-            style={{ color: "#2D1F1A" }}
-          >
-            Wellness Score
-          </h3>
-          <WellnessGauge score={analytics?.score?.score || 0} />
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {[
-              {
-                key: "sleep",
-                label: "Sleep",
-                val: analytics?.score?.factors?.sleep || 0,
-                color: "#CDB4F6",
-              },
-              {
-                key: "cycle",
-                label: "Cycle",
-                val: analytics?.score?.factors?.cycle || 0,
-                color: "#F8B6B6",
-              },
-              {
-                key: "hydration",
-                label: "Hydration",
-                val: analytics?.score?.factors?.hydration || 0,
-                color: "#DDEAD7",
-              },
-              {
-                key: "symptoms",
-                label: "Symptoms",
-                val: analytics?.score?.factors?.symptoms || 0,
-                color: "#F6A58E",
-              },
-            ].map((f) => (
-              <div
-                key={f.key}
-                className="rounded-2xl p-3 text-center"
-                style={{ background: `${f.color}25` }}
-              >
-                <p
-                  className="text-[10px] font-bold"
-                  style={{ color: "#8C7B74" }}
-                >
-                  {f.label}
-                </p>
-                <p
-                  className="text-lg font-serif font-bold"
-                  style={{ color: "#2D1F1A" }}
-                >
-                  {f.val}%
-                </p>
-              </div>
-            ))}
+          <h2 className="font-serif font-bold text-xl mb-6 text-[#2D1F1A]">
+            AI Health Profile Analysis
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <WellnessGauge
+              score={profile.wellnessScore || 0}
+              label="Wellness Score"
+            />
+            <WellnessGauge
+              score={profile.cycleHealthScore || 0}
+              label="Cycle Health"
+            />
+            <WellnessGauge
+              score={profile.sleepScore || 0}
+              label="Sleep Quality"
+            />
+            <WellnessGauge
+              score={profile.stressScore || 0}
+              label="Stress Balance"
+            />
           </div>
+        </section>
+      )}
+
+      {/* ── DUAL COLUMN LAYOUT ── */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Column: Daily Checklist & Goals */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Daily Checklist */}
+          {profile?.dailyRecs && (
+            <div
+              className="rounded-3xl p-6 border bg-white"
+              style={{
+                borderColor: "rgba(246,165,142,0.12)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+              }}
+            >
+              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
+                <CheckSquare className="text-[#8BC0D0]" size={20} />
+                My Daily Wellness Checklist
+              </h3>
+              <div className="space-y-3">
+                {profile.dailyRecs.map((rec) => {
+                  const isChecked = !!checkedTasks[rec];
+                  return (
+                    <button
+                      key={rec}
+                      type="button"
+                      onClick={() => toggleTask(rec)}
+                      className="w-full flex items-center gap-3 p-3 rounded-2xl border border-rose-50 text-left transition-all hover:bg-[#FFFAF8]"
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-all ${
+                          isChecked
+                            ? "bg-[#8BC0D0] border-[#8BC0D0] text-white"
+                            : "border-zinc-300"
+                        }`}
+                      >
+                        {isChecked && <Sparkles size={12} />}
+                      </div>
+                      <span
+                        className={`text-xs font-semibold ${
+                          isChecked
+                            ? "line-through text-zinc-400"
+                            : "text-[#2D1F1A]"
+                        }`}
+                      >
+                        {rec}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Action Plan */}
+          {profile?.actionPlan && (
+            <div
+              className="rounded-3xl p-6 border bg-white"
+              style={{
+                borderColor: "rgba(246,165,142,0.12)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+              }}
+            >
+              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
+                <Target className="text-[#F6A58E]" size={20} />
+                Hormonal Action Plan
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {profile.actionPlan.map((action, idx) => (
+                  <div
+                    key={action}
+                    className="p-4 rounded-2xl border border-[#FFF0ED] bg-[#FFF9F7] flex items-start gap-3"
+                  >
+                    <span className="w-6 h-6 rounded-full bg-[#FFF0ED] text-[#F6A58E] flex items-center justify-center text-xs font-bold shrink-0">
+                      {idx + 1}
+                    </span>
+                    <span className="text-xs font-semibold text-[#2D1F1A] leading-relaxed">
+                      {action}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Cycle Insights Analysis */}
+          {profile && (
+            <div
+              className="rounded-3xl p-6 border bg-[#FFFAF8]"
+              style={{
+                borderColor: "rgba(246,165,142,0.15)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+              }}
+            >
+              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
+                <BookOpen className="text-[#F6A58E]" size={20} />
+                AI Cycle & Symptom Insights
+              </h3>
+              <p className="text-xs font-medium text-[#8C7B74] leading-relaxed">
+                {profile.cycleInsights}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#2D1F1A] mb-2 flex items-center gap-1.5">
+                    <Moon size={12} className="text-[#CDB4F6]" /> Sleep Analysis
+                  </h4>
+                  <p className="text-[11px] text-[#8C7B74] leading-relaxed bg-white border p-3 rounded-2xl">
+                    {profile.sleepAnalysis}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#2D1F1A] mb-2 flex items-center gap-1.5">
+                    <Smile size={12} className="text-[#F8B6B6]" /> Stress
+                    Analysis
+                  </h4>
+                  <p className="text-[11px] text-[#8C7B74] leading-relaxed bg-white border p-3 rounded-2xl">
+                    {profile.stressAnalysis}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Insights Panel */}
-        <div
-          className="rounded-3xl p-6 border"
-          style={{
-            background: "white",
-            borderColor: "rgba(246,165,142,0.12)",
-            boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
-          }}
-        >
-          <h3
-            className="font-serif font-bold text-lg mb-4"
-            style={{ color: "#2D1F1A" }}
-          >
-            Metric Trends
-          </h3>
-          <InsightPanel insights={analytics?.insights || []} />
-        </div>
+        {/* Right Column: Nutrition, Hydration & Alerts */}
+        <div className="space-y-6">
+          {/* Nutrition recommendations */}
+          {profile?.nutritionRecs && (
+            <div
+              className="rounded-3xl p-6 border"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(221,234,215,0.15), white)",
+                borderColor: "rgba(221,234,215,0.3)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+              }}
+            >
+              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
+                <Award className="text-green-600" size={20} />
+                Nutrition Recommendations
+              </h3>
+              <ul className="space-y-3">
+                {profile.nutritionRecs.map((rec) => (
+                  <li
+                    key={rec}
+                    className="text-xs font-semibold text-[#8C7B74] flex items-start gap-2.5"
+                  >
+                    <span className="text-green-500 mt-0.5">•</span>
+                    <span className="leading-relaxed">{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        {/* Recommendations */}
-        <div
-          className="rounded-3xl p-6 border"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(221,234,215,0.15), white)",
-            borderColor: "rgba(221,234,215,0.3)",
-            boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
-          }}
-        >
-          <h3
-            className="font-serif font-bold text-lg mb-4"
-            style={{ color: "#2D1F1A" }}
-          >
-            Recommendations
-          </h3>
-          <RecommendationList
-            recommendations={analytics?.recommendations || []}
-          />
+          {/* Hydration recommendations */}
+          {profile?.hydrationRecs && (
+            <div
+              className="rounded-3xl p-6 border bg-[#F0FFF4]/20"
+              style={{
+                borderColor: "rgba(221,234,215,0.4)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+              }}
+            >
+              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
+                <Droplets className="text-blue-500" size={20} />
+                Hydration Insights
+              </h3>
+              <ul className="space-y-3">
+                {profile.hydrationRecs.map((rec) => (
+                  <li
+                    key={rec}
+                    className="text-xs font-semibold text-[#8C7B74] flex items-start gap-2.5"
+                  >
+                    <span className="text-blue-400 mt-0.5">•</span>
+                    <span className="leading-relaxed">{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
 
       {/* ── CALENDAR + CHARTS ── */}
       <div className="grid gap-6 md:grid-cols-2">
         <div
-          className="rounded-3xl overflow-hidden border"
+          className="rounded-3xl overflow-hidden border bg-white"
           style={{
             borderColor: "rgba(246,165,142,0.12)",
             boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
@@ -375,9 +484,8 @@ export default function Dashboard() {
           />
         </div>
         <div
-          className="rounded-3xl p-6 border"
+          className="rounded-3xl p-6 border bg-white"
           style={{
-            background: "white",
             borderColor: "rgba(246,165,142,0.12)",
             boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
           }}

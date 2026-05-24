@@ -36,4 +36,21 @@ export class CreateLogDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @IsNumber()
+  @IsOptional()
+  energyLevel?: number;
+
+  @IsNumber()
+  @IsOptional()
+  stressLevel?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  exerciseMinutes?: number;
+
+  @IsString()
+  @IsOptional()
+  nutritionNotes?: string;
 }

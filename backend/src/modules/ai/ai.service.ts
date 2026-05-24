@@ -4,6 +4,21 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PrismaService } from '../prisma/prisma.service';
 import { subDays, format } from 'date-fns';
 
+export interface AIHealthProfileResponse {
+  wellnessScore: number;
+  cycleHealthScore: number;
+  sleepScore: number;
+  stressScore: number;
+  stressIndicator: string;
+  sleepAnalysis: string;
+  stressAnalysis: string;
+  cycleInsights: string;
+  hydrationRecs: string[];
+  nutritionRecs: string[];
+  actionPlan: string[];
+  dailyRecs: string[];
+}
+
 @Injectable()
 export class AIService {
   private genAI: GoogleGenerativeAI;
@@ -55,6 +70,192 @@ export class AIService {
         educationalNote:
           'Consistency in logging helps identify patterns over time.',
       };
+    }
+  }
+
+  async generateInitialProfile(
+    onboardingData: any,
+  ): Promise<AIHealthProfileResponse> {
+    const prompt = `
+      You are an expert AI Wellness Coach for a woman using CycleWell, a hormonal wellness app.
+      Based on the following onboarding responses, generate a comprehensive personalized health profile.
+      
+      RULES:
+      1. DO NOT provide medical diagnoses.
+      2. DO NOT suggest cures for diseases.
+      3. Focus on education, lifestyle habits, and encouragement.
+      4. Keep the tone empathetic, professional, and warm.
+      5. Output ONLY raw JSON format matching the specified schema. DO NOT wrap in markdown code blocks.
+
+      SCHEMA:
+      {
+        "wellnessScore": number (1-100),
+        "cycleHealthScore": number (1-100),
+        "sleepScore": number (1-100),
+        "stressScore": number (1-100),
+        "stressIndicator": "Low" | "Moderate" | "High",
+        "sleepAnalysis": "string (detailed educational analysis of reported sleep habits)",
+        "stressAnalysis": "string (detailed educational analysis of reported stress levels)",
+        "cycleInsights": "string (detailed insights based on symptoms, pain severity, and cycle regularity)",
+        "hydrationRecs": ["array of strings (hydration habits advice)"],
+        "nutritionRecs": ["array of strings (nutritional habits advice based on symptoms/goals)"],
+        "actionPlan": ["array of strings (action items for goals)"],
+        "dailyRecs": ["array of strings (daily micro-habits recommendations)"]
+      }
+
+      DATA:
+      ${JSON.stringify(onboardingData, null, 2)}
+    `;
+
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      });
+
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      return JSON.parse(responseText || '{}') as AIHealthProfileResponse;
+    } catch (error) {
+      console.error('Gemini Initial Profile Error:', error);
+      return {
+        wellnessScore: 70,
+        cycleHealthScore: 70,
+        sleepScore: 70,
+        stressScore: 70,
+        stressIndicator: 'Moderate',
+        sleepAnalysis:
+          'Based on your reported sleep, maintaining a consistent routine is key.',
+        stressAnalysis: 'Mindfulness and gentle yoga can help balance stress.',
+        cycleInsights:
+          'Tracking your cycle regularly will help identify your patterns.',
+        hydrationRecs: [
+          'Drink 2-3 liters of water daily',
+          'Start your day with a glass of warm water',
+        ],
+        nutritionRecs: [
+          'Prioritize nutrient-dense whole foods',
+          'Include healthy fats for hormone synthesis',
+        ],
+        actionPlan: [
+          'Log symptoms daily in the calendar',
+          'Establish a consistent wind-down routine',
+        ],
+        dailyRecs: [
+          'Perform 5 minutes of deep breathing',
+          'Drink water before reaching for caffeine',
+        ],
+      };
+    }
+  }
+
+  async getHealthProfile(userId: string) {
+    return this.prisma.healthProfile.findUnique({
+      where: { userId },
+    });
+  }
+
+  async reAnalyzeProfile(userId: string) {
+    const context = await this.getUserContext(userId);
+    const onboarding = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        lifestyle: true,
+        healthHistory: true,
+        goals: true,
+        symptoms: true,
+      },
+    });
+
+    const prompt = `
+      You are an expert AI Wellness Coach for a woman using CycleWell, a hormonal wellness app.
+      Based on the user's initial onboarding profile AND their last 7 days of daily tracking data, generate an updated wellness analysis.
+      Identify any patterns, improvements, or areas of concern (e.g. sleep inconsistencies, hydration drops, stress trends) and update their scores and recommendations.
+      
+      RULES:
+      1. DO NOT provide medical diagnoses.
+      2. DO NOT suggest cures for diseases.
+      3. Focus on education, lifestyle habits, and encouragement.
+      4. Keep the tone empathetic and professional.
+      5. Output ONLY raw JSON format matching the specified schema. DO NOT wrap in markdown code blocks.
+
+      SCHEMA:
+      {
+        "wellnessScore": number (1-100),
+        "cycleHealthScore": number (1-100),
+        "sleepScore": number (1-100),
+        "stressScore": number (1-100),
+        "stressIndicator": "Low" | "Moderate" | "High",
+        "sleepAnalysis": "string (updated sleep analysis showing any trends/inconsistencies)",
+        "stressAnalysis": "string (updated stress analysis highlighting stress levels)",
+        "cycleInsights": "string (updated cycle predictions / symptom check)",
+        "hydrationRecs": ["array of strings (revised hydration advice)"],
+        "nutritionRecs": ["array of strings (revised nutrition suggestions)"],
+        "actionPlan": ["array of strings (updated action plan)"],
+        "dailyRecs": ["array of strings (updated daily micro-habits)"]
+      }
+
+      ONBOARDING DATA:
+      ${JSON.stringify(
+        {
+          lifestyle: onboarding?.lifestyle,
+          healthHistory: onboarding?.healthHistory,
+          goals: onboarding?.goals,
+          symptoms: onboarding?.symptoms,
+        },
+        null,
+        2,
+      )}
+
+      LAST 7 DAYS TRACKING DATA:
+      ${JSON.stringify(context, null, 2)}
+    `;
+
+    try {
+      const model = this.genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      });
+
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      const updatedProfile = JSON.parse(
+        responseText || '{}',
+      ) as AIHealthProfileResponse;
+      return this.prisma.healthProfile.upsert({
+        where: { userId },
+        update: updatedProfile,
+        create: {
+          ...updatedProfile,
+          userId,
+        },
+      });
+    } catch (error) {
+      console.error('Gemini Re-analysis Error:', error);
+      const existing = await this.prisma.healthProfile.findUnique({
+        where: { userId },
+      });
+      if (existing) {
+        return {
+          wellnessScore: existing.wellnessScore,
+          cycleHealthScore: existing.cycleHealthScore,
+          sleepScore: existing.sleepScore,
+          stressScore: existing.stressScore,
+          stressIndicator: existing.stressIndicator,
+          sleepAnalysis: existing.sleepAnalysis,
+          stressAnalysis: existing.stressAnalysis,
+          cycleInsights: existing.cycleInsights,
+          hydrationRecs: existing.hydrationRecs,
+          nutritionRecs: existing.nutritionRecs,
+          actionPlan: existing.actionPlan,
+          dailyRecs: existing.dailyRecs,
+        };
+      }
+      throw error;
     }
   }
 

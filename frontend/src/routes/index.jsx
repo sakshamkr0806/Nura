@@ -12,11 +12,13 @@ const Reports = lazy(() => import("@/pages/Reports"));
 const Education = lazy(() => import("@/pages/Education"));
 const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
 const Profile = lazy(() => import("@/pages/Profile"));
-const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
 const PlaceholderPage = lazy(() => import("@/pages/PlaceholderPage"));
 const Seeds = lazy(() => import("@/pages/Seeds"));
+const OnboardingPage = lazy(
+  () => import("@/features/onboarding/pages/OnboardingPage"),
+);
 
 const wrap = (Component, props = {}) => (
   <Suspense fallback={<LoadingFallback />}>
@@ -29,6 +31,12 @@ export const router = createBrowserRouter([
   { path: "/", element: wrap(Home) },
   { path: "/login", element: wrap(LoginPage) },
   { path: "/signup", element: wrap(SignupPage) },
+
+  // Protected onboarding route
+  {
+    path: "/onboarding",
+    element: <ProtectedRoute>{wrap(OnboardingPage)}</ProtectedRoute>,
+  },
 
   // Protected app routes
   {

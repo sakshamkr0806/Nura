@@ -61,6 +61,7 @@ export class AuthService {
       newUser.fullName,
       newUser.phoneNumber ?? undefined,
       newUser.dateOfBirth,
+      newUser.onboardingCompleted,
     );
     await this.updateRtHash(newUser.id, tokens.refresh_token);
 
@@ -94,6 +95,7 @@ export class AuthService {
       user.fullName,
       user.phoneNumber ?? undefined,
       user.dateOfBirth,
+      user.onboardingCompleted,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
@@ -133,6 +135,7 @@ export class AuthService {
       user.fullName,
       user.phoneNumber ?? undefined,
       user.dateOfBirth,
+      user.onboardingCompleted,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
 
@@ -157,6 +160,7 @@ export class AuthService {
       updatedUser.fullName,
       updatedUser.phoneNumber ?? undefined,
       updatedUser.dateOfBirth,
+      updatedUser.onboardingCompleted,
     );
 
     await this.updateRtHash(updatedUser.id, tokens.refresh_token);
@@ -185,14 +189,16 @@ export class AuthService {
     email: string,
     role: string,
     fullName: string,
-    phoneNumber?: string,
-    dateOfBirth?: Date | null,
+    phoneNumber: string | undefined,
+    dateOfBirth: Date | null | undefined,
+    onboardingCompleted: boolean,
   ): Promise<Tokens> {
     const payload = {
       sub: userId,
       email,
       role,
       fullName,
+      onboardingCompleted,
       ...(phoneNumber ? { phoneNumber } : {}),
       ...(dateOfBirth ? { dateOfBirth: dateOfBirth.toISOString() } : {}),
     };

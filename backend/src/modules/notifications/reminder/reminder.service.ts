@@ -1,18 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
-
-/**
- * ReminderService — scheduler-ready service for sending bulk email reminders.
- *
- * ─── TO ACTIVATE CRON SCHEDULING ────────────────────────────────────────────
- * 1. Install: npm install @nestjs/schedule
- * 2. In app.module.ts, add to imports: ScheduleModule.forRoot()
- * 3. Import ScheduleModule from '@nestjs/schedule'
- * 4. Uncomment the @Cron decorator below and the Cron import
- * ─────────────────────────────────────────────────────────────────────────────
- */
-// import { Cron } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ReminderService {
@@ -25,11 +14,9 @@ export class ReminderService {
 
   /**
    * Send daily health log reminders to all opted-in users.
-   *
-   * Activate by uncommenting the @Cron decorator.
    * '0 8 * * *' = every day at 08:00 server time.
    */
-  // @Cron('0 8 * * *')
+  @Cron('0 8 * * *')
   async sendDailyReminders(): Promise<void> {
     this.logger.log('Running daily reminder job...');
 
@@ -48,6 +35,81 @@ export class ReminderService {
     );
 
     this.logger.log('Daily reminder job complete');
+  }
+
+  /**
+   * Send weekly wellness summaries to all opted-in users on Sunday at 9 AM.
+   */
+  @Cron('0 9 * * 0')
+  async sendWeeklySummaries(): Promise<void> {
+    this.logger.log('Running weekly wellness summary job...');
+
+    const users = await this.prisma.user.findMany({
+      where: { emailNotifications: true },
+      include: { healthProfile: true },
+    });
+
+    this.logger.log(`Sending weekly summaries to ${users.length} user(s)`);
+
+    await Promise.allSettled(
+      users.map((user) => {
+        const summary =
+          user.healthProfile?.cycleInsights ||
+          'Log your daily symptoms on CycleWell to get personalized wellness analysis!';
+        return this.email.sendWeeklySummaryEmail(
+          user.email,
+          user.fullName || 'there',
+          summary,
+        );
+      }),
+    );
+
+    this.logger.log('Weekly wellness summary job complete');
+  }
+
+  /**
+   * Send hydration reminders at 2 PM daily.
+   */
+  @Cron('0 14 * * *')
+  async sendHydrationReminders(): Promise<void> {
+    this.logger.log('Running daily hydration reminder job...');
+
+    const users = await this.prisma.user.findMany({
+      where: { emailNotifications: true },
+      select: { email: true, fullName: true },
+    });
+
+    await Promise.allSettled(
+      users.map((user) =>
+        this.email.sendHydrationReminderEmail(
+          user.email,
+          user.fullName || 'there',
+        ),
+      ),
+    );
+
+    this.logger.log('Hydration reminder job complete');
+  }
+
+  /**
+   * Send sleep reminders at 9 PM daily.
+   */
+  @Cron('0 21 * * *')
+  async sendSleepReminders(): Promise<void> {
+    this.logger.log('Running daily sleep reminder job...');
+
+    const users = await this.prisma.user.findMany({
+      where: { emailNotifications: true },
+      select: { email: true, fullName: true },
+    });
+
+    await Promise.allSettled(
+      users.map((user) =>
+        this.email.sendSleepReminderEmail(user.email, user.fullName || 'there'),
+      ),
+    );
+
+    this.logger.log('Sleep reminder job complete');
   }
 
   /**

@@ -3,4 +3,5 @@ export type JwtPayload = {
   sub: string;
   role: string;
   phoneNumber?: string;
+  onboardingCompleted: boolean;
 };

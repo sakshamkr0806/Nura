@@ -71,6 +71,7 @@ export default function LoginPage() {
         fullName: decoded.fullName || "",
         phoneNumber: decoded.phoneNumber || "",
         dateOfBirth: decoded.dateOfBirth || null,
+        onboardingCompleted: decoded.onboardingCompleted || false,
       };
       setAuth(user, access_token);
       toast.success("Welcome back! 🌸");

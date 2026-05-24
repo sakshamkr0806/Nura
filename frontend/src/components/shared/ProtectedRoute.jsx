@@ -13,5 +13,17 @@ export default function ProtectedRoute({ children, roles }) {
     return <Navigate to="/dashboard" replace />;
   }
 
+  if (
+    user &&
+    !user.onboardingCompleted &&
+    location.pathname !== "/onboarding"
+  ) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  if (user && user.onboardingCompleted && location.pathname === "/onboarding") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return <>{children}</>;
 }

@@ -35,4 +35,23 @@ export class NotificationsService {
   ): Promise<void> {
     await this.email.sendPasswordResetEmail(userEmail, fullName, resetLink);
   }
+
+  async sendWeeklySummary(
+    userEmail: string,
+    fullName: string,
+    summary: string,
+  ): Promise<void> {
+    await this.email.sendWeeklySummaryEmail(userEmail, fullName, summary);
+  }
+
+  async sendHydrationReminder(
+    userEmail: string,
+    fullName: string,
+  ): Promise<void> {
+    await this.email.sendHydrationReminderEmail(userEmail, fullName);
+  }
+
+  async sendSleepReminder(userEmail: string, fullName: string): Promise<void> {
+    await this.email.sendSleepReminderEmail(userEmail, fullName);
+  }
 }

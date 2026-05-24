@@ -11,6 +11,47 @@ export class LogService {
     const logDate = new Date(date);
     logDate.setUTCHours(0, 0, 0, 0);
 
+    const existingLog = await this.prisma.dailyLog.findUnique({
+      where: {
+        userId_date: {
+          userId,
+          date: logDate,
+        },
+      },
+    });
+
+    if (!existingLog) {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (user) {
+        const yesterday = new Date(logDate);
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setUTCHours(0, 0, 0, 0);
+
+        const yesterdayLog = await this.prisma.dailyLog.findUnique({
+          where: {
+            userId_date: {
+              userId,
+              date: yesterday,
+            },
+          },
+        });
+
+        let newStreak = 1;
+        if (yesterdayLog) {
+          newStreak = user.currentStreak + 1;
+        }
+
+        const longest = Math.max(user.longestStreak, newStreak);
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            currentStreak: newStreak,
+            longestStreak: longest,
+          },
+        });
+      }
+    }
+
     return this.prisma.dailyLog.upsert({
       where: {
         userId_date: {

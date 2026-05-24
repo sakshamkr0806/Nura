@@ -154,6 +154,7 @@ export default function SignupPage() {
         fullName: decoded.fullName || values.fullName,
         phoneNumber: decoded.phoneNumber || "",
         dateOfBirth: decoded.dateOfBirth,
+        onboardingCompleted: decoded.onboardingCompleted || false,
       };
       setAuth(user, access_token);
       toast.success("Welcome to Nura! 🌸");

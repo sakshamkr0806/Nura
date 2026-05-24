@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -13,6 +14,7 @@ import { AlertModule } from './modules/alert/alert.module';
 import { ReportModule } from './modules/report/report.module';
 import { ArticleModule } from './modules/article/article.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { AtGuard } from './modules/auth/guards';
 
 @Module({
@@ -20,6 +22,7 @@ import { AtGuard } from './modules/auth/guards';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     CycleModule,
@@ -30,6 +33,7 @@ import { AtGuard } from './modules/auth/guards';
     ReportModule,
     ArticleModule,
     NotificationsModule,
+    OnboardingModule,
   ],
   controllers: [AppController],
   providers: [

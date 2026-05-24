@@ -9,5 +9,6 @@ import { NotificationsModule } from '../notifications/notifications.module';
   imports: [JwtModule.register({}), NotificationsModule],
   controllers: [AuthController],
   providers: [AuthService, AtStrategy, RtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}
