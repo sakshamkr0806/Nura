@@ -19,9 +19,46 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
-import { FloralDecoration } from "@/components/shared/Illustrations";
 import api from "@/api/axios";
 import { toast } from "sonner";
+
+const PHASE_DETAILS = {
+  "Menstrual Phase": {
+    title: "Menstrual Phase 🌸",
+    description:
+      "Energy may feel lower today. Be gentle with yourself and prioritize rest.",
+    accentColor: "#F8B6B6",
+    textColor: "#C87B7B",
+  },
+  "Follicular Phase": {
+    title: "Follicular Phase 🌱",
+    description:
+      "Your energy is rising! A perfect time to plan, create, and start new projects.",
+    accentColor: "#BDD7B3",
+    textColor: "#5A8A4E",
+  },
+  "Ovulatory Phase": {
+    title: "Ovulatory Phase ☀️",
+    description:
+      "You are at your peak communication and social energy today. Glow and connect!",
+    accentColor: "#F6A58E",
+    textColor: "#C86A4E",
+  },
+  "Luteal Phase": {
+    title: "Luteal Phase 🌙",
+    description:
+      "Time to slow down, reflect, and turn inward. Focus on comforting and nurturing self-care.",
+    accentColor: "#CDB4F6",
+    textColor: "#7B5EA7",
+  },
+  "No Active Cycle": {
+    title: "Cycle Sanctuary ✨",
+    description:
+      "Log your last period to start tracking your natural biological rhythms.",
+    accentColor: "#F6A58E",
+    textColor: "#C86A4E",
+  },
+};
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -217,35 +254,127 @@ export default function Dashboard() {
     },
   ];
 
+  const cycleDay = analytics?.metrics?.cycleDay || 0;
+  const cyclePhase = analytics?.metrics?.cyclePhase || "No Active Cycle";
+  const nextPeriodDays = analytics?.metrics?.nextPeriodDays || 0;
+  const phaseInfo =
+    PHASE_DETAILS[cyclePhase] || PHASE_DETAILS["No Active Cycle"];
+
   return (
     <div className="space-y-8 pb-12">
-      {/* ── PAGE HEADER ── */}
-      <div className="page-hero flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative">
-        <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
-          <FloralDecoration className="w-40 h-40" />
-        </div>
-        <div>
-          <h1
-            className="font-serif font-bold text-4xl"
-            style={{ color: "#2D1F1A" }}
-          >
-            Welcome, {firstName} 🌸
-          </h1>
-          <p className="mt-1 text-sm font-medium" style={{ color: "#8C7B74" }}>
-            Your personalized AI hormonal health sanctuary.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2 rounded-2xl shrink-0"
-          style={{ borderColor: "rgba(246,165,142,0.3)", color: "#F6A58E" }}
-          onClick={handleRefreshAI}
-          disabled={isAiLoading}
+      {/* ── PAGE HEADER / HERO BANNER ── */}
+      <div
+        className="relative overflow-hidden rounded-[2rem] border transition-all duration-300 shadow-md"
+        style={{
+          backgroundImage: "url('/images/botanical_banner_bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          borderColor: "rgba(246, 165, 142, 0.25)",
+        }}
+      >
+        {/* Soft glassmorphic overlay for readable text */}
+        <div
+          className="w-full h-full p-6 md:p-8 flex flex-col gap-6"
+          style={{
+            background: "rgba(255, 253, 252, 0.85)",
+            backdropFilter: "blur(4px)",
+          }}
         >
-          <RefreshCcw size={15} className={isAiLoading ? "animate-spin" : ""} />
-          Refresh AI Insights
-        </Button>
+          {/* Top Row: Greeting & Refresh AI Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10">
+            <div>
+              <h1
+                className="font-serif font-bold text-3xl md:text-4xl leading-tight"
+                style={{ color: "#2D1F1A" }}
+              >
+                Welcome, {firstName} 🌸
+              </h1>
+              <p
+                className="mt-1 text-xs md:text-sm font-medium"
+                style={{ color: "#8C7B74" }}
+              >
+                Your personalized AI hormonal health sanctuary.
+              </p>
+            </div>
+
+            <Button
+              onClick={handleRefreshAI}
+              disabled={isAiLoading}
+              className="btn-primary-nura flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold shadow-md hover:scale-105 active:scale-95 transition-all duration-200 self-start sm:self-auto"
+            >
+              <RefreshCcw
+                size={15}
+                className={isAiLoading ? "animate-spin" : ""}
+              />
+              <span>Refresh AI Insights</span>
+            </Button>
+          </div>
+
+          {/* Middle Row: Phase Callout */}
+          <div className="space-y-2 z-10">
+            <div className="flex items-center gap-2">
+              <span
+                className="text-xs font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm border"
+                style={{
+                  backgroundColor: `${phaseInfo.accentColor}22`,
+                  borderColor: `${phaseInfo.accentColor}44`,
+                  color: phaseInfo.textColor,
+                }}
+              >
+                {phaseInfo.title}
+              </span>
+            </div>
+
+            <p
+              className="text-sm md:text-base font-semibold leading-relaxed"
+              style={{ color: "#4A4A4A" }}
+            >
+              {phaseInfo.description}
+            </p>
+          </div>
+
+          {/* Bottom Row: Inline Quick Stats */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 pt-2 z-10">
+            {/* Stat 1: Cycle Day */}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/90 border border-peach/10 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C7B74]">
+                Day of Cycle
+              </span>
+              <span className="text-xs font-extrabold text-[#2D1F1A]">
+                Day {cycleDay}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden sm:block h-6 w-px bg-peach/25" />
+
+            {/* Stat 2: Days Until Next Period */}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/90 border border-peach/10 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C7B74]">
+                Next Period
+              </span>
+              <span className="text-xs font-extrabold text-[#2D1F1A]">
+                {nextPeriodDays} Days
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden sm:block h-6 w-px bg-peach/25" />
+
+            {/* Stat 3: Current Phase */}
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/90 border border-peach/10 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8C7B74]">
+                Current Phase
+              </span>
+              <span
+                className="text-xs font-extrabold"
+                style={{ color: phaseInfo.textColor }}
+              >
+                {cyclePhase}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ── METRIC CARDS ── */}

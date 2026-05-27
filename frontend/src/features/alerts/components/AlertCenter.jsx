@@ -10,6 +10,7 @@ import { AlertCard } from "./AlertCard";
 import { useEffect, useState, useCallback } from "react";
 import api from "@/api/axios";
 import { BellOff } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
   const [alerts, setAlerts] = useState([]);
@@ -17,8 +18,9 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
   const fetchAlerts = useCallback(async () => {
     try {
       const res = await api.get("/alerts");
-      setAlerts(res.data);
-      onUpdateCount(res.data.filter((a) => !a.isRead).length);
+      const unreadAlerts = res.data.filter((a) => !a.isRead);
+      setAlerts(unreadAlerts);
+      onUpdateCount(unreadAlerts.length);
     } catch (err) {
       console.error("Failed to fetch alerts", err);
     }
@@ -31,20 +33,32 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
   }, [isOpen, fetchAlerts]);
 
   const handleMarkAsRead = async (id) => {
+    const previousAlerts = alerts;
+    const updatedAlerts = alerts.filter((a) => a.id !== id);
+    setAlerts(updatedAlerts);
+    onUpdateCount(updatedAlerts.length);
+
     try {
       await api.patch(`/alerts/${id}/read`);
-      fetchAlerts();
     } catch (err) {
       console.error("Failed to mark alert as read", err);
+      setAlerts(previousAlerts);
+      onUpdateCount(previousAlerts.length);
     }
   };
 
   const handleDelete = async (id) => {
+    const previousAlerts = alerts;
+    const updatedAlerts = alerts.filter((a) => a.id !== id);
+    setAlerts(updatedAlerts);
+    onUpdateCount(updatedAlerts.length);
+
     try {
       await api.delete(`/alerts/${id}`);
-      fetchAlerts();
     } catch (err) {
       console.error("Failed to delete alert", err);
+      setAlerts(previousAlerts);
+      onUpdateCount(previousAlerts.length);
     }
   };
 
@@ -58,21 +72,34 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1 p-6">
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             {alerts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-muted-foreground opacity-50">
                 <BellOff size={48} className="mb-4" />
                 <p>No active alerts</p>
               </div>
             ) : (
-              alerts.map((alert) => (
-                <AlertCard
-                  key={alert.id}
-                  alert={alert}
-                  onMarkAsRead={handleMarkAsRead}
-                  onDelete={handleDelete}
-                />
-              ))
+              <AnimatePresence initial={false}>
+                {alerts.map((alert) => (
+                  <motion.div
+                    key={alert.id}
+                    layout
+                    exit={{
+                      opacity: 0,
+                      height: 0,
+                      scale: 0.95,
+                      overflow: "hidden",
+                    }}
+                    transition={{ duration: 0.1, ease: "easeOut" }}
+                  >
+                    <AlertCard
+                      alert={alert}
+                      onMarkAsRead={handleMarkAsRead}
+                      onDelete={handleDelete}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             )}
           </div>
         </ScrollArea>
