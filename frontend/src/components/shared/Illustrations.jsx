@@ -743,3 +743,160 @@ export function FloralDecoration({ className = "w-32 h-32" }) {
     </svg>
   );
 }
+
+// ── Sketchy Hand-Drawn Doodles ────────────────────────────────
+export function SketchyHeart({ className = "w-6 h-6" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 20.25S3 14 3 8.5A4.5 4.5 0 0 1 7.5 4c2.25 0 3.75 1.5 4.5 2.5.75-1 2.25-2.5 4.5-2.5a4.5 4.5 0 0 1 4.5 4.5c0 5.5-9 11.75-9 11.75z" />
+      <path
+        d="M11.8 19.5S3.8 13.5 3.8 8.7A4.2 4.2 0 0 1 8 4.5c1.8 0 3 1.2 3.8 2.2"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function SketchyStar({ className = "w-6 h-6" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2l2.6 5.8 6.4.5-4.8 4.2 1.5 6.3-5.7-3.5-5.7 3.5 1.5-6.3-4.8-4.2 6.4-.5z" />
+      <path
+        d="M11.8 2.5l2.3 5.4 6 .5-4.5 3.9 1.4 5.9-5.4-3.3-5.4 3.3 1.4-5.9-4.5-3.9 6-.5z"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function SketchyFlower({ className = "w-8 h-8" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 32 32"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 13.5c-1.5-3.5-4.5-3.5-3 0s1.5 3.5 3 0z" />
+      <path d="M16 18.5c1.5 3.5 4.5 3.5 3 0s-1.5-3.5-3 0z" />
+      <path d="M18.5 16c3.5 1.5 3.5 4.5 0 3s-3.5-1.5 0-3z" />
+      <path d="M13.5 16c-3.5-1.5-3.5-4.5 0-3s3.5 1.5 0 3z" />
+      <path d="M16 18c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" />
+      <path
+        d="M15.8 17.8c.8 0 1.5-.7 1.5-1.5s-.7-1.5-1.5-1.5-1.5.7-1.5 1.5.7 1.5 1.5 1.5z"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function SketchyLeaf({ className = "w-6 h-6" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 20 Q12 18 19 6 Q16 15 4 20 Z" />
+      <path d="M4 20 Q11 14 16 9" />
+      <path d="M9 16q2-1 3.5-3" opacity="0.7" />
+      <path d="M12 13q2.5-1 3.5-3" opacity="0.7" />
+      <path d="M4.5 19.5Q12 17.5 18 7" opacity="0.5" strokeWidth="1" />
+    </svg>
+  );
+}
+
+export function SketchyCloud({ className = "w-10 h-7" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 36 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M8 18A5 5 0 0 1 8 8a6 6 0 0 1 11-2 5 5 0 0 1 9 2 4.5 4.5 0 0 1 0 9 H8z" />
+      <path
+        d="M8.5 17.5A4.5 4.5 0 0 1 8.5 8.5a5.5 5.5 0 0 1 10-1.8 4.5 4.5 0 0 1 8 1.8 4 4 0 0 1 0 8H8.5"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function SketchySwirl({ className = "w-8 h-6" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 32 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 12c4 4 8-8 12-4s4 8 8 0 4-8 4-8" />
+      <path
+        d="M5 12.5c3.8 3.8 7.6-7.6 11.4-3.8s3.8 7.6 7.6 0 3.8-7.6 3.8-7.6"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function SketchySparkles({ className = "w-6 h-6" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 4q0 6 6 6-6 0-6 6 0-6-6-6 6 0 6-6z" />
+      <path
+        d="M12.2 4.5q0 5.5 5.5 5.5-5.5 0-5.5 5.5 0-5.5-5.5-5.5 5.5 0 5.5-5.5z"
+        opacity="0.5"
+        strokeWidth="1"
+      />
+      <path
+        d="M19 15q0 3 3 3-3 0-3 3 0-3-3-3 3 0 3-3z"
+        opacity="0.8"
+        strokeWidth="1"
+      />
+      <circle cx="6" cy="6" r="0.8" fill="currentColor" />
+    </svg>
+  );
+}

@@ -17,10 +17,14 @@ import {
   MoonStars,
   EnvelopeIllustration,
   PottedPlant,
-  HeartDoodle,
-  StarDoodle,
-  CloudDoodle,
   FloralDecoration,
+  SketchyHeart,
+  SketchyStar,
+  SketchyFlower,
+  SketchyLeaf,
+  SketchyCloud,
+  SketchySwirl,
+  SketchySparkles,
 } from "@/components/shared/Illustrations";
 import { ArrowRight, Mail, Sparkles } from "lucide-react";
 
@@ -105,24 +109,36 @@ export default function Home() {
         {/* ─── HERO ─── */}
         <section className="relative overflow-hidden">
           <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Floating doodles */}
+            {/* Floating sketchy doodles */}
             <div
-              className="absolute top-12 left-6 opacity-25 floating pointer-events-none"
+              className="absolute top-12 left-6 opacity-30 floating pointer-events-none"
               style={{ color: "#F8B6B6" }}
             >
-              <HeartDoodle className="w-7 h-7" />
+              <SketchyHeart className="w-8 h-8" />
             </div>
             <div
-              className="absolute top-20 right-1/4 opacity-20 floating pointer-events-none"
+              className="absolute top-20 right-1/4 opacity-25 floating pointer-events-none"
               style={{ animationDelay: "2s", color: "#CDB4F6" }}
             >
-              <StarDoodle className="w-8 h-8" />
+              <SketchySparkles className="w-8 h-8" />
             </div>
             <div
-              className="absolute bottom-16 left-1/4 opacity-15 floating pointer-events-none"
-              style={{ animationDelay: "4s", color: "#EADCF8" }}
+              className="absolute bottom-16 left-12 opacity-20 floating pointer-events-none"
+              style={{ animationDelay: "4.5s", color: "#EADCF8" }}
             >
-              <CloudDoodle className="w-16 h-10" />
+              <SketchyCloud className="w-14 h-9" />
+            </div>
+            <div
+              className="absolute top-1/2 left-4 opacity-25 floating pointer-events-none"
+              style={{ animationDelay: "1.5s", color: "#FAF2EA" }}
+            >
+              <SketchySwirl className="w-12 h-8" />
+            </div>
+            <div
+              className="absolute bottom-20 right-12 opacity-35 floating pointer-events-none"
+              style={{ animationDelay: "3s", color: "#F8B6B6" }}
+            >
+              <SketchyFlower className="w-9 h-9" />
             </div>
 
             {/* Left column */}
@@ -204,14 +220,34 @@ export default function Home() {
 
         {/* ─── FEATURED TOOLS ─── */}
         <section
-          className="py-20"
+          className="py-20 relative overflow-hidden"
           style={{
             background: "rgba(255,255,255,0.5)",
             borderTop: "1px solid rgba(246,165,142,0.08)",
             borderBottom: "1px solid rgba(246,165,142,0.08)",
           }}
         >
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-12">
+          {/* Background sketchy doodles */}
+          <div
+            className="absolute top-8 right-8 opacity-20 floating pointer-events-none"
+            style={{ color: "#EADCF8" }}
+          >
+            <SketchyLeaf className="w-8 h-8 rotate-45" />
+          </div>
+          <div
+            className="absolute bottom-6 left-8 opacity-25 floating pointer-events-none"
+            style={{ animationDelay: "1s", color: "#FAF2EA" }}
+          >
+            <SketchySwirl className="w-16 h-8" />
+          </div>
+          <div
+            className="absolute top-12 left-1/3 opacity-20 floating pointer-events-none"
+            style={{ animationDelay: "3s", color: "#F8B6B6" }}
+          >
+            <SketchySparkles className="w-6 h-6" />
+          </div>
+
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-12 relative z-10">
             <div className="space-y-3">
               <h2
                 className="font-serif font-bold text-4xl"
@@ -261,8 +297,22 @@ export default function Home() {
         </section>
 
         {/* ─── DAILY CARE ─── */}
-        <section className="py-20">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <section className="py-20 relative overflow-hidden">
+          {/* Background sketchy doodles */}
+          <div
+            className="absolute top-4 left-10 opacity-20 floating pointer-events-none"
+            style={{ color: "#F8B6B6" }}
+          >
+            <SketchyFlower className="w-10 h-10" />
+          </div>
+          <div
+            className="absolute bottom-4 right-10 opacity-25 floating pointer-events-none"
+            style={{ animationDelay: "2s", color: "#CDB4F6" }}
+          >
+            <SketchyStar className="w-8 h-8" />
+          </div>
+
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
             <div
               className="relative overflow-hidden rounded-[40px] p-8 md:p-12 flex flex-col lg:flex-row items-center gap-10"
               style={{
@@ -325,8 +375,22 @@ export default function Home() {
         </section>
 
         {/* ─── ABOUT + TESTIMONIAL ─── */}
-        <section className="py-4 pb-20">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <section className="py-4 pb-20 relative overflow-hidden">
+          {/* Background sketchy doodles */}
+          <div
+            className="absolute top-1/2 left-2 opacity-20 floating pointer-events-none"
+            style={{ color: "#EADCF8" }}
+          >
+            <SketchySwirl className="w-12 h-8" />
+          </div>
+          <div
+            className="absolute top-1/3 right-4 opacity-25 floating pointer-events-none"
+            style={{ animationDelay: "1.5s", color: "#FAF2EA" }}
+          >
+            <SketchyLeaf className="w-8 h-8 -rotate-12" />
+          </div>
+
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
             {/* About card */}
             <div
               className="relative overflow-hidden rounded-[36px] p-10 min-h-[320px] flex flex-col justify-between transition-transform hover:-translate-y-1.5"
@@ -430,8 +494,16 @@ export default function Home() {
         </section>
 
         {/* ─── NEWSLETTER ─── */}
-        <section className="pb-20">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <section className="pb-20 relative overflow-hidden">
+          {/* Background sketchy doodles */}
+          <div
+            className="absolute top-2 left-10 opacity-20 floating pointer-events-none"
+            style={{ color: "#F8B6B6" }}
+          >
+            <SketchyHeart className="w-8 h-8" />
+          </div>
+
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
             <div
               className="relative overflow-hidden rounded-[40px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8"
               style={{
@@ -445,10 +517,10 @@ export default function Home() {
                 <PottedPlant className="w-16 h-20" />
               </div>
               <div
-                className="absolute top-4 right-12 opacity-20 floating pointer-events-none"
-                style={{ color: "#D4A843" }}
+                className="absolute top-4 right-12 opacity-25 floating pointer-events-none"
+                style={{ color: "#CDB4F6" }}
               >
-                <StarDoodle className="w-5 h-5" />
+                <SketchySparkles className="w-6 h-6" />
               </div>
 
               <div className="space-y-3 z-10 text-center md:text-left">
