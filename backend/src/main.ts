@@ -18,7 +18,7 @@ async function bootstrap(): Promise<INestApplication> {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+      origin: true,
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       allowedHeaders: 'Content-Type, Accept, Authorization',
