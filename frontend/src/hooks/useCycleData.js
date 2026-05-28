@@ -13,6 +13,7 @@ export function useCycleData() {
   });
   const [cycles, setCycles] = useState([]);
   const [predictions, setPredictions] = useState(null);
+  const [dailyLogs, setDailyLogs] = useState([]);
 
   const fetchCycleData = useCallback(async () => {
     try {
@@ -56,6 +57,7 @@ export function useCycleData() {
 
       setCycles(cyclesRes.data || []);
       setPredictions(predictionsRes.data || null);
+      setDailyLogs(logsRes.data || []);
       setHighlightedDates({ period: periods, prediction: predictions, logged });
     } catch {
       // Silently handle — calendar will just show no highlights
@@ -70,6 +72,7 @@ export function useCycleData() {
     highlightedDates,
     cycles,
     predictions,
+    dailyLogs,
     refetchCycleData: fetchCycleData,
   };
 }
