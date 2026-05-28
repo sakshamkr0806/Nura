@@ -33,6 +33,7 @@ import {
   Target,
   Smile,
   CheckSquare,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -109,6 +110,49 @@ const PHASE_DETAILS = {
   },
 };
 
+const PHASE_TASKS = {
+  "Menstrual Phase": [
+    { text: "Drink warm ginger tea", emoji: "🍵" },
+    { text: "Do gentle yoga or rest", emoji: "🧘" },
+    { text: "Take iron-rich foods", emoji: "🥗" },
+    { text: "Apply heat for cramps", emoji: "🔥" },
+    { text: "Sleep by 10pm", emoji: "😴" },
+    { text: "Journal your feelings", emoji: "✍️" },
+  ],
+  "Follicular Phase": [
+    { text: "Drink 2L water", emoji: "💧" },
+    { text: "Try a new workout", emoji: "💪" },
+    { text: "Eat leafy greens", emoji: "🥬" },
+    { text: "Take flax seeds", emoji: "🌱" },
+    { text: "Get morning sunlight", emoji: "☀️" },
+    { text: "Plan your week", emoji: "📅" },
+  ],
+  "Ovulatory Phase": [
+    { text: "Drink coconut water", emoji: "🥥" },
+    { text: "High intensity workout", emoji: "⚡" },
+    { text: "Eat colourful antioxidants", emoji: "🫐" },
+    { text: "Take sesame seeds", emoji: "🌱" },
+    { text: "Connect with someone", emoji: "👭" },
+    { text: "Practice gratitude", emoji: "🙏" },
+  ],
+  "Luteal Phase": [
+    { text: "Drink chamomile tea", emoji: "🍵" },
+    { text: "Take a walk", emoji: "🚶‍♀️" },
+    { text: "Eat dark chocolate (70%+)", emoji: "🍫" },
+    { text: "Take sunflower seeds", emoji: "🌻" },
+    { text: "Limit caffeine", emoji: "☕" },
+    { text: "Wind down 1hr before bed", emoji: "🌙" },
+  ],
+  "No Active Cycle": [
+    { text: "Drink a glass of water first thing in the morning", emoji: "💧" },
+    { text: "Take a 5-minute breathing break", emoji: "🧘" },
+    { text: "Log your energy levels", emoji: "⚡" },
+    { text: "Go for a short morning walk", emoji: "🚶‍♀️" },
+    { text: "Set a positive daily intention", emoji: "✨" },
+    { text: "Sleep by 10:30pm", emoji: "😴" },
+  ],
+};
+
 export default function Dashboard() {
   const { user } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -116,7 +160,21 @@ export default function Dashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [checkedTasks, setCheckedTasks] = useState({});
+  const [checkedTasks, setCheckedTasks] = useState(() => {
+    try {
+      const todayKey = format(new Date(), "yyyy-MM-dd");
+      const saved = localStorage.getItem("nura_checklist_tasks");
+      if (saved) {
+        const { date, tasks } = JSON.parse(saved);
+        if (date === todayKey) {
+          return tasks || {};
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load checklist from localStorage", e);
+    }
+    return {};
+  });
   const { highlightedDates, cycles, predictions, refetchCycleData, dailyLogs } =
     useCycleData();
 
@@ -166,10 +224,22 @@ export default function Dashboard() {
   };
 
   const toggleTask = (task) => {
-    setCheckedTasks((prev) => ({
-      ...prev,
-      [task]: !prev[task],
-    }));
+    setCheckedTasks((prev) => {
+      const updated = {
+        ...prev,
+        [task]: !prev[task],
+      };
+      try {
+        const todayKey = format(new Date(), "yyyy-MM-dd");
+        localStorage.setItem(
+          "nura_checklist_tasks",
+          JSON.stringify({ date: todayKey, tasks: updated }),
+        );
+      } catch (e) {
+        console.error("Failed to save checklist to localStorage", e);
+      }
+      return updated;
+    });
   };
 
   const firstName = user?.fullName?.split(" ")[0] || "Lovely";
@@ -467,50 +537,115 @@ export default function Dashboard() {
         {/* Left Column: Daily Checklist & Goals */}
         <div className="lg:col-span-2 space-y-6">
           {/* Daily Checklist */}
-          {profile?.dailyRecs && (
+          {profile && (
             <div
-              className="rounded-3xl p-6 border bg-white"
+              className="rounded-[32px] p-6 border transition-all duration-300 relative overflow-hidden"
               style={{
-                borderColor: "rgba(246,165,142,0.12)",
-                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+                background: "linear-gradient(135deg, #FFF9F6 0%, #FFFDFD 100%)",
+                borderColor: "rgba(246,165,142,0.15)",
+                boxShadow: "0 2px 20px rgba(200,150,130,0.06)",
               }}
             >
-              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
-                <CheckSquare className="text-[#8BC0D0]" size={20} />
-                My Daily Wellness Checklist
-              </h3>
-              <div className="space-y-3">
-                {profile.dailyRecs.map((rec) => {
-                  const isChecked = !!checkedTasks[rec];
-                  return (
-                    <button
-                      key={rec}
-                      type="button"
-                      onClick={() => toggleTask(rec)}
-                      className="w-full flex items-center gap-3 p-3 rounded-2xl border border-rose-50 text-left transition-all hover:bg-[#FFFAF8]"
-                    >
-                      <div
-                        className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-all ${
-                          isChecked
-                            ? "bg-[#8BC0D0] border-[#8BC0D0] text-white"
-                            : "border-zinc-300"
-                        }`}
-                      >
-                        {isChecked && <Sparkles size={12} />}
-                      </div>
-                      <span
-                        className={`text-xs font-semibold ${
-                          isChecked
-                            ? "line-through text-zinc-400"
-                            : "text-[#2D1F1A]"
-                        }`}
-                      >
-                        {rec}
-                      </span>
-                    </button>
-                  );
-                })}
+              {/* Header Title with CheckSquare and Streak Badge */}
+              <div className="flex justify-between items-start gap-4 mb-4">
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C86A4E] bg-[#FFF0ED] px-2.5 py-0.5 rounded-full border border-[#FFF0ED]">
+                    {cyclePhase === "No Active Cycle"
+                      ? "Daily Checklist"
+                      : `${cyclePhase} Tasks`}
+                  </span>
+                  <h3 className="font-serif font-bold text-lg text-[#2D1F1A] flex items-center gap-2 mt-1">
+                    <CheckSquare className="text-[#F6A58E]" size={20} />
+                    My Daily Wellness Checklist
+                  </h3>
+                </div>
+
+                {/* Streak Counter Badge */}
+                <span className="flex items-center gap-1 text-[10px] font-extrabold bg-[#FFF0ED] text-[#F6A58E] px-2.5 py-1 rounded-full border border-[#FFE0D9] shadow-sm shrink-0">
+                  🔥 {user?.currentStreak || 0} day streak
+                </span>
               </div>
+
+              {/* Progress Bar & Congratulations */}
+              {(() => {
+                const currentTasks =
+                  PHASE_TASKS[cyclePhase] || PHASE_TASKS["No Active Cycle"];
+                const completedCount = currentTasks.filter(
+                  (task) => !!checkedTasks[task.text],
+                ).length;
+                const progressPercent =
+                  (completedCount / currentTasks.length) * 100;
+                const allCompleted = completedCount === currentTasks.length;
+
+                return (
+                  <>
+                    <div className="space-y-2 mb-5">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-bold text-[#8C7B74]">
+                          {allCompleted ? (
+                            <span className="text-[#E56A54] animate-bounce inline-block">
+                              🌸 Amazing! You completed today’s wellness
+                              routine!
+                            </span>
+                          ) : (
+                            `${completedCount} / ${currentTasks.length} completed today`
+                          )}
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-[#FAF2EA] rounded-full overflow-hidden border border-peach/5">
+                        <div
+                          className="h-full bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Task Checklist Items */}
+                    <div className="space-y-3">
+                      {currentTasks.map((task) => {
+                        const isChecked = !!checkedTasks[task.text];
+                        return (
+                          <button
+                            key={task.text}
+                            type="button"
+                            onClick={() => toggleTask(task.text)}
+                            className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl border border-[#FFF5F2]/40 bg-white/70 text-left transition-all duration-200 hover:bg-[#FFF5F2]/60 hover:translate-x-1 shadow-sm"
+                          >
+                            {/* Emoji Icon before text */}
+                            <span className="text-base select-none shrink-0">
+                              {task.emoji}
+                            </span>
+
+                            {/* Task text with strike-through and fade */}
+                            <span
+                              className={cn(
+                                "text-xs font-semibold flex-1 leading-normal transition-all duration-200",
+                                isChecked
+                                  ? "line-through text-zinc-400 opacity-60"
+                                  : "text-[#2D1F1A]",
+                              )}
+                            >
+                              {task.text}
+                            </span>
+
+                            {/* Pink / Salmon rounded checkbox with soft checkmark */}
+                            <div
+                              className={cn(
+                                "w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-200 shadow-sm",
+                                isChecked
+                                  ? "bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] border-transparent text-white"
+                                  : "border-[#F8B6B6]/60 bg-white",
+                              )}
+                            >
+                              {isChecked && <Check size={10} strokeWidth={3} />}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
 
