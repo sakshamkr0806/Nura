@@ -99,7 +99,6 @@ export default function CalendarPage() {
             />
           </div>
         </div>
-        </div>
 
         {/* Legend + Tips */}
         <div className="space-y-5">
