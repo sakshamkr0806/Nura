@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, INestApplication } from '@nestjs/common';
+import { ValidationPipe, INestApplication, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { Express } from 'express';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser') as () => ReturnType<
 >;
 
 let cachedApp: INestApplication;
+const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<INestApplication> {
   if (!cachedApp) {
@@ -17,7 +18,7 @@ async function bootstrap(): Promise<INestApplication> {
     app.use(cookieParser());
 
     app.enableCors({
-      origin: true,
+      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       allowedHeaders: 'Content-Type, Accept, Authorization',
@@ -35,18 +36,18 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const app = await bootstrap();
     const port = process.env.PORT || 3000;
     await app.listen(port, '0.0.0.0');
-    console.log(`🚀 Backend running on: http://localhost:${port}`);
+    logger.log(`🚀 Backend running on: http://localhost:${port}`);
   };
   void startLocal();
 }
 
 // Global error handlers to prevent silent crashes on Vercel
 process.on('uncaughtException', (err) => {
-  console.error('CRITICAL: Uncaught Exception in NestJS:', err);
+  logger.error('CRITICAL: Uncaught Exception in NestJS:', err);
 });
 
 process.on('unhandledRejection', (reason) => {
-  console.error('CRITICAL: Unhandled Rejection in NestJS:', reason);
+  logger.error('CRITICAL: Unhandled Rejection in NestJS:', reason);
 });
 
 import { Request, Response } from 'express';

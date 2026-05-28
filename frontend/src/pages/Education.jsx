@@ -27,8 +27,8 @@ export default function Education() {
         params: { q: search, category: selectedCategory },
       });
       setArticles(res.data);
-    } catch (err) {
-      console.error("Failed to fetch articles", err);
+    } catch {
+      // Silently handle error
     } finally {
       setIsLoading(false);
     }

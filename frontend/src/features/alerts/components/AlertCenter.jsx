@@ -21,8 +21,8 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
       const unreadAlerts = res.data.filter((a) => !a.isRead);
       setAlerts(unreadAlerts);
       onUpdateCount(unreadAlerts.length);
-    } catch (err) {
-      console.error("Failed to fetch alerts", err);
+    } catch {
+      // Silently handle error
     }
   }, [onUpdateCount]);
 
@@ -40,8 +40,7 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
 
     try {
       await api.patch(`/alerts/${id}/read`);
-    } catch (err) {
-      console.error("Failed to mark alert as read", err);
+    } catch {
       setAlerts(previousAlerts);
       onUpdateCount(previousAlerts.length);
     }
@@ -55,8 +54,7 @@ export function AlertCenter({ isOpen, onClose, onUpdateCount }) {
 
     try {
       await api.delete(`/alerts/${id}`);
-    } catch (err) {
-      console.error("Failed to delete alert", err);
+    } catch {
       setAlerts(previousAlerts);
       onUpdateCount(previousAlerts.length);
     }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TopNavbar from "@/components/shared/TopNavbar";
 import Footer from "@/components/shared/Footer";
@@ -108,7 +108,7 @@ export default function Home() {
 
         {/* ─── HERO ─── */}
         <section className="relative overflow-hidden">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-24 flex flex-col items-center text-center relative z-10">
             {/* Floating sketchy doodles */}
             <div
               className="absolute top-12 left-6 opacity-30 floating pointer-events-none"
@@ -141,8 +141,8 @@ export default function Home() {
               <SketchyFlower className="w-9 h-9" />
             </div>
 
-            {/* Left column */}
-            <div className="space-y-7 z-10">
+            {/* Hero content */}
+            <div className="space-y-7 z-10 max-w-3xl flex flex-col items-center">
               <div
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
@@ -175,15 +175,15 @@ export default function Home() {
               </h1>
 
               <p
-                className="text-base leading-relaxed font-medium"
-                style={{ color: "#8C7B74", maxWidth: "460px" }}
+                className="text-base leading-relaxed font-medium max-w-xl mx-auto"
+                style={{ color: "#8C7B74" }}
               >
                 Understand your cycle. Balance your hormones.
                 <br />
                 Live your <em style={{ color: "#F6A58E" }}>best you.</em>
               </p>
 
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <Link to={user ? "/dashboard" : "/signup"}>
                   <button
                     className="flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white font-bold text-sm transition-all hover:opacity-90 hover:-translate-y-0.5 group"
@@ -212,9 +212,6 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-
-            {/* Right column — empty to maintain grid layout, illustration removed as requested */}
-            <div className="relative flex justify-center lg:justify-end z-0"></div>
           </div>
         </section>
 

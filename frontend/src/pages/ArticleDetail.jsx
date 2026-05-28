@@ -14,7 +14,9 @@ export default function ArticleDetail() {
     api
       .get(`/articles/${slug}`)
       .then((res) => setArticle(res.data))
-      .catch((err) => console.error("Failed to fetch article", err))
+      .catch(() => {
+        // Silently handle error
+      })
       .finally(() => setIsLoading(false));
   }, [slug]);
 

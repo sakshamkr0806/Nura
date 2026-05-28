@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,6 +21,7 @@ export interface AIHealthProfileResponse {
 
 @Injectable()
 export class AIService {
+  private readonly logger = new Logger(AIService.name);
   private genAI: GoogleGenerativeAI;
 
   constructor(
@@ -62,7 +63,7 @@ export class AIService {
       const responseText = result.response.text();
       return JSON.parse(responseText || '{}') as Record<string, unknown>;
     } catch (error) {
-      console.error('Gemini Error:', error);
+      this.logger.error('Gemini Error:', error);
       return {
         summary:
           'We are unable to generate personalized insights right now, but keep up your consistent logging!',
@@ -119,7 +120,7 @@ export class AIService {
       const responseText = result.response.text();
       return JSON.parse(responseText || '{}') as AIHealthProfileResponse;
     } catch (error) {
-      console.error('Gemini Initial Profile Error:', error);
+      this.logger.error('Gemini Initial Profile Error:', error);
       return {
         wellnessScore: 70,
         cycleHealthScore: 70,
@@ -268,7 +269,7 @@ export class AIService {
         },
       });
     } catch (error) {
-      console.error('Gemini Re-analysis Error:', error);
+      this.logger.error('Gemini Re-analysis Error:', error);
       const existing = await this.prisma.healthProfile.findUnique({
         where: { userId },
       });

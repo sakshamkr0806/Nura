@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { CycleCalendar } from "@/features/cycle/components/CycleCalendar";
 import { LoggingModal } from "@/features/cycle/components/LoggingModal";
 import { TrendCharts } from "@/features/insights/components/TrendCharts";
 import { WellnessGauge } from "@/features/analytics/components/WellnessGauge";
+import { useCycleData } from "@/hooks/useCycleData";
 import {
   Droplets,
   Moon,
@@ -21,6 +22,36 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import api from "@/api/axios";
 import { toast } from "sonner";
+
+const DEFAULT_PROFILE = {
+  wellnessScore: 0,
+  cycleHealthScore: 0,
+  sleepScore: 0,
+  stressScore: 0,
+  stressIndicator: "Unknown",
+  sleepAnalysis:
+    "Start logging your daily data so we can analyze your sleep patterns.",
+  stressAnalysis:
+    "Log your moods and symptoms daily to get a personalized stress analysis.",
+  cycleInsights:
+    "Track your cycle and symptoms consistently to unlock AI-powered insights.",
+  hydrationRecs: [
+    "Aim for 2-3 liters of water daily",
+    "Start your morning with a glass of warm water",
+  ],
+  nutritionRecs: [
+    "Eat a balanced diet rich in whole foods",
+    "Include iron-rich foods during your period",
+  ],
+  actionPlan: [
+    "Log your symptoms daily in the calendar",
+    'Click "Refresh AI Insights" after a few days of logging',
+  ],
+  dailyRecs: [
+    "Drink a glass of water first thing in the morning",
+    "Take a 5-minute breathing break",
+  ],
+};
 
 const PHASE_DETAILS = {
   "Menstrual Phase": {
@@ -64,56 +95,22 @@ export default function Dashboard() {
   const { user } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isLoggingOpen, setIsLoggingOpen] = useState(false);
-  const [highlightedDates, setHighlightedDates] = useState({
-    period: [],
-    prediction: [],
-    logged: [],
-  });
   const [analytics, setAnalytics] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [checkedTasks, setCheckedTasks] = useState({});
+  const { highlightedDates, refetchCycleData } = useCycleData();
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       const res = await api.get("/analytics/summary");
       setAnalytics(res.data);
-    } catch (err) {
-      console.error("Failed to fetch analytics", err);
+    } catch {
+      // Analytics unavailable — metric cards will show defaults
     }
-  };
+  }, []);
 
-  const DEFAULT_PROFILE = {
-    wellnessScore: 0,
-    cycleHealthScore: 0,
-    sleepScore: 0,
-    stressScore: 0,
-    stressIndicator: "Unknown",
-    sleepAnalysis:
-      "Start logging your daily data so we can analyze your sleep patterns.",
-    stressAnalysis:
-      "Log your moods and symptoms daily to get a personalized stress analysis.",
-    cycleInsights:
-      "Track your cycle and symptoms consistently to unlock AI-powered insights.",
-    hydrationRecs: [
-      "Aim for 2-3 liters of water daily",
-      "Start your morning with a glass of warm water",
-    ],
-    nutritionRecs: [
-      "Eat a balanced diet rich in whole foods",
-      "Include iron-rich foods during your period",
-    ],
-    actionPlan: [
-      "Log your symptoms daily in the calendar",
-      'Click "Refresh AI Insights" after a few days of logging',
-    ],
-    dailyRecs: [
-      "Drink a glass of water first thing in the morning",
-      "Take a 5-minute breathing break",
-    ],
-  };
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const res = await api.get("/ai/profile");
       setProfile(
@@ -121,62 +118,18 @@ export default function Dashboard() {
           ? res.data
           : DEFAULT_PROFILE,
       );
-    } catch (err) {
-      console.error("Failed to fetch AI health profile", err);
+    } catch {
       setProfile(DEFAULT_PROFILE);
     }
-  };
-
-  const fetchCycleData = async () => {
-    try {
-      const currentYear = new Date().getFullYear();
-      const [cyclesRes, predictionsRes, logsRes] = await Promise.all([
-        api.get("/cycles"),
-        api.get("/cycles/predictions"),
-        api.get(
-          `/logs/range?start=${currentYear - 2}-01-01&end=${currentYear + 2}-12-31`,
-        ),
-      ]);
-      const periods = [];
-      cyclesRes.data.forEach((cycle) => {
-        const start = new Date(cycle.startDate);
-        const end = cycle.endDate ? new Date(cycle.endDate) : new Date();
-        let current = new Date(start);
-        while (current <= end) {
-          periods.push(new Date(current));
-          current.setDate(current.getDate() + 1);
-        }
-      });
-      const predictions = [];
-      if (predictionsRes.data?.predictedNextPeriod) {
-        const predStart = new Date(predictionsRes.data.predictedNextPeriod);
-        for (let i = 0; i < 5; i++) {
-          const d = new Date(predStart);
-          d.setDate(d.getDate() + i);
-          predictions.push(d);
-        }
-      }
-      const logged = [];
-      logsRes.data?.forEach((log) => {
-        const d = new Date(log.date);
-        logged.push(d);
-        if (log.symptoms?.includes("Period Day")) periods.push(d);
-        if (log.symptoms?.includes("Predicted Period")) predictions.push(d);
-      });
-      setHighlightedDates({ period: periods, prediction: predictions, logged });
-    } catch (err) {
-      console.error("Failed to fetch cycle data", err);
-    }
-  };
+  }, []);
 
   const handleRefreshAI = async () => {
     setIsAiLoading(true);
     try {
       await api.post("/ai/re-analyze");
       toast.success("AI Profile updated successfully! ✨");
-      await Promise.all([fetchProfile(), fetchAnalytics(), fetchCycleData()]);
-    } catch (err) {
-      console.error("Failed to refresh AI profile", err);
+      await Promise.all([fetchProfile(), fetchAnalytics(), refetchCycleData()]);
+    } catch {
       toast.error("Failed to refresh insights. Log more daily data first!");
     } finally {
       setIsAiLoading(false);
@@ -186,8 +139,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAnalytics();
     fetchProfile();
-    fetchCycleData();
-  }, []);
+  }, [fetchAnalytics, fetchProfile]);
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
@@ -669,7 +621,7 @@ export default function Dashboard() {
         isOpen={isLoggingOpen}
         onClose={() => setIsLoggingOpen(false)}
         onSave={() => {
-          fetchCycleData();
+          refetchCycleData();
           fetchAnalytics();
         }}
       />

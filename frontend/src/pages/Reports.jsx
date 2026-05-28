@@ -15,7 +15,9 @@ export default function Reports() {
     api
       .get("/reports/preview")
       .then((res) => setPreviewData(res.data))
-      .catch((err) => console.error("Failed to fetch preview", err));
+      .catch(() => {
+        // Silently handle error — preview will just render empty state
+      });
   }, []);
 
   const handleExport = async () => {
