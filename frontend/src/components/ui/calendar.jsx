@@ -186,6 +186,19 @@ function CalendarDayButton({ className, day, modifiers, locale, ...props }) {
     if (modifiers.focused) ref.current?.focus();
   }, [modifiers.focused]);
 
+  const hasSolidBg =
+    modifiers.period ||
+    modifiers.logged ||
+    (modifiers.selected &&
+      !modifiers.range_start &&
+      !modifiers.range_end &&
+      !modifiers.range_middle);
+
+  const showMenstrual = !hasSolidBg && modifiers.menstrual;
+  const showFollicular = !hasSolidBg && modifiers.follicular;
+  const showOvulatory = !hasSolidBg && modifiers.ovulatory;
+  const showLuteal = !hasSolidBg && modifiers.luteal;
+
   return (
     <Button
       variant="ghost"
@@ -203,11 +216,19 @@ function CalendarDayButton({ className, day, modifiers, locale, ...props }) {
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
+      data-menstrual={showMenstrual ? "true" : undefined}
+      data-follicular={showFollicular ? "true" : undefined}
+      data-ovulatory={showOvulatory ? "true" : undefined}
+      data-luteal={showLuteal ? "true" : undefined}
       className={cn(
         "relative isolate z-10 flex aspect-square size-auto w-full min-w-[var(--cell-size)] flex-col gap-1 border-0 font-normal leading-none data-[range-end=true]:rounded-[var(--cell-radius)] data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-[var(--cell-radius)] data-[range-end=true]:rounded-r-[var(--cell-radius)] data-[range-start=true]:rounded-l-[var(--cell-radius)] data-[range-end=true]:bg-primary data-[range-middle=true]:bg-muted data-[range-start=true]:bg-primary data-[selected-single=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:text-foreground data-[range-start=true]:text-primary-foreground data-[selected-single=true]:text-primary-foreground group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
         "data-[period=true]:bg-[#F8B6B6] data-[period=true]:text-white hover:data-[period=true]:bg-[#F8B6B6]/90 hover:data-[period=true]:text-white",
         "data-[prediction=true]:border-2 data-[prediction=true]:border-dashed data-[prediction=true]:border-[#F8B6B6]",
         "data-[logged=true]:bg-[#CDB4F6] data-[logged=true]:text-white data-[logged=true]:rounded-full hover:data-[logged=true]:bg-[#CDB4F6]/90 hover:data-[logged=true]:text-white",
+        "data-[menstrual=true]:bg-[rgba(248,182,182,0.22)] data-[menstrual=true]:text-[#2D1F1A] hover:data-[menstrual=true]:bg-[rgba(248,182,182,0.32)]",
+        "data-[follicular=true]:bg-[rgba(234,220,248,0.28)] data-[follicular=true]:text-[#2D1F1A] hover:data-[follicular=true]:bg-[rgba(234,220,248,0.38)]",
+        "data-[ovulatory=true]:bg-[rgba(254,237,202,0.38)] data-[ovulatory=true]:text-[#2D1F1A] hover:data-[ovulatory=true]:bg-[rgba(254,237,202,0.48)]",
+        "data-[luteal=true]:bg-[rgba(226,210,245,0.22)] data-[luteal=true]:text-[#2D1F1A] hover:data-[luteal=true]:bg-[rgba(226,210,245,0.32)]",
         defaultClassNames.day,
         className,
       )}

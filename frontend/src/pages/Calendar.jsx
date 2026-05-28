@@ -7,6 +7,8 @@ import api from "@/api/axios";
 export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isLoggingOpen, setIsLoggingOpen] = useState(false);
+  const [cycles, setCycles] = useState([]);
+  const [predictionData, setPredictionData] = useState(null);
   const [highlightedDates, setHighlightedDates] = useState({
     period: [],
     prediction: [],
@@ -23,6 +25,9 @@ export default function CalendarPage() {
           `/logs/range?start=${currentYear - 2}-01-01T00:00:00.000Z&end=${currentYear + 2}-12-31T23:59:59.000Z`,
         ),
       ]);
+      setCycles(cyclesRes.data || []);
+      setPredictionData(predictionsRes.data || null);
+
       const periods = [];
       cyclesRes.data.forEach((cycle) => {
         const start = new Date(cycle.startDate);
@@ -92,6 +97,8 @@ export default function CalendarPage() {
             selectedDate={selectedDate}
             onDateSelect={handleDateSelect}
             highlightedDates={highlightedDates}
+            cycles={cycles}
+            predictions={predictionData}
           />
         </div>
 
@@ -111,56 +118,132 @@ export default function CalendarPage() {
             >
               Legend
             </h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ background: "#F8B6B6" }}
-                />
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#2D1F1A" }}
-                >
-                  Period Days
-                </span>
+
+            <div className="space-y-4">
+              {/* Day Statuses */}
+              <div className="space-y-2.5">
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C7B74] mb-1">
+                  Day Status
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ background: "#F8B6B6" }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    Period Days
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full border-2 border-dashed"
+                    style={{ borderColor: "#F8B6B6" }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    Predicted Period
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                    }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    Selected Day
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ background: "#CDB4F6" }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    Logged Day
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-4 h-4 rounded-full border-2 border-dashed"
-                  style={{ borderColor: "#F8B6B6" }}
-                />
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#2D1F1A" }}
-                >
-                  Predicted Period
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{
-                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
-                  }}
-                />
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#2D1F1A" }}
-                >
-                  Selected Day
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ background: "#CDB4F6" }}
-                />
-                <span
-                  className="text-sm font-medium"
-                  style={{ color: "#2D1F1A" }}
-                >
-                  Logged Day
-                </span>
+
+              <hr className="border-peach/10" />
+
+              {/* Cycle Phases */}
+              <div className="space-y-2.5">
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C7B74] mb-1">
+                  Cycle Phases
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      background: "rgba(248, 182, 182, 0.4)",
+                      border: "1px solid rgba(248, 182, 182, 0.8)",
+                    }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    🔴 Menstrual (rose)
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      background: "rgba(234, 220, 248, 0.5)",
+                      border: "1px solid rgba(234, 220, 248, 0.9)",
+                    }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    🟣 Follicular (lavender)
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      background: "rgba(254, 237, 202, 0.7)",
+                      border: "1px solid rgba(254, 237, 202, 0.9)",
+                    }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    🟠 Ovulatory (peach)
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      background: "rgba(226, 210, 245, 0.45)",
+                      border: "1px solid rgba(226, 210, 245, 0.85)",
+                    }}
+                  />
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: "#2D1F1A" }}
+                  >
+                    🟤 Luteal (mauve)
+                  </span>
+                </div>
               </div>
             </div>
           </div>
