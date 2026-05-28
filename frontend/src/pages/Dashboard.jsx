@@ -5,6 +5,14 @@ import { TrendCharts } from "@/features/insights/components/TrendCharts";
 import { WellnessGauge } from "@/features/analytics/components/WellnessGauge";
 import { useCycleData } from "@/hooks/useCycleData";
 import {
+  SketchyHeart,
+  SketchyFlower,
+  SketchyLeaf,
+  SketchyCloud,
+  SketchySwirl,
+  SketchySparkles,
+} from "@/components/shared/Illustrations";
+import {
   Droplets,
   Moon,
   Utensils,
@@ -99,7 +107,8 @@ export default function Dashboard() {
   const [profile, setProfile] = useState(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [checkedTasks, setCheckedTasks] = useState({});
-  const { highlightedDates, refetchCycleData } = useCycleData();
+  const { highlightedDates, cycles, predictions, refetchCycleData, dailyLogs } =
+    useCycleData();
 
   const fetchAnalytics = useCallback(async () => {
     try {
@@ -597,22 +606,69 @@ export default function Dashboard() {
             selectedDate={selectedDate}
             onDateSelect={handleDateSelect}
             highlightedDates={highlightedDates}
+            cycles={cycles}
+            predictions={predictions}
+            dailyLogs={dailyLogs}
           />
         </div>
-        <div
-          className="rounded-3xl p-6 border bg-white"
-          style={{
-            borderColor: "rgba(246,165,142,0.12)",
-            boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
-          }}
-        >
-          <h2
-            className="font-serif font-bold text-xl mb-4"
-            style={{ color: "#2D1F1A" }}
+
+        <div className="relative">
+          {/* Decorative Doodles around Health Trends Card */}
+          <div className="absolute -top-6 -left-6 opacity-30 pointer-events-none text-[#F8B6B6] floating">
+            <SketchyFlower className="w-12 h-12" />
+          </div>
+          <div
+            className="absolute -bottom-6 -right-6 opacity-30 pointer-events-none text-[#F8B6B6] floating"
+            style={{ animationDelay: "1.5s" }}
           >
-            Health Trends
-          </h2>
-          <TrendCharts />
+            <SketchyFlower className="w-10 h-10 rotate-45" />
+          </div>
+          <div
+            className="absolute top-1/2 -left-8 opacity-25 pointer-events-none text-[#EADCF8] floating"
+            style={{ animationDelay: "3s" }}
+          >
+            <SketchySwirl className="w-16 h-8" />
+          </div>
+          <div
+            className="absolute -top-8 right-12 opacity-25 pointer-events-none text-[#FAF2EA] floating"
+            style={{ animationDelay: "2s" }}
+          >
+            <SketchyCloud className="w-14 h-9" />
+          </div>
+          <div
+            className="absolute bottom-1/3 -right-6 opacity-35 pointer-events-none text-[#CDB4F6] floating"
+            style={{ animationDelay: "4s" }}
+          >
+            <SketchySparkles className="w-8 h-8" />
+          </div>
+          <div
+            className="absolute -bottom-8 left-12 opacity-30 pointer-events-none text-[#EADCF8] floating"
+            style={{ animationDelay: "2.5s" }}
+          >
+            <SketchyLeaf className="w-8 h-8 -rotate-45" />
+          </div>
+          <div
+            className="absolute top-4 -right-6 opacity-25 pointer-events-none text-[#F8B6B6] floating"
+            style={{ animationDelay: "1s" }}
+          >
+            <SketchyHeart className="w-6 h-6 rotate-12" />
+          </div>
+
+          <div
+            className="rounded-3xl p-6 border bg-white h-full"
+            style={{
+              borderColor: "rgba(246,165,142,0.12)",
+              boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+            }}
+          >
+            <h2
+              className="font-serif font-bold text-xl mb-4"
+              style={{ color: "#2D1F1A" }}
+            >
+              Health Trends
+            </h2>
+            <TrendCharts />
+          </div>
         </div>
       </div>
 
