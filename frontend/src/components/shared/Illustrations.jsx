@@ -1227,3 +1227,216 @@ export function DailyChecklistDoodle({ className = "w-full h-full" }) {
     </svg>
   );
 }
+
+export function CycleDayIllust({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="24" cy="24" r="18" fill="#FFF0ED" opacity="0.8" />
+      <path
+        d="M15 11V7M33 11V7"
+        stroke="#6E4E42"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <rect
+        x="10"
+        y="10"
+        width="28"
+        height="28"
+        rx="6"
+        fill="#FFFFFF"
+        stroke="#6E4E42"
+        strokeWidth="2"
+      />
+      <path d="M10 18H38" stroke="#6E4E42" strokeWidth="2" />
+      <path
+        d="M16 10H32C35 10 37 12 37 15V18H11V15C11 12 13 10 16 10Z"
+        fill="#FBC7B3"
+        opacity="0.9"
+      />
+      <path
+        d="M24 28 C24 28 22 25 20 25 C18.5 25 17.5 26.2 17.5 27.5 C17.5 30 21 32.5 24 34.5 C27 32.5 30.5 30 30.5 27.5 C30.5 26.2 29.5 25 28 25 C26 25 24 28 24 28Z"
+        fill="#F8B6B6"
+        stroke="#6E4E42"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="16" cy="22" r="1" fill="#6E4E42" />
+      <circle cx="24" cy="22" r="1" fill="#6E4E42" />
+      <circle cx="32" cy="22" r="1" fill="#6E4E42" />
+    </svg>
+  );
+}
+
+export function NextPeriodIllust({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="24" cy="24" r="18" fill="#F7F3FF" opacity="0.8" />
+      <path
+        d="M24 16.5 C24 16.5 21.5 11 17 11 C12 11 9 15 9 20 C 9 27 19.5 33.5 24 37 C28.5 33.5 39 27 39 20 C39 15 36 11 31 11 C26.5 11 24 16.5 24 16.5Z"
+        fill="#D2C0EC"
+        stroke="#4E3E5C"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 18 C14 15.5 16 13.5 18 13.5"
+        stroke="#FFF"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M37 12Q37 15 40 15Q37 15 37 18Q37 15 34 15Q37 15 37 12Z"
+        fill="#F8B6B6"
+        stroke="#4E3E5C"
+        strokeWidth="1"
+      />
+      <path
+        d="M8 30Q8 32 10 32Q8 32 8 34Q8 32 6 32Q8 32 8 30Z"
+        fill="#FFF"
+        stroke="#4E3E5C"
+        strokeWidth="1"
+      />
+      <circle
+        cx="34"
+        cy="28"
+        r="1.5"
+        fill="#FAF0D9"
+        stroke="#4E3E5C"
+        strokeWidth="0.8"
+      />
+    </svg>
+  );
+}
+
+export function LogStreakIllust({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="24" cy="24" r="18" fill="#FFF5F2" opacity="0.8" />
+      <path
+        d="M24 9C24 9 32 17 32 25C32 31 28.5 37 24 37C19.5 37 16 31 16 25C16 17 24 9 24 9Z"
+        fill="#FFE0A0"
+        stroke="#634B28"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M24 17C24 17 28 22 28 27C28 31 26 34 24 34C22 34 20 31 20 27C20 22 24 17 24 17Z"
+        fill="#FFF0D0"
+        stroke="#634B28"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M37 20Q37 22 39 22Q37 22 37 24Q37 22 35 22Q37 22 37 20Z"
+        fill="#F8B6B6"
+        stroke="#634B28"
+        strokeWidth="1"
+      />
+      <path
+        d="M10 16Q10 18 12 18Q10 18 10 20Q10 18 8 18Q10 18 10 16Z"
+        fill="#FBC7B3"
+        stroke="#634B28"
+        strokeWidth="1"
+      />
+    </svg>
+  );
+}
+
+export function AvgSleepIllust({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="24" cy="24" r="18" fill="#F3ECF9" opacity="0.8" />
+      <path
+        d="M27 11C20.5 11 15 16.5 15 23C15 29.5 20.5 35 27 35C29.5 35 32 34 33.5 32.5C27 32.5 22 27.5 22 23C22 18.5 27 13.5 33.5 13.5C32 12 29.5 11 27 11Z"
+        fill="#C6DBFC"
+        stroke="#3E4A5C"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19 23Q20.5 24 22 23"
+        stroke="#3E4A5C"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M10 33 C9 33 8.2 32.2 8.2 31.2 C8.2 30.5 8.7 30 9.4 29.8 C9.2 29.2 9.6 28.5 10.3 28.5 C10.8 28.5 11.2 28.8 11.4 29.2 C11.8 28.6 12.6 28.6 13.1 29.1 C13.5 29.5 13.6 30 13.4 30.5 C13.8 30.5 14.2 30.9 14.2 31.4 C14.2 32.3 13.4 33 12.5 33 Z"
+        fill="#FFF"
+        stroke="#3E4A5C"
+        strokeWidth="1.2"
+      />
+      <circle cx="16" cy="15" r="1" fill="#FAF0D9" />
+      <circle cx="34" cy="18" r="0.8" fill="#FFF" />
+      <circle cx="24" cy="30" r="1" fill="#FFF" />
+    </svg>
+  );
+}
+
+export function WaterIntakeIllust({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="24" cy="24" r="18" fill="#F0FFF4" opacity="0.8" />
+      <path
+        d="M24 10C24 10 33 19 33 26C33 31 29 35 24 35C19 35 15 31 15 26C15 19 24 10 24 10Z"
+        fill="#BCE6E0"
+        stroke="#2E4D48"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19 24 C19 21.5 21 19.5 22.5 18.5"
+        stroke="#FFF"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <g transform="translate(29, 23) rotate(35)">
+        <path
+          d="M0 0 Q6 -8 12 -4 Q6 4 0 0 Z"
+          fill="#D4EDE6"
+          stroke="#2E4D48"
+          strokeWidth="1.2"
+        />
+        <line
+          x1="0"
+          y1="0"
+          x2="10"
+          y2="-3"
+          stroke="#2E4D48"
+          strokeWidth="0.8"
+        />
+      </g>
+    </svg>
+  );
+}

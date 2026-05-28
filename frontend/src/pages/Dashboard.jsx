@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -21,6 +22,11 @@ import {
   SketchySwirl,
   SketchySparkles,
   DailyChecklistDoodle,
+  CycleDayIllust,
+  NextPeriodIllust,
+  LogStreakIllust,
+  AvgSleepIllust,
+  WaterIntakeIllust,
 } from "@/components/shared/Illustrations";
 import {
   Droplets,
@@ -156,6 +162,8 @@ const PHASE_TASKS = {
 
 export default function Dashboard() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const [activePopover, setActivePopover] = useState(null); // 'period' | 'streak' | null
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isLoggingOpen, setIsLoggingOpen] = useState(false);
   const [analytics, setAnalytics] = useState(null);
@@ -253,8 +261,13 @@ export default function Dashboard() {
         : "Day 0",
       sub: analytics?.metrics?.cyclePhase || "No Active Cycle",
       Icon: Droplets,
+      IllustComponent: CycleDayIllust,
+      doodleType: "flower",
+      onClick: () => navigate("/calendar"),
       color: "#F8B6B6",
+      doodleColor: "#F8B6B6",
       bg: "#FFF0ED",
+      id: "period",
     },
     {
       label: "Next Period",
@@ -263,16 +276,28 @@ export default function Dashboard() {
         : "0 Days",
       sub: analytics?.metrics?.predictedDate || "No prediction",
       Icon: Heart,
+      IllustComponent: NextPeriodIllust,
+      doodleType: "heart",
+      onClick: () =>
+        setActivePopover(activePopover === "period" ? null : "period"),
       color: "#CDB4F6",
+      doodleColor: "#CDB4F6",
       bg: "#F7F3FF",
+      id: "next-period",
     },
     {
       label: "Log Streak",
       value: `${user?.currentStreak || 0} Days`,
       sub: `Best: ${user?.longestStreak || 0} days`,
       Icon: Zap,
+      IllustComponent: LogStreakIllust,
+      doodleType: "sparkles",
+      onClick: () =>
+        setActivePopover(activePopover === "streak" ? null : "streak"),
       color: "#F6A58E",
+      doodleColor: "#F6A58E",
       bg: "#FFF5F2",
+      id: "streak",
     },
     {
       label: "Avg Sleep",
@@ -281,8 +306,17 @@ export default function Dashboard() {
         : "0h",
       sub: "Weekly average",
       Icon: Moon,
+      IllustComponent: AvgSleepIllust,
+      doodleType: "cloud",
+      onClick: () => {
+        document
+          .getElementById("chart-sleep")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      },
       color: "#EADCF8",
+      doodleColor: "#CDB4F6",
       bg: "#F3ECF9",
+      id: "sleep",
     },
     {
       label: "Water Intake",
@@ -291,8 +325,17 @@ export default function Dashboard() {
         : "0L",
       sub: "Daily average",
       Icon: Utensils,
+      IllustComponent: WaterIntakeIllust,
+      doodleType: "leaf",
+      onClick: () => {
+        document
+          .getElementById("chart-water")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      },
       color: "#DDEAD7",
+      doodleColor: "#BDD7B3",
       bg: "#F0FFF4",
+      id: "water",
     },
   ];
 
@@ -460,42 +503,216 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Invisible overlay backdrop for click-away popovers */}
+      {activePopover && (
+        <div
+          className="fixed inset-0 z-40 bg-transparent cursor-default"
+          onClick={() => setActivePopover(null)}
+        />
+      )}
+
       {/* ── METRIC CARDS ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {metricCards.map((card) => (
-          <div
-            key={card.label}
-            className="metric-card rounded-3xl p-5 border border-transparent shadow-sm flex flex-col justify-between"
-            style={{ background: card.bg }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span
-                className="text-[10px] font-bold uppercase tracking-wider"
-                style={{ color: "#8C7B74" }}
-              >
-                {card.label}
-              </span>
-              <div
-                className="p-1.5 rounded-xl"
-                style={{ background: `${card.color}30` }}
-              >
-                <card.Icon size={14} style={{ color: card.color }} />
+        {metricCards.map((card) => {
+          // Calculate last 7 days of logging for streak popover dynamically
+          const last7DaysInfo = Array.from({ length: 7 })
+            .map((_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() - i);
+              const dateKey = format(d, "yyyy-MM-dd");
+              const hasLog = (dailyLogs || []).some((log) => {
+                return format(new Date(log.date), "yyyy-MM-dd") === dateKey;
+              });
+              return {
+                dayName: format(d, "EEE"), // e.g. Mon, Tue
+                dayNum: format(d, "d"), // e.g. 28
+                hasLog,
+              };
+            })
+            .reverse();
+
+          return (
+            <div
+              key={card.label}
+              onClick={card.onClick}
+              role="button"
+              tabIndex={0}
+              className="metric-card rounded-3xl p-5 border border-transparent shadow-sm flex flex-col justify-between cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-md active:scale-[0.98] relative overflow-visible text-left select-none outline-none"
+              style={{ background: card.bg }}
+            >
+              {/* Illustrated Icon floating in top-right */}
+              <div className="absolute top-3 right-3 pointer-events-none select-none">
+                <card.IllustComponent className="w-12 h-12" />
               </div>
+
+              {/* Hand-Drawn Doodle in background corner */}
+              <div className="absolute bottom-2 right-2 opacity-35 pointer-events-none select-none">
+                {card.doodleType === "flower" && (
+                  <SketchyFlower
+                    className="w-8 h-8"
+                    style={{ color: card.doodleColor }}
+                  />
+                )}
+                {card.doodleType === "heart" && (
+                  <SketchyHeart
+                    className="w-7 h-7"
+                    style={{ color: card.doodleColor }}
+                  />
+                )}
+                {card.doodleType === "sparkles" && (
+                  <SketchySparkles
+                    className="w-7 h-7"
+                    style={{ color: card.doodleColor }}
+                  />
+                )}
+                {card.doodleType === "cloud" && (
+                  <SketchyCloud
+                    className="w-8 h-6"
+                    style={{ color: card.doodleColor }}
+                  />
+                )}
+                {card.doodleType === "leaf" && (
+                  <SketchyLeaf
+                    className="w-7 h-7"
+                    style={{ color: card.doodleColor }}
+                  />
+                )}
+              </div>
+
+              <div className="mb-3 pr-8">
+                <span
+                  className="text-[10px] font-bold uppercase tracking-wider"
+                  style={{ color: "#8C7B74" }}
+                >
+                  {card.label}
+                </span>
+              </div>
+
+              <div>
+                <p
+                  className="text-2xl font-serif font-bold leading-none mb-1"
+                  style={{ color: "#2D1F1A" }}
+                >
+                  {card.value}
+                </p>
+                <p
+                  className="text-[11px] font-medium"
+                  style={{ color: "#8C7B74" }}
+                >
+                  {card.sub}
+                </p>
+              </div>
+
+              {/* Popover for Predicted Next Period */}
+              {card.id === "next-period" && activePopover === "period" && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute top-[105%] left-1/2 -translate-x-1/2 z-50 w-72 md:w-80 p-5 rounded-2xl bg-white border border-[#CDB4F6]/20 shadow-xl animate-fade-in text-left text-[#2D1F1A]"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <NextPeriodIllust className="w-8 h-8" />
+                    <h4 className="font-serif font-bold text-sm text-[#4E3E5C]">
+                      Next Period Prediction
+                    </h4>
+                  </div>
+                  <div className="space-y-3 text-xs">
+                    <div className="p-3 rounded-xl bg-[#F7F3FF] border border-[#CDB4F6]/10">
+                      <p className="text-[#8C7B74] font-medium mb-1 uppercase tracking-wider text-[9px]">
+                        Predicted Start Date
+                      </p>
+                      <p className="font-extrabold text-sm text-[#4E3E5C]">
+                        {predictions?.predictedNextPeriod
+                          ? format(
+                              new Date(predictions.predictedNextPeriod),
+                              "MMMM d, yyyy",
+                            )
+                          : "No prediction data"}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[#F7F3FF] border border-[#CDB4F6]/10">
+                      <p className="text-[#8C7B74] font-medium mb-1 uppercase tracking-wider text-[9px]">
+                        Average Cycle Length
+                      </p>
+                      <p className="font-extrabold text-sm text-[#4E3E5C]">
+                        {predictions?.averageCycleLength
+                          ? `${Math.round(predictions.averageCycleLength)} Days`
+                          : "28 Days"}
+                      </p>
+                    </div>
+                    <p className="text-[10px] text-[#8C7B74] leading-relaxed">
+                      🌸 Predictions are calculated dynamically based on your
+                      logged cycles. Consistent daily logs help improve
+                      prediction accuracy!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Popover for Log Streak Details */}
+              {card.id === "streak" && activePopover === "streak" && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute top-[105%] left-1/2 -translate-x-1/2 z-50 w-80 p-5 rounded-2xl bg-white border border-[#F6A58E]/20 shadow-xl animate-fade-in text-left text-[#2D1F1A]"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <LogStreakIllust className="w-8 h-8" />
+                    <h4 className="font-serif font-bold text-sm text-[#C86A4E]">
+                      Your Logging Streak
+                    </h4>
+                  </div>
+                  <p className="text-[10px] text-[#8C7B74] mb-4">
+                    Log your symptoms daily to keep your streak glowing! Here is
+                    your activity over the last 7 days:
+                  </p>
+
+                  {/* 7 Circles Track */}
+                  <div className="flex justify-between items-center gap-1 mb-4">
+                    {last7DaysInfo.map((day, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center gap-1.5 flex-1"
+                      >
+                        <span className="text-[9px] font-bold text-[#8C7B74] uppercase">
+                          {day.dayName.substring(0, 2)}
+                        </span>
+                        <div
+                          className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300",
+                            day.hasLog
+                              ? "bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] text-white shadow-sm"
+                              : "border border-[#F6A58E]/20 bg-[#FFFBF9] text-[#8C7B74]",
+                          )}
+                        >
+                          {day.hasLog ? "✓" : day.dayNum}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Streak Info */}
+                  <div className="grid grid-cols-2 gap-3 text-xs border-t border-[#F6A58E]/10 pt-3">
+                    <div>
+                      <span className="text-[#8C7B74] block text-[9px] uppercase font-bold">
+                        Current Streak
+                      </span>
+                      <span className="text-sm font-extrabold text-[#C86A4E]">
+                        🔥 {user?.currentStreak || 0} Days
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[#8C7B74] block text-[9px] uppercase font-bold">
+                        Longest Streak
+                      </span>
+                      <span className="text-sm font-extrabold text-[#C86A4E]">
+                        🏆 {user?.longestStreak || 0} Days
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-            <p
-              className="text-2xl font-serif font-bold"
-              style={{ color: "#2D1F1A" }}
-            >
-              {card.value}
-            </p>
-            <p
-              className="text-[11px] mt-1 font-medium"
-              style={{ color: "#8C7B74" }}
-            >
-              {card.sub}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ── HEALTH PROFILE SCORES ── */}

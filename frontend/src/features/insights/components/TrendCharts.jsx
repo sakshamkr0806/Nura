@@ -134,6 +134,7 @@ export function TrendCharts() {
       <div className="grid gap-4 md:grid-cols-2">
         {/* Water Intake Graph */}
         <Card
+          id="chart-water"
           className="border transition-all duration-300"
           style={{
             background: "#FFF9F6",
@@ -212,6 +213,7 @@ export function TrendCharts() {
 
         {/* Sleep Patterns Graph */}
         <Card
+          id="chart-sleep"
           className="border transition-all duration-300"
           style={{
             background: "#FFF9F6",
