@@ -900,3 +900,330 @@ export function SketchySparkles({ className = "w-6 h-6" }) {
     </svg>
   );
 }
+
+export function DailyChecklistDoodle({ className = "w-full h-full" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 120 400"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <radialGradient id="pinkBlob" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FCDAD9" />
+          <stop offset="100%" stopColor="#FCDAD9" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="orangeBlob" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FDE3D5" />
+          <stop offset="100%" stopColor="#FDE3D5" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="purpleBlob" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#EDE2F5" />
+          <stop offset="100%" stopColor="#EDE2F5" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* Watercolor Blobs */}
+      <circle cx="10" cy="180" r="50" fill="url(#pinkBlob)" opacity="0.8" />
+      <circle cx="50" cy="220" r="45" fill="url(#orangeBlob)" opacity="0.7" />
+      <circle cx="60" cy="50" r="35" fill="url(#purpleBlob)" opacity="0.8" />
+      <circle cx="30" cy="300" r="40" fill="url(#pinkBlob)" opacity="0.6" />
+
+      {/* Hair filled areas for a soft hand-painted look */}
+      <path
+        d="M -10,-10 
+           C 15,30 25,60 15,90 
+           C 5,120 30,140 25,170 
+           C 20,200 35,220 30,250 
+           C 25,280 35,300 25,330 
+           C 15,360 10,380 -10,410 Z"
+        fill="#8C6239"
+        opacity="0.08"
+      />
+
+      {/* Hair outlines */}
+      <path
+        d="M -10,10 C 15,40 25,60 15,100 C 5,140 35,170 20,210 C 10,240 38,280 25,320 C 15,350 5,380 -10,400"
+        stroke="#6E4C33"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M -20,30 C 5,60 15,80 5,120 C -5,160 25,190 10,230 C 0,260 28,300 15,340 C 5,370 -5,390 -20,410"
+        stroke="#593C26"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity="0.7"
+      />
+      <path
+        d="M -15,50 C 0,80 10,95 0,135 C -10,175 15,205 0,245 C -10,275 18,315 5,355"
+        stroke="#8C6239"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+
+      {/* Stems and Leaves */}
+      <path
+        d="M 15,100 C 35,110 45,130 50,150 C 55,170 35,190 35,200"
+        stroke="#7A8F75"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 35,200 C 45,210 65,215 68,215"
+        stroke="#7A8F75"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 35,200 C 25,230 20,260 25,285"
+        stroke="#7A8F75"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 35,200 Q 55,180 62,145"
+        stroke="#7A8F75"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+
+      {/* Leaf 1 */}
+      <g transform="translate(45, 120) rotate(-30)">
+        <path
+          d="M 0,0 C 4,-6 8,-4 10,-2 C 6,2 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      {/* Leaf 2 */}
+      <g transform="translate(52, 172) rotate(45)">
+        <path
+          d="M 0,0 C 6,-6 10,-2 12,2 C 6,4 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      {/* Leaf 3 */}
+      <g transform="translate(30, 240) rotate(-110)">
+        <path
+          d="M 0,0 C 5,-7 9,-5 11,-1 C 7,3 3,5 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      {/* Leaf 4 */}
+      <g transform="translate(20, 260) rotate(15)">
+        <path
+          d="M 0,0 C 4,-6 8,-4 10,-2 C 6,2 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      {/* Leaf 5 */}
+      <g transform="translate(50, 210) rotate(60)">
+        <path
+          d="M 0,0 C 4,-6 8,-4 10,-2 C 6,2 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flowers */}
+      {/* Flower 1 */}
+      <g transform="translate(55, 105)">
+        <path
+          d="M 0,0 C -5,-12 5,-12 0,0 
+             C 12,-5 12,5 0,0 
+             C 5,12 -5,12 0,0 
+             C -12,5 -12,-5 0,0 
+             C -8,-8 -8,8 0,0"
+          fill="#F8B6B6"
+          stroke="#7A4D4D"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="2.5"
+          fill="#F6D55C"
+          stroke="#7A4D4D"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 2 */}
+      <g transform="translate(35, 200) rotate(15)">
+        <path
+          d="M 0,0 C -6,-15 6,-15 0,0
+             C 15,-6 15,6 0,0
+             C 6,15 -6,15 0,0
+             C -15,6 -15,-6 0,0"
+          fill="#FFF4F0"
+          stroke="#6E504A"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="3"
+          fill="#E8A382"
+          stroke="#6E504A"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 3 */}
+      <g transform="translate(25, 285) rotate(-20)">
+        <path
+          d="M 0,0 C -5,-12 5,-12 0,0
+             C 12,-5 12,5 0,0
+             C 5,12 -5,12 0,0
+             C -12,5 -12,-5 0,0"
+          fill="#FBC7B3"
+          stroke="#8C5C50"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="2.5"
+          fill="#FAF0D9"
+          stroke="#8C5C50"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 4 (tiny purple) */}
+      <g transform="translate(68, 215) rotate(35)">
+        <path
+          d="M 0,0 C -3,-8 3,-8 0,0
+             C 8,-3 8,3 0,0
+             C 3,8 -3,8 0,0
+             C -8,3 -8,-3 0,0"
+          fill="#E0D2EC"
+          stroke="#6A5A7A"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="1.2"
+          fill="#FAF0D9"
+          stroke="#6A5A7A"
+          strokeWidth="0.6"
+        />
+      </g>
+
+      {/* Flower 5 (tiny orange) */}
+      <g transform="translate(65, 150) rotate(10)">
+        <path
+          d="M 0,0 C -3,-8 3,-8 0,0
+             C 8,-3 8,3 0,0
+             C 3,8 -3,8 0,0
+             C -8,3 -8,-3 0,0"
+          fill="#FCD5C3"
+          stroke="#8A6553"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="1.2"
+          fill="#FAF0D9"
+          stroke="#8A6553"
+          strokeWidth="0.6"
+        />
+      </g>
+
+      {/* Heart */}
+      <g transform="translate(70, 20)">
+        <path
+          d="M 8,4 C 8,4 6.5,0 4,0 C 1.5,0 0,2 0,5 C 0,9 5,12 8,15 C 11,12 16,9 16,5 C 16,2 14.5,0 12,0 C 9.5,0 8,4 8,4"
+          fill="#E8DDF4"
+          stroke="#8A6EAA"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M 8,5 C 8,5 7,2 4.5,2 C 2.5,2 1.5,3.5 1.5,5.5 C 1.5,8.5 5.5,11.5 8,13.5"
+          fill="none"
+          stroke="#8A6EAA"
+          strokeWidth="0.6"
+          opacity="0.5"
+          strokeDasharray="1 1"
+        />
+      </g>
+
+      {/* Cloud */}
+      <g transform="translate(72, 60)">
+        <path
+          d="M 3,8 C 1.5,8 0,6.5 0,5 C 0,3 2,1.5 4,1.5 C 5,0.5 7,0 8.5,0.8 C 10.5,0 12.5,1.2 12.5,3 C 14,3.5 15,4.5 15,5.8 C 15,7.2 13.5,8 12,8 Z"
+          fill="#FAF8F6"
+          stroke="#9A908A"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M 7,8 L 7,12"
+          stroke="#9A908A"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+      </g>
+
+      {/* Dashed trail */}
+      <path
+        d="M 25,320 Q 50,330 55,345 T 40,375 T 65,390"
+        stroke="#B8A490"
+        strokeWidth="1"
+        strokeDasharray="2 2"
+        strokeLinecap="round"
+      />
+
+      {/* Butterfly */}
+      <g transform="translate(65, 388) rotate(-15) scale(0.7)">
+        <line
+          x1="0"
+          y1="-3"
+          x2="0"
+          y2="5"
+          stroke="#8A7868"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 0,-1 C 3,-5 7,-3 5,1 C 3,2 1,1 0,1 C -1,1 -3,2 -5,1 C -7,-3 -3,-5 0,-1"
+          fill="#FCEBE3"
+          stroke="#8A7868"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 0,2 C 2,3 4,6 2,7 C 1,8 0,4 0,2 C 0,2 -1,4 -2,7 C -4,6 -2,3 0,2"
+          fill="#FCEBE3"
+          stroke="#8A7868"
+          strokeWidth="0.6"
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  );
+}

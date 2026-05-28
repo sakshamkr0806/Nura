@@ -20,6 +20,7 @@ import {
   SketchyCloud,
   SketchySwirl,
   SketchySparkles,
+  DailyChecklistDoodle,
 } from "@/components/shared/Illustrations";
 import {
   Droplets,
@@ -538,114 +539,172 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           {/* Daily Checklist */}
           {profile && (
-            <div
-              className="rounded-[32px] p-6 border transition-all duration-300 relative overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, #FFF9F6 0%, #FFFDFD 100%)",
-                borderColor: "rgba(246,165,142,0.15)",
-                boxShadow: "0 2px 20px rgba(200,150,130,0.06)",
-              }}
-            >
-              {/* Header Title with CheckSquare and Streak Badge */}
-              <div className="flex justify-between items-start gap-4 mb-4">
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C86A4E] bg-[#FFF0ED] px-2.5 py-0.5 rounded-full border border-[#FFF0ED]">
-                    {cyclePhase === "No Active Cycle"
-                      ? "Daily Checklist"
-                      : `${cyclePhase} Tasks`}
-                  </span>
-                  <h3 className="font-serif font-bold text-lg text-[#2D1F1A] flex items-center gap-2 mt-1">
-                    <CheckSquare className="text-[#F6A58E]" size={20} />
-                    My Daily Wellness Checklist
-                  </h3>
-                </div>
-
-                {/* Streak Counter Badge */}
-                <span className="flex items-center gap-1 text-[10px] font-extrabold bg-[#FFF0ED] text-[#F6A58E] px-2.5 py-1 rounded-full border border-[#FFE0D9] shadow-sm shrink-0">
-                  🔥 {user?.currentStreak || 0} day streak
-                </span>
+            <div className="relative">
+              {/* Decorative Doodles around Daily Checklist Card */}
+              <div className="absolute -top-6 -left-6 opacity-30 pointer-events-none text-[#F8B6B6] floating">
+                <SketchyFlower className="w-12 h-12" />
+              </div>
+              <div
+                className="absolute -bottom-6 -right-6 opacity-30 pointer-events-none text-[#F8B6B6] floating"
+                style={{ animationDelay: "1.5s" }}
+              >
+                <SketchyFlower className="w-10 h-10 rotate-45" />
+              </div>
+              <div
+                className="absolute top-1/2 -left-8 opacity-25 pointer-events-none text-[#EADCF8] floating"
+                style={{ animationDelay: "3s" }}
+              >
+                <SketchySwirl className="w-16 h-8" />
+              </div>
+              <div
+                className="absolute -top-8 right-12 opacity-25 pointer-events-none text-[#FAF2EA] floating"
+                style={{ animationDelay: "2s" }}
+              >
+                <SketchyCloud className="w-14 h-9" />
+              </div>
+              <div
+                className="absolute bottom-1/3 -right-6 opacity-35 pointer-events-none text-[#CDB4F6] floating"
+                style={{ animationDelay: "4s" }}
+              >
+                <SketchySparkles className="w-8 h-8" />
+              </div>
+              <div
+                className="absolute -bottom-8 left-12 opacity-30 pointer-events-none text-[#EADCF8] floating"
+                style={{ animationDelay: "2.5s" }}
+              >
+                <SketchyLeaf className="w-8 h-8 -rotate-45" />
+              </div>
+              <div
+                className="absolute top-4 -right-6 opacity-25 pointer-events-none text-[#F8B6B6] floating"
+                style={{ animationDelay: "1s" }}
+              >
+                <SketchyHeart className="w-6 h-6 rotate-12" />
               </div>
 
-              {/* Progress Bar & Congratulations */}
-              {(() => {
-                const currentTasks =
-                  PHASE_TASKS[cyclePhase] || PHASE_TASKS["No Active Cycle"];
-                const completedCount = currentTasks.filter(
-                  (task) => !!checkedTasks[task.text],
-                ).length;
-                const progressPercent =
-                  (completedCount / currentTasks.length) * 100;
-                const allCompleted = completedCount === currentTasks.length;
-
-                return (
-                  <>
-                    <div className="space-y-2 mb-5">
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="font-bold text-[#8C7B74]">
-                          {allCompleted ? (
-                            <span className="text-[#E56A54] animate-bounce inline-block">
-                              🌸 Amazing! You completed today’s wellness
-                              routine!
-                            </span>
-                          ) : (
-                            `${completedCount} / ${currentTasks.length} completed today`
-                          )}
+              <div
+                className="rounded-[32px] p-6 border transition-all duration-300 relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #FFF9F6 0%, #FFFDFD 100%)",
+                  borderColor: "rgba(246,165,142,0.15)",
+                  boxShadow: "0 2px 20px rgba(200,150,130,0.06)",
+                }}
+              >
+                <div className="flex flex-col md:flex-row gap-6 items-stretch">
+                  {/* Left Column: Checklist & Goals */}
+                  <div className="flex-1 min-w-0">
+                    {/* Header Title with CheckSquare and Streak Badge */}
+                    <div className="flex justify-between items-start gap-4 mb-4">
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C86A4E] bg-[#FFF0ED] px-2.5 py-0.5 rounded-full border border-[#FFF0ED]">
+                          {cyclePhase === "No Active Cycle"
+                            ? "Daily Checklist"
+                            : `${cyclePhase} Tasks`}
                         </span>
+                        <h3 className="font-serif font-bold text-lg text-[#2D1F1A] flex items-center gap-2 mt-1">
+                          <CheckSquare className="text-[#F6A58E]" size={20} />
+                          My Daily Wellness Checklist
+                        </h3>
                       </div>
-                      <div className="h-2 w-full bg-[#FAF2EA] rounded-full overflow-hidden border border-peach/5">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${progressPercent}%` }}
-                        />
-                      </div>
+
+                      {/* Streak Counter Badge */}
+                      <span className="flex items-center gap-1 text-[10px] font-extrabold bg-[#FFF0ED] text-[#F6A58E] px-2.5 py-1 rounded-full border border-[#FFE0D9] shadow-sm shrink-0">
+                        🔥 {user?.currentStreak || 0} day streak
+                      </span>
                     </div>
 
-                    {/* Task Checklist Items */}
-                    <div className="space-y-3">
-                      {currentTasks.map((task) => {
-                        const isChecked = !!checkedTasks[task.text];
-                        return (
-                          <button
-                            key={task.text}
-                            type="button"
-                            onClick={() => toggleTask(task.text)}
-                            className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl border border-[#FFF5F2]/40 bg-white/70 text-left transition-all duration-200 hover:bg-[#FFF5F2]/60 hover:translate-x-1 shadow-sm"
-                          >
-                            {/* Emoji Icon before text */}
-                            <span className="text-base select-none shrink-0">
-                              {task.emoji}
-                            </span>
+                    {/* Progress Bar & Congratulations */}
+                    {(() => {
+                      const currentTasks =
+                        PHASE_TASKS[cyclePhase] ||
+                        PHASE_TASKS["No Active Cycle"];
+                      const completedCount = currentTasks.filter(
+                        (task) => !!checkedTasks[task.text],
+                      ).length;
+                      const progressPercent =
+                        (completedCount / currentTasks.length) * 100;
+                      const allCompleted =
+                        completedCount === currentTasks.length;
 
-                            {/* Task text with strike-through and fade */}
-                            <span
-                              className={cn(
-                                "text-xs font-semibold flex-1 leading-normal transition-all duration-200",
-                                isChecked
-                                  ? "line-through text-zinc-400 opacity-60"
-                                  : "text-[#2D1F1A]",
-                              )}
-                            >
-                              {task.text}
-                            </span>
-
-                            {/* Pink / Salmon rounded checkbox with soft checkmark */}
-                            <div
-                              className={cn(
-                                "w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-200 shadow-sm",
-                                isChecked
-                                  ? "bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] border-transparent text-white"
-                                  : "border-[#F8B6B6]/60 bg-white",
-                              )}
-                            >
-                              {isChecked && <Check size={10} strokeWidth={3} />}
+                      return (
+                        <>
+                          <div className="space-y-2 mb-5">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="font-bold text-[#8C7B74]">
+                                {allCompleted ? (
+                                  <span className="text-[#E56A54] animate-bounce inline-block">
+                                    🌸 Amazing! You completed today’s wellness
+                                    routine!
+                                  </span>
+                                ) : (
+                                  `${completedCount} / ${currentTasks.length} completed today`
+                                )}
+                              </span>
                             </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </>
-                );
-              })()}
+                            <div className="h-2 w-full bg-[#FAF2EA] rounded-full overflow-hidden border border-peach/5">
+                              <div
+                                className="h-full bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] rounded-full transition-all duration-500 ease-out"
+                                style={{ width: `${progressPercent}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Task Checklist Items */}
+                          <div className="space-y-3">
+                            {currentTasks.map((task) => {
+                              const isChecked = !!checkedTasks[task.text];
+                              return (
+                                <button
+                                  key={task.text}
+                                  type="button"
+                                  onClick={() => toggleTask(task.text)}
+                                  className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl border border-[#FFF5F2]/40 bg-white/70 text-left transition-all duration-200 hover:bg-[#FFF5F2]/60 hover:translate-x-1 shadow-sm"
+                                >
+                                  {/* Emoji Icon before text */}
+                                  <span className="text-base select-none shrink-0">
+                                    {task.emoji}
+                                  </span>
+
+                                  {/* Task text with strike-through and fade */}
+                                  <span
+                                    className={cn(
+                                      "text-xs font-semibold flex-1 leading-normal transition-all duration-200",
+                                      isChecked
+                                        ? "line-through text-zinc-400 opacity-60"
+                                        : "text-[#2D1F1A]",
+                                    )}
+                                  >
+                                    {task.text}
+                                  </span>
+
+                                  {/* Pink / Salmon rounded checkbox with soft checkmark */}
+                                  <div
+                                    className={cn(
+                                      "w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-200 shadow-sm",
+                                      isChecked
+                                        ? "bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] border-transparent text-white"
+                                        : "border-[#F8B6B6]/60 bg-white",
+                                    )}
+                                  >
+                                    {isChecked && (
+                                      <Check size={10} strokeWidth={3} />
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Right Column: Beautiful Hand-Drawn Doodle Panel */}
+                  <div className="hidden md:flex w-32 shrink-0 flex-col items-center justify-center border-l border-[#F6A58E]/10 pl-6 select-none pointer-events-none">
+                    <DailyChecklistDoodle className="w-full h-[360px] opacity-95" />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
