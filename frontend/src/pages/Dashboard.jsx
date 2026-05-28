@@ -1,4 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { CycleCalendar } from "@/features/cycle/components/CycleCalendar";
 import { LoggingModal } from "@/features/cycle/components/LoggingModal";
 import { TrendCharts } from "@/features/insights/components/TrendCharts";
@@ -24,10 +33,11 @@ import {
   Target,
   Smile,
   CheckSquare,
-  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import api from "@/api/axios";
 import { toast } from "sonner";
 
@@ -220,6 +230,47 @@ export default function Dashboard() {
   const nextPeriodDays = analytics?.metrics?.nextPeriodDays || 0;
   const phaseInfo =
     PHASE_DETAILS[cyclePhase] || PHASE_DETAILS["No Active Cycle"];
+
+  // Sleep analysis calculations
+  const sleepLogs = (dailyLogs || [])
+    .filter((log) => log.sleepHours > 0)
+    .slice(-7);
+  const hasSleepData = sleepLogs.length >= 2;
+  const sleepChartData = sleepLogs.map((log) => ({
+    day: format(new Date(log.date), "d"),
+    hours: log.sleepHours,
+  }));
+
+  // Stress analysis calculations
+  const stressLogs = (dailyLogs || [])
+    .filter((log) => log.stressLevel > 0)
+    .slice(-7);
+  const hasStressData = stressLogs.length >= 2;
+  const stressChartData = stressLogs.map((log) => ({
+    day: format(new Date(log.date), "d"),
+    stress: log.stressLevel,
+  }));
+
+  // Hydration calculations
+  const waterLogs = (dailyLogs || []).filter((log) => log.waterIntake > 0);
+  const avgWater =
+    waterLogs.length > 0
+      ? Math.round(
+          waterLogs.reduce((acc, log) => acc + log.waterIntake, 0) /
+            waterLogs.length,
+        )
+      : 0;
+
+  // Cycle regularity calculation
+  const hasCycles = cycles && cycles.length > 0;
+  const isRegular =
+    predictions?.averageCycleLength >= 25 &&
+    predictions?.averageCycleLength <= 35;
+
+  const handleLogToday = () => {
+    setSelectedDate(new Date());
+    setIsLoggingOpen(true);
+  };
 
   return (
     <div className="space-y-8 pb-12">
@@ -497,37 +548,210 @@ export default function Dashboard() {
           {/* Cycle Insights Analysis */}
           {profile && (
             <div
-              className="rounded-3xl p-6 border bg-[#FFFAF8]"
+              className="rounded-[32px] p-6 border transition-all duration-300"
               style={{
-                borderColor: "rgba(246,165,142,0.15)",
-                boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
+                background: "linear-gradient(135deg, #FFF5F5 0%, #F5ECFF 100%)",
+                borderColor: "rgba(246,165,142,0.18)",
+                boxShadow: "0 4px 24px rgba(200,150,130,0.1)",
               }}
             >
-              <h3 className="font-serif font-bold text-lg mb-4 text-[#2D1F1A] flex items-center gap-2">
-                <BookOpen className="text-[#F6A58E]" size={20} />
+              <h3 className="font-serif font-bold text-lg mb-2 text-[#2D1F1A] flex items-center gap-2">
+                <Sparkles className="text-[#F6A58E] animate-pulse" size={20} />
                 AI Cycle & Symptom Insights
               </h3>
-              <p className="text-xs font-medium text-[#8C7B74] leading-relaxed">
+              <p className="text-xs font-semibold text-[#8C7B74] leading-relaxed mb-6">
                 {profile.cycleInsights}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                <div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#2D1F1A] mb-2 flex items-center gap-1.5">
-                    <Moon size={12} className="text-[#CDB4F6]" /> Sleep Analysis
-                  </h4>
-                  <p className="text-[11px] text-[#8C7B74] leading-relaxed bg-white border p-3 rounded-2xl">
-                    {profile.sleepAnalysis}
-                  </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Sleep Analysis Card */}
+                <div className="rounded-2xl p-4 border bg-[#F0F4FF] border-[#DDE6FF] flex flex-col justify-between min-h-[190px] shadow-sm">
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E293B] mb-2 flex items-center gap-1.5">
+                      <span className="text-sm">🌙</span> Sleep Analysis
+                    </h4>
+                    {!hasSleepData ? (
+                      <div className="flex flex-col items-center justify-center py-4 text-center my-auto">
+                        <div className="w-10 h-10 rounded-full bg-blue-100/80 flex items-center justify-center text-blue-500 mb-2">
+                          <Moon size={18} />
+                        </div>
+                        <p className="text-[10px] font-bold text-[#6E7B95] leading-relaxed">
+                          Log a few days of sleep to unlock your sleep patterns
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="h-[70px] w-full my-2">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={sleepChartData}>
+                              <defs>
+                                <linearGradient
+                                  id="sleepMiniGrad"
+                                  x1="0"
+                                  y1="0"
+                                  x2="0"
+                                  y2="1"
+                                >
+                                  <stop
+                                    offset="0%"
+                                    stopColor="#3b82f6"
+                                    stopOpacity={0.3}
+                                  />
+                                  <stop
+                                    offset="100%"
+                                    stopColor="#3b82f6"
+                                    stopOpacity={0}
+                                  />
+                                </linearGradient>
+                              </defs>
+                              <XAxis dataKey="day" hide />
+                              <YAxis
+                                hide
+                                domain={["dataMin - 1", "dataMax + 1"]}
+                              />
+                              <Area
+                                type="monotone"
+                                dataKey="hours"
+                                stroke="#3b82f6"
+                                strokeWidth={1.5}
+                                fill="url(#sleepMiniGrad)"
+                                dot={{ fill: "#3b82f6", r: 2.5 }}
+                              />
+                            </AreaChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <p className="text-[11px] font-semibold text-[#4A5568] leading-relaxed mt-1">
+                          {profile.sleepAnalysis}
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#2D1F1A] mb-2 flex items-center gap-1.5">
-                    <Smile size={12} className="text-[#F8B6B6]" /> Stress
-                    Analysis
-                  </h4>
-                  <p className="text-[11px] text-[#8C7B74] leading-relaxed bg-white border p-3 rounded-2xl">
-                    {profile.stressAnalysis}
-                  </p>
+
+                {/* Stress Analysis Card */}
+                <div className="rounded-2xl p-4 border bg-[#F2FAF5] border-[#DEF2E6] flex flex-col justify-between min-h-[190px] shadow-sm">
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E293B] mb-2 flex items-center gap-1.5">
+                      <span className="text-sm">🧘</span> Stress Analysis
+                    </h4>
+                    {!hasStressData ? (
+                      <div className="flex flex-col items-center justify-center py-4 text-center my-auto">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100/80 flex items-center justify-center text-emerald-600 mb-2">
+                          <Smile size={18} />
+                        </div>
+                        <p className="text-[10px] font-bold text-[#5F7A6A] leading-relaxed">
+                          Log your moods daily to get a personalized stress
+                          analysis
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="h-[70px] w-full my-2">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={stressChartData}>
+                              <defs>
+                                <linearGradient
+                                  id="stressMiniGrad"
+                                  x1="0"
+                                  y1="0"
+                                  x2="0"
+                                  y2="1"
+                                >
+                                  <stop
+                                    offset="0%"
+                                    stopColor="#10b981"
+                                    stopOpacity={0.5}
+                                  />
+                                  <stop
+                                    offset="100%"
+                                    stopColor="#10b981"
+                                    stopOpacity={0.1}
+                                  />
+                                </linearGradient>
+                              </defs>
+                              <XAxis dataKey="day" hide />
+                              <YAxis hide domain={[0, 5]} />
+                              <Bar
+                                dataKey="stress"
+                                fill="url(#stressMiniGrad)"
+                                radius={[3, 3, 0, 0]}
+                                maxBarSize={12}
+                              />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <p className="text-[11px] font-semibold text-[#4A5568] leading-relaxed mt-1">
+                          {profile.stressAnalysis}
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </div>
+
+                {/* Cycle Regularity Card */}
+                <div className="rounded-2xl p-4 border bg-[#FFF6F3] border-[#FFE8E0] flex flex-col justify-between min-h-[190px] shadow-sm">
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E293B] mb-3 flex items-center gap-1.5">
+                      <span className="text-sm">🩸</span> Cycle Regularity
+                    </h4>
+                    <div className="mt-2 mb-3">
+                      <span
+                        className={cn(
+                          "text-lg font-serif font-black px-3 py-1 rounded-full text-center leading-none inline-block",
+                          hasCycles
+                            ? isRegular
+                              ? "bg-orange-100/60 text-[#E56A54]"
+                              : "bg-red-100/60 text-[#C94A4A]"
+                            : "bg-peach/10 text-[#C86A4E]",
+                        )}
+                      >
+                        {hasCycles
+                          ? isRegular
+                            ? "Regular Cycle"
+                            : "Irregular Cycle"
+                          : "No Logged Cycles"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] font-semibold text-[#5C4D4A] leading-relaxed">
+                      {hasCycles
+                        ? `Your average cycle length is ${Math.round(predictions.averageCycleLength)} days. This falls within the expected hormonal regularity range.`
+                        : "Log your next period starting day in the calendar to start analyzing your cycle regularity."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Hydration Pattern Card */}
+                <div className="rounded-2xl p-4 border bg-[#F0FAFA] border-[#DDF5F5] flex flex-col justify-between min-h-[190px] shadow-sm">
+                  <div>
+                    <h4 className="text-xs font-bold text-[#1E293B] mb-3 flex items-center gap-1.5">
+                      <span className="text-sm">💧</span> Hydration Pattern
+                    </h4>
+                    <div className="mt-2 mb-3">
+                      <span className="text-lg font-serif font-black px-3 py-1 rounded-full text-center leading-none inline-block bg-teal-100/60 text-[#0E7A7D]">
+                        {avgWater > 0
+                          ? `${avgWater} ml / day`
+                          : "No water logged"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] font-semibold text-[#4A5D5E] leading-relaxed">
+                      {avgWater === 0
+                        ? "Log your water intake daily in the calendar to track your hydration pattern and cycle correlations."
+                        : avgWater < 2000
+                          ? "Slightly below target (2,000 ml). Try keeping a hydration tracker active today."
+                          : "Excellent hydration pattern! You are consistently hitting your daily water intake goals."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom CTA Button */}
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={handleLogToday}
+                  className="px-6 py-2.5 rounded-full text-xs font-extrabold transition-all duration-300 text-white bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] hover:opacity-95 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                >
+                  Log Today to Unlock More Insights →
+                </Button>
               </div>
             </div>
           )}
