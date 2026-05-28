@@ -67,4 +67,100 @@ export class CycleService {
       averageCycleLength: avgLength || 28,
     };
   }
+
+  getSeedRecommendation(startDateStr: string | Date, cycleLength: number = 28) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(startDateStr);
+    start.setHours(0, 0, 0, 0);
+
+    const diffTime = today.getTime() - start.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    let cycleDay = ((diffDays - 1) % cycleLength) + 1;
+    if (cycleDay < 1) cycleDay = 1;
+
+    let phase: string;
+    let recommendedSeeds: string[];
+    let nextPhase: {
+      phase: string;
+      daysUntil: number;
+      recommendedSeeds: string[];
+    } | null = null;
+
+    if (cycleDay <= 5) {
+      phase = 'Menstrual';
+      recommendedSeeds = ['Flax seeds', 'Pumpkin seeds'];
+      nextPhase = {
+        phase: 'Follicular',
+        daysUntil: 6 - cycleDay,
+        recommendedSeeds: ['Sesame seeds', 'Sunflower seeds'],
+      };
+    } else if (cycleDay <= 13) {
+      phase = 'Follicular';
+      recommendedSeeds = ['Sesame seeds', 'Sunflower seeds'];
+      nextPhase = {
+        phase: 'Ovulation',
+        daysUntil: 14 - cycleDay,
+        recommendedSeeds: ['Pumpkin seeds', 'Sunflower seeds'],
+      };
+    } else if (cycleDay <= 16) {
+      phase = 'Ovulation';
+      recommendedSeeds = ['Pumpkin seeds', 'Sunflower seeds'];
+      nextPhase = {
+        phase: 'Luteal',
+        daysUntil: 17 - cycleDay,
+        recommendedSeeds: ['Flax seeds', 'Sesame seeds'],
+      };
+    } else {
+      phase = 'Luteal';
+      recommendedSeeds = ['Flax seeds', 'Sesame seeds'];
+      nextPhase = {
+        phase: 'Menstrual',
+        daysUntil: cycleLength - cycleDay + 1,
+        recommendedSeeds: ['Flax seeds', 'Pumpkin seeds'],
+      };
+    }
+
+    return {
+      phase,
+      day: cycleDay,
+      recommendedSeeds,
+      nextPhase,
+    };
+  }
+
+  async getUserSeedRecommendation(userId: string) {
+    const activeCycle = await this.findActive(userId);
+    let startDate: Date | null = null;
+
+    if (activeCycle) {
+      startDate = new Date(activeCycle.startDate);
+    } else {
+      const lastCycle = await this.prisma.cycle.findFirst({
+        where: { userId },
+        orderBy: { startDate: 'desc' },
+      });
+      if (lastCycle) {
+        startDate = new Date(lastCycle.startDate);
+      }
+    }
+
+    if (!startDate) {
+      return {
+        phase: null,
+        day: null,
+        recommendedSeeds: [],
+        nextPhase: null,
+      };
+    }
+
+    let cycleLength = 28;
+    const predictions = await this.getPredictions(userId);
+    if (predictions && predictions.averageCycleLength) {
+      cycleLength = Math.round(predictions.averageCycleLength);
+    }
+
+    return this.getSeedRecommendation(startDate, cycleLength);
+  }
 }

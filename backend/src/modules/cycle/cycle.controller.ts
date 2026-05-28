@@ -27,6 +27,11 @@ export class CycleController {
     return this.cycleService.getPredictions(userId);
   }
 
+  @Get('seed-cycling')
+  getSeedRecommendation(@GetCurrentUserId() userId: string) {
+    return this.cycleService.getUserSeedRecommendation(userId);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
