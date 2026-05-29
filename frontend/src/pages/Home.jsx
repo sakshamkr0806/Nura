@@ -99,7 +99,7 @@ export default function Home() {
           backgroundImage: "url('/images/home-bg.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.22,
+          opacity: 0.12,
           zIndex: 0,
         }}
       />

@@ -15,7 +15,7 @@ export default function DashboardLayout() {
           backgroundImage: "url('/images/home-bg.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.4,
+          opacity: 0.12,
         }}
       />
       {/* Peaceful Woman Watermark Background */}

@@ -381,6 +381,118 @@ export default function Dashboard() {
     predictions?.averageCycleLength >= 25 &&
     predictions?.averageCycleLength <= 35;
 
+  // Dynamic Health Score calculations
+  const validSleepLogs = (dailyLogs || []).filter((log) => log.sleepHours > 0);
+  const avgSleepHours =
+    validSleepLogs.length > 0
+      ? validSleepLogs.reduce((acc, log) => acc + log.sleepHours, 0) /
+        validSleepLogs.length
+      : 0;
+
+  const calculatedSleepScore =
+    avgSleepHours >= 8
+      ? 100
+      : avgSleepHours >= 7
+        ? 85
+        : avgSleepHours >= 6
+          ? 70
+          : avgSleepHours >= 5
+            ? 50
+            : avgSleepHours >= 4
+              ? 30
+              : avgSleepHours > 0
+                ? 10
+                : 0;
+
+  const validWaterLogs = (dailyLogs || []).filter((log) => log.waterIntake > 0);
+  const avgWaterIntake =
+    validWaterLogs.length > 0
+      ? validWaterLogs.reduce((acc, log) => acc + log.waterIntake, 0) /
+        validWaterLogs.length
+      : 0;
+
+  const totalLogsCount = (dailyLogs || []).length;
+  const totalSymptomsCount = (dailyLogs || []).reduce(
+    (acc, log) =>
+      acc +
+      (log.symptoms || []).filter(
+        (s) => s !== "Period Day" && s !== "Predicted Period",
+      ).length,
+    0,
+  );
+  const avgSymptomsCount =
+    totalLogsCount > 0 ? totalSymptomsCount / totalLogsCount : 0;
+  const calculatedStressScore =
+    totalLogsCount > 0
+      ? avgSymptomsCount === 0
+        ? 100
+        : avgSymptomsCount <= 2
+          ? 75
+          : avgSymptomsCount <= 4
+            ? 50
+            : 25
+      : 0;
+
+  const avgCycleLength = predictions?.averageCycleLength || 0;
+  let calculatedCycleHealthScore = 0;
+  if (hasCycles) {
+    if (avgCycleLength >= 28 && avgCycleLength <= 32)
+      calculatedCycleHealthScore = 100;
+    else if (avgCycleLength >= 25 && avgCycleLength <= 35)
+      calculatedCycleHealthScore = 85;
+    else if (avgCycleLength >= 21 && avgCycleLength <= 40)
+      calculatedCycleHealthScore = 70;
+    else calculatedCycleHealthScore = 50;
+  }
+
+  // Wellness score averages the active components
+  const wellnessComponents = [];
+  if (avgSleepHours > 0) {
+    wellnessComponents.push(
+      avgSleepHours >= 8
+        ? 100
+        : avgSleepHours >= 6
+          ? 75
+          : avgSleepHours >= 4
+            ? 50
+            : 25,
+    );
+  }
+  if (avgWaterIntake > 0) {
+    wellnessComponents.push(
+      avgWaterIntake >= 2.0
+        ? 100
+        : avgWaterIntake >= 1.5
+          ? 75
+          : avgWaterIntake >= 1.0
+            ? 50
+            : 25,
+    );
+  }
+  if (totalLogsCount > 0) {
+    wellnessComponents.push(
+      avgSymptomsCount === 0
+        ? 100
+        : avgSymptomsCount <= 2
+          ? 75
+          : avgSymptomsCount <= 4
+            ? 50
+            : 25,
+    );
+  }
+  if (hasCycles) {
+    const isReg = avgCycleLength >= 25 && avgCycleLength <= 35;
+    wellnessComponents.push(isReg ? 100 : 70);
+  }
+
+  const calculatedWellnessScore =
+    wellnessComponents.length > 0
+      ? Math.round(
+          wellnessComponents.reduce((acc, s) => acc + s, 0) /
+            wellnessComponents.length,
+        )
+      : 0;
+
   const handleLogToday = () => {
     setSelectedDate(new Date());
     setIsLoggingOpen(true);
@@ -731,19 +843,16 @@ export default function Dashboard() {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             <WellnessGauge
-              score={profile.wellnessScore || 0}
+              score={calculatedWellnessScore}
               label="Wellness Score"
             />
             <WellnessGauge
-              score={profile.cycleHealthScore || 0}
+              score={calculatedCycleHealthScore}
               label="Cycle Health"
             />
+            <WellnessGauge score={calculatedSleepScore} label="Sleep Quality" />
             <WellnessGauge
-              score={profile.sleepScore || 0}
-              label="Sleep Quality"
-            />
-            <WellnessGauge
-              score={profile.stressScore || 0}
+              score={calculatedStressScore}
               label="Stress Balance"
             />
           </div>
