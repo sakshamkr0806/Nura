@@ -98,7 +98,7 @@ export default function Home() {
           backgroundImage: "url('/images/home-bg.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.15,
+          opacity: 0.4,
           zIndex: 0,
         }}
       />

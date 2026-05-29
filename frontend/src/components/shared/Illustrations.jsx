@@ -1440,3 +1440,360 @@ export function WaterIntakeIllust({ className = "w-12 h-12" }) {
     </svg>
   );
 }
+
+export function WelcomeWomanIllust({ className = "w-full h-full" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 340 380"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <radialGradient id="womanBgBlob" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FDEEE8" />
+          <stop offset="100%" stopColor="#FDEEE8" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="flowerYellowCenter" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FFF2AF" />
+          <stop offset="100%" stopColor="#F6D55C" />
+        </radialGradient>
+      </defs>
+
+      {/* Soft background blob */}
+      <circle
+        cx="180"
+        cy="200"
+        r="120"
+        fill="url(#womanBgBlob)"
+        opacity="0.85"
+      />
+      <circle cx="230" cy="140" r="80" fill="#F3ECF9" opacity="0.35" />
+
+      {/* Floating Sparkles & Heart in background */}
+      <g transform="translate(280, 40) scale(0.8)">
+        <path
+          d="M 8,4 C 8,4 6.5,0 4,0 C 1.5,0 0,2 0,5 C 0,9 5,12 8,15 C 11,12 16,9 16,5 C 16,2 14.5,0 12,0 C 9.5,0 8,4 8,4"
+          fill="#E0D2EC"
+          stroke="#8A6EAA"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <g transform="translate(40, 80) scale(0.8)">
+        <path
+          d="M12 4q0 6 6 6-6 0-6 6 0-6-6-6 6 0 6-6z"
+          fill="#FFF"
+          stroke="#EADCF8"
+          strokeWidth="1"
+        />
+      </g>
+      <g transform="translate(290, 180) scale(0.7)">
+        <path
+          d="M 3,8 C 1.5,8 0,6.5 0,5 C 0,3 2,1.5 4,1.5 C 5,0.5 7,0 8.5,0.8 C 10.5,0 12.5,1.2 12.5,3 C 14,3.5 15,4.5 15,5.8 C 15,7.2 13.5,8 12,8 Z"
+          fill="#FAF8F6"
+          stroke="#9A908A"
+          strokeWidth="1"
+        />
+        <path d="M 7,8 L 7,12" stroke="#9A908A" strokeWidth="1" />
+      </g>
+
+      {/* Skin / Face Profile */}
+      <path
+        d="M 175,80 
+           C 152,80 138,92 132,102
+           C 126,112 120,118 116,122
+           C 112,126 108,124 110,128
+           C 112,132 118,130 118,134
+           C 118,138 114,138 115,142
+           C 116,146 120,145 118,150
+           C 116,155 112,157 115,162
+           C 118,167 127,165 133,174
+           C 138,182 136,197 135,217
+           C 134,237 122,270 118,285
+           L 185,285
+           C 185,240 180,200 173,175
+           C 173,135 180,100 175,80 Z"
+        fill="#FDD9C8"
+      />
+
+      {/* Profile Outlines */}
+      <path
+        d="M 170,80
+           C 152,80 138,92 132,102
+           C 126,112 120,118 116,122
+           C 112,126 108,124 110,128
+           C 112,132 118,130 118,134
+           C 118,138 114,138 115,142
+           C 116,146 120,145 118,150
+           C 116,155 112,157 115,162
+           C 118,167 127,165 133,174
+           C 137,180 135,192 134,207
+           C 133,222 132,232 128,244"
+        stroke="#6E4C3E"
+        strokeWidth="1.8"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* Robe */}
+      <path
+        d="M 128,244 
+           C 132,257 138,270 142,277 
+           C 132,302 108,348 95,375 
+           L 260,375 
+           C 250,335 210,310 190,290 
+           C 185,275 180,265 178,255 Z"
+        fill="#FBC7B3"
+        opacity="0.9"
+      />
+      {/* Robe shadow/fold */}
+      <path
+        d="M 128,244 
+           C 132,257 138,270 142,277 
+           C 132,302 108,348 95,375"
+        stroke="#6E4C3E"
+        strokeWidth="1.8"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 142,277 
+           C 160,297 175,320 178,340"
+        stroke="#6E4C3E"
+        strokeWidth="1.2"
+        fill="none"
+        opacity="0.6"
+      />
+      <path
+        d="M 190,290 
+           C 215,315 235,345 250,375"
+        stroke="#6E4C3E"
+        strokeWidth="1.8"
+        fill="none"
+        strokeLinecap="round"
+      />
+
+      {/* Closed eye & eyebrow */}
+      <path
+        d="M 125,123 Q 131,127 137,123"
+        stroke="#5C3D2E"
+        strokeWidth="2"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M 122,116 Q 130,111 138,116"
+        stroke="#5C3D2E"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <ellipse cx="138" cy="133" rx="8" ry="5" fill="#F8B6B6" opacity="0.45" />
+
+      {/* Lips */}
+      <path
+        d="M 115,142 C 117,143 120,143 121,142"
+        stroke="#D35F5F"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+
+      {/* Long Brown Hair */}
+      <path
+        d="M 175,80 
+           C 190,80 225,105 235,135 
+           C 245,165 260,200 255,230 
+           C 250,260 255,290 245,320 
+           C 235,350 210,370 195,375 
+           L 180,270 
+           C 185,240 178,200 170,175 
+           C 172,135 180,100 175,80 Z"
+        fill="#8C6239"
+      />
+      {/* Hair Waves */}
+      <path
+        d="M 175,80 C 195,85 220,105 230,135 C 240,165 255,195 250,230 C 245,265 253,295 243,325 C 233,355 215,375 200,380"
+        stroke="#5C3D2E"
+        strokeWidth="2.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 190,95 C 210,110 230,130 235,160 C 240,190 247,220 240,250 C 233,280 238,310 228,340 C 218,370 205,378 195,380"
+        stroke="#4B3124"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.8"
+      />
+      <path
+        d="M 200,125 C 215,145 225,170 227,200 C 229,230 233,260 225,290 C 217,320 219,350 210,375"
+        stroke="#A27B5C"
+        strokeWidth="1.2"
+        fill="none"
+        strokeLinecap="round"
+        opacity="0.6"
+      />
+
+      {/* Flower in Hair */}
+      <g transform="translate(195, 100) rotate(15)">
+        <path
+          d="M 0,0 C -3,-8 3,-8 0,0 C 8,-3 8,3 0,0 C 3,8 -3,8 0,0 C -8,3 -8,-3 0,0"
+          fill="#FFF"
+          stroke="#5C3D2E"
+          strokeWidth="1"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="1.5"
+          fill="#FAF0D9"
+          stroke="#5C3D2E"
+          strokeWidth="0.6"
+        />
+      </g>
+
+      {/* Leaves and Stems growing around back */}
+      <path
+        d="M 230,160 C 255,165 270,185 275,205 C 280,225 260,245 260,255"
+        stroke="#7A8F75"
+        strokeWidth="1.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M 245,225 C 255,235 280,240 285,240"
+        stroke="#7A8F75"
+        strokeWidth="1.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* Leaves */}
+      <g transform="translate(250, 175) rotate(30)">
+        <path
+          d="M 0,0 C 4,-6 8,-4 10,-2 C 6,2 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      <g transform="translate(265, 225) rotate(-45)">
+        <path
+          d="M 0,0 C 6,-6 10,-2 12,2 C 6,4 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+      <g transform="translate(275, 240) rotate(15)">
+        <path
+          d="M 0,0 C 4,-6 8,-4 10,-2 C 6,2 2,4 0,0"
+          fill="#D3E2C6"
+          stroke="#687A64"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 1 (Peach) */}
+      <g transform="translate(255, 185) rotate(-10)">
+        <path
+          d="M 0,0 C -5,-12 5,-12 0,0 
+             C 12,-5 12,5 0,0 
+             C 5,12 -5,12 0,0 
+             C -12,5 -12,-5 0,0 
+             C -8,-8 -8,8 0,0"
+          fill="#FFF4F0"
+          stroke="#6E504A"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="2.2"
+          fill="#E8A382"
+          stroke="#6E504A"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 2 (Pink) */}
+      <g transform="translate(245, 275) rotate(25)">
+        <path
+          d="M 0,0 C -5,-12 5,-12 0,0 
+             C 12,-5 12,5 0,0 
+             C 5,12 -5,12 0,0 
+             C -12,5 -12,-5 0,0 
+             C -8,-8 -8,8 0,0"
+          fill="#F8B6B6"
+          stroke="#7A4D4D"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="2.2"
+          fill="#F6D55C"
+          stroke="#7A4D4D"
+          strokeWidth="0.8"
+        />
+      </g>
+
+      {/* Flower 3 (Lavender on Left) */}
+      <g transform="translate(75, 230) rotate(-40)">
+        <path
+          d="M 0,0 C -4,-10 4,-10 0,0 
+             C 10,-4 10,4 0,0 
+             C 4,10 -4,10 0,0 
+             C -10,4 -10,-4 0,0"
+          fill="#E0D2EC"
+          stroke="#6A5A7A"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+        <circle
+          cx="0"
+          cy="0"
+          r="1.5"
+          fill="#FAF0D9"
+          stroke="#6A5A7A"
+          strokeWidth="0.6"
+        />
+      </g>
+
+      {/* Dashed trail & Butterfly */}
+      <path
+        d="M 230,340 Q 255,348 260,360 T 245,378"
+        stroke="#B8A490"
+        strokeWidth="1"
+        strokeDasharray="2 2"
+        strokeLinecap="round"
+      />
+      <g transform="translate(245, 375) scale(0.6)">
+        <line
+          x1="0"
+          y1="-3"
+          x2="0"
+          y2="5"
+          stroke="#8A7868"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 0,-1 C 3,-5 7,-3 5,1 C 3,2 1,1 0,1 C -1,1 -3,2 -5,1 C -7,-3 -3,-5 0,-1"
+          fill="#FCEBE3"
+          stroke="#8A7868"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  );
+}
