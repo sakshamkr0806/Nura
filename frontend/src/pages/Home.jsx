@@ -25,6 +25,7 @@ import {
   SketchyCloud,
   SketchySwirl,
   SketchySparkles,
+  WelcomeWomanIllust,
 } from "@/components/shared/Illustrations";
 import { ArrowRight, Mail, Sparkles } from "lucide-react";
 
@@ -102,6 +103,11 @@ export default function Home() {
           zIndex: 0,
         }}
       />
+
+      {/* Peaceful Woman Watermark Background */}
+      <div className="fixed top-[15%] right-0 w-80 md:w-96 lg:w-[420px] aspect-[340/380] pointer-events-none select-none opacity-[0.12] z-0 hidden md:block">
+        <WelcomeWomanIllust className="w-full h-full" />
+      </div>
 
       <div className="relative z-10">
         <TopNavbar />

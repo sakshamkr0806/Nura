@@ -27,7 +27,6 @@ import {
   LogStreakIllust,
   AvgSleepIllust,
   WaterIntakeIllust,
-  WelcomeWomanIllust,
 } from "@/components/shared/Illustrations";
 import {
   Droplets,
@@ -407,10 +406,6 @@ export default function Dashboard() {
             backdropFilter: "blur(4px)",
           }}
         >
-          {/* Welcome Woman Illustration absolutely positioned on the right */}
-          <div className="absolute right-4 bottom-0 top-0 w-64 md:w-80 hidden sm:flex items-center justify-end pointer-events-none select-none opacity-25 z-0">
-            <WelcomeWomanIllust className="h-full max-h-[160px] md:max-h-[200px]" />
-          </div>
           {/* Top Row: Greeting & Refresh AI Button */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10">
             <div>
