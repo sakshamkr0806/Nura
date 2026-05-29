@@ -148,13 +148,10 @@ export default function Home() {
             </div>
 
             <div
-              className="space-y-7 z-10 max-w-3xl flex flex-col items-center p-8 md:p-12 rounded-[36px] border"
+              className="space-y-7 z-10 max-w-3xl flex flex-col items-center p-6 md:p-10"
               style={{
-                background: "rgba(255, 253, 252, 0.94)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-                borderColor: "rgba(246, 165, 142, 0.2)",
-                boxShadow: "0 10px 35px rgba(200, 150, 130, 0.06)",
+                background:
+                  "radial-gradient(circle, rgba(255, 253, 252, 0.95) 0%, rgba(255, 253, 252, 0.7) 60%, rgba(255, 253, 252, 0) 100%)",
               }}
             >
               <div
