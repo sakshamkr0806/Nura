@@ -178,7 +178,7 @@ export default function Reports() {
             </TabsList>
             <TabsContent value="preview">
               <div
-                className="rounded-3xl border p-5"
+                className="rounded-3xl border p-4 sm:p-6"
                 style={{
                   background: "white",
                   borderColor: "rgba(246,165,142,0.12)",
