@@ -99,7 +99,7 @@ export default function Home() {
           backgroundImage: "url('/images/home-bg.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.4,
+          opacity: 0.22,
           zIndex: 0,
         }}
       />
@@ -148,7 +148,15 @@ export default function Home() {
             </div>
 
             {/* Hero content */}
-            <div className="space-y-7 z-10 max-w-3xl flex flex-col items-center">
+            <div
+              className="space-y-7 z-10 max-w-3xl flex flex-col items-center p-8 md:p-12 rounded-[36px] border"
+              style={{
+                background: "rgba(255, 253, 252, 0.65)",
+                backdropFilter: "blur(12px)",
+                borderColor: "rgba(246, 165, 142, 0.15)",
+                boxShadow: "0 10px 30px rgba(200, 150, 130, 0.04)",
+              }}
+            >
               <div
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
@@ -164,7 +172,7 @@ export default function Home() {
                 className="font-serif font-bold leading-tight"
                 style={{
                   fontSize: "clamp(2.4rem, 5vw, 3.5rem)",
-                  color: "#2D1F1A",
+                  color: "#1a1a1a",
                 }}
               >
                 Smarter{" "}
@@ -182,7 +190,7 @@ export default function Home() {
 
               <p
                 className="text-base leading-relaxed font-medium max-w-xl mx-auto"
-                style={{ color: "#8C7B74" }}
+                style={{ color: "#4A3E3A" }}
               >
                 Understand your cycle. Balance your hormones.
                 <br />
