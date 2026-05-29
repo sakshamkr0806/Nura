@@ -147,21 +147,21 @@ export default function Home() {
               <SketchyFlower className="w-9 h-9" />
             </div>
 
-            {/* Hero content */}
             <div
               className="space-y-7 z-10 max-w-3xl flex flex-col items-center p-8 md:p-12 rounded-[36px] border"
               style={{
-                background: "rgba(255, 253, 252, 0.65)",
-                backdropFilter: "blur(12px)",
-                borderColor: "rgba(246, 165, 142, 0.15)",
-                boxShadow: "0 10px 30px rgba(200, 150, 130, 0.04)",
+                background: "rgba(255, 253, 252, 0.94)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                borderColor: "rgba(246, 165, 142, 0.2)",
+                boxShadow: "0 10px 35px rgba(200, 150, 130, 0.06)",
               }}
             >
               <div
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
-                  background: "rgba(246,165,142,0.12)",
-                  color: "#F6A58E",
+                  background: "rgba(246,165,142,0.15)",
+                  color: "#C86A4E",
                 }}
               >
                 <Sparkles size={12} className="animate-pulse" />
@@ -178,7 +178,7 @@ export default function Home() {
                 Smarter{" "}
                 <span
                   style={{
-                    background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
+                    background: "linear-gradient(135deg, #E26E54, #C5533D)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                   }}
@@ -189,12 +189,12 @@ export default function Home() {
               </h1>
 
               <p
-                className="text-base leading-relaxed font-medium max-w-xl mx-auto"
-                style={{ color: "#4A3E3A" }}
+                className="text-base leading-relaxed font-semibold max-w-xl mx-auto"
+                style={{ color: "#2D1F1A" }}
               >
                 Understand your cycle. Balance your hormones.
                 <br />
-                Live your <em style={{ color: "#F6A58E" }}>best you.</em>
+                Live your <em style={{ color: "#C86A4E" }}>best you.</em>
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3">
