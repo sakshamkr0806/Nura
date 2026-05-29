@@ -147,13 +147,8 @@ export default function Home() {
               <SketchyFlower className="w-9 h-9" />
             </div>
 
-            <div
-              className="space-y-7 z-10 max-w-3xl flex flex-col items-center p-6 md:p-10"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(255, 253, 252, 0.95) 0%, rgba(255, 253, 252, 0.7) 60%, rgba(255, 253, 252, 0) 100%)",
-              }}
-            >
+            {/* Hero content */}
+            <div className="space-y-7 z-10 max-w-3xl flex flex-col items-center">
               <div
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
                 style={{
