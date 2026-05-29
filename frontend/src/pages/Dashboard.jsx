@@ -1176,8 +1176,8 @@ export default function Dashboard() {
               className="rounded-3xl p-6 border"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(221,234,215,0.15), white)",
-                borderColor: "rgba(221,234,215,0.3)",
+                  "linear-gradient(135deg, rgba(221,234,215,0.8), rgba(255, 255, 255, 0.95))",
+                borderColor: "rgba(221,234,215,0.4)",
                 boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
               }}
             >
@@ -1202,9 +1202,11 @@ export default function Dashboard() {
           {/* Hydration recommendations */}
           {profile?.hydrationRecs && (
             <div
-              className="rounded-3xl p-6 border bg-[#F0FFF4]/20"
+              className="rounded-3xl p-6 border"
               style={{
-                borderColor: "rgba(221,234,215,0.4)",
+                background:
+                  "linear-gradient(135deg, rgba(240,255,244,0.85), rgba(255, 255, 255, 0.95))",
+                borderColor: "rgba(221,234,215,0.45)",
                 boxShadow: "0 2px 20px rgba(200,150,130,0.08)",
               }}
             >
