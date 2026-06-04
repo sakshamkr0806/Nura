@@ -57,6 +57,35 @@ const LOADING_PHASES = [
   "Almost ready! Preparing your sanctuary...",
 ];
 
+const sanitizeAnswers = (loaded, defaults) => {
+  const sanitize = (loadedSec, defaultSec) => {
+    const res = { ...defaultSec };
+    if (!loadedSec) return res;
+    Object.keys(defaultSec).forEach((key) => {
+      const val = loadedSec[key];
+      if (val !== undefined && val !== null && val !== "") {
+        res[key] = val;
+      }
+    });
+    return res;
+  };
+
+  return {
+    personalDetails: sanitize(
+      loaded?.personalDetails,
+      defaults.personalDetails,
+    ),
+    menstrualHealth: sanitize(
+      loaded?.menstrualHealth,
+      defaults.menstrualHealth,
+    ),
+    lifestyle: sanitize(loaded?.lifestyle, defaults.lifestyle),
+    healthHistory: sanitize(loaded?.healthHistory, defaults.healthHistory),
+    wellnessGoals: sanitize(loaded?.wellnessGoals, defaults.wellnessGoals),
+    moodEnergy: sanitize(loaded?.moodEnergy, defaults.moodEnergy),
+  };
+};
+
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { user, setAuth } = useAuthStore();
@@ -64,35 +93,17 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const updateSection = useOnboardingStore((state) => state.updateSection);
   const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
+
   const [answers] = useState(() => {
     const loaded = useOnboardingStore.getState().answers;
-    return {
-      personalDetails: {
-        ...DEFAULT_ANSWERS.personalDetails,
-        ...loaded?.personalDetails,
-      },
-      menstrualHealth: {
-        ...DEFAULT_ANSWERS.menstrualHealth,
-        ...loaded?.menstrualHealth,
-      },
-      lifestyle: {
-        ...DEFAULT_ANSWERS.lifestyle,
-        ...loaded?.lifestyle,
-      },
-      healthHistory: {
-        ...DEFAULT_ANSWERS.healthHistory,
-        ...loaded?.healthHistory,
-      },
-      wellnessGoals: {
-        ...DEFAULT_ANSWERS.wellnessGoals,
-        ...loaded?.wellnessGoals,
-      },
-      moodEnergy: {
-        ...DEFAULT_ANSWERS.moodEnergy,
-        ...loaded?.moodEnergy,
-      },
-    };
+    return sanitizeAnswers(loaded, DEFAULT_ANSWERS);
   });
+
+  useEffect(() => {
+    const loaded = useOnboardingStore.getState().answers;
+    const sanitized = sanitizeAnswers(loaded, DEFAULT_ANSWERS);
+    useOnboardingStore.setState({ answers: sanitized });
+  }, []);
 
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
