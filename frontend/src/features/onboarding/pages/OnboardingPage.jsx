@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useOnboardingStore } from "../store/useOnboardingStore";
+import {
+  useOnboardingStore,
+  DEFAULT_ANSWERS,
+} from "../store/useOnboardingStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import api from "@/api/axios";
 import { toast } from "sonner";
@@ -61,7 +64,35 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const updateSection = useOnboardingStore((state) => state.updateSection);
   const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
-  const [answers] = useState(() => useOnboardingStore.getState().answers);
+  const [answers] = useState(() => {
+    const loaded = useOnboardingStore.getState().answers;
+    return {
+      personalDetails: {
+        ...DEFAULT_ANSWERS.personalDetails,
+        ...loaded?.personalDetails,
+      },
+      menstrualHealth: {
+        ...DEFAULT_ANSWERS.menstrualHealth,
+        ...loaded?.menstrualHealth,
+      },
+      lifestyle: {
+        ...DEFAULT_ANSWERS.lifestyle,
+        ...loaded?.lifestyle,
+      },
+      healthHistory: {
+        ...DEFAULT_ANSWERS.healthHistory,
+        ...loaded?.healthHistory,
+      },
+      wellnessGoals: {
+        ...DEFAULT_ANSWERS.wellnessGoals,
+        ...loaded?.wellnessGoals,
+      },
+      moodEnergy: {
+        ...DEFAULT_ANSWERS.moodEnergy,
+        ...loaded?.moodEnergy,
+      },
+    };
+  });
 
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
