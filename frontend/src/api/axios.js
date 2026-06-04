@@ -1,8 +1,18 @@
 import axios from "axios";
 import { useAuthStore } from "../store/useAuthStore";
 
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== "undefined" && window.location) {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    return `${protocol}//${hostname}:3000`;
+  }
+  return "http://localhost:3000";
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseURL: getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },

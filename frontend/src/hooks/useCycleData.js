@@ -59,7 +59,8 @@ export function useCycleData() {
       setPredictions(predictionsRes.data || null);
       setDailyLogs(logsRes.data || []);
       setHighlightedDates({ period: periods, prediction: predictions, logged });
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch cycle/log data:", error);
       // Silently handle — calendar will just show no highlights
     }
   }, []);

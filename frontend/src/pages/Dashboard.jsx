@@ -191,7 +191,8 @@ export default function Dashboard() {
     try {
       const res = await api.get("/analytics/summary");
       setAnalytics(res.data);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch analytics summary:", error);
       // Analytics unavailable — metric cards will show defaults
     }
   }, []);
@@ -204,7 +205,8 @@ export default function Dashboard() {
           ? res.data
           : DEFAULT_PROFILE,
       );
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch AI profile:", error);
       setProfile(DEFAULT_PROFILE);
     }
   }, []);
@@ -460,11 +462,11 @@ export default function Dashboard() {
   }
   if (avgWaterIntake > 0) {
     wellnessComponents.push(
-      avgWaterIntake >= 2.0
+      avgWaterIntake >= 2000
         ? 100
-        : avgWaterIntake >= 1.5
+        : avgWaterIntake >= 1500
           ? 75
-          : avgWaterIntake >= 1.0
+          : avgWaterIntake >= 1000
             ? 50
             : 25,
     );

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -14,6 +14,7 @@ import { ArticleModule } from './modules/article/article.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OnboardingModule } from './modules/onboarding/onboarding.module';
 import { AtGuard } from './modules/auth/guards';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -40,4 +41,8 @@ import { AtGuard } from './modules/auth/guards';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

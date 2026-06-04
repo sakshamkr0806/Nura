@@ -26,11 +26,11 @@ import { isAfter, subYears } from "date-fns";
 const STEPS = [
   { id: "welcome", title: "Welcome" },
   { id: "personalDetails", title: "Personal Details" },
-  { id: "menstrual", title: "Menstrual Health" },
+  { id: "menstrualHealth", title: "Menstrual Health" },
   { id: "lifestyle", title: "Lifestyle Habits" },
-  { id: "health", title: "Health History" },
-  { id: "goals", title: "Wellness Goals" },
-  { id: "mood", title: "Mood & Energy" },
+  { id: "healthHistory", title: "Health History" },
+  { id: "wellnessGoals", title: "Wellness Goals" },
+  { id: "moodEnergy", title: "Mood & Energy" },
   { id: "summary", title: "Summary" },
 ];
 

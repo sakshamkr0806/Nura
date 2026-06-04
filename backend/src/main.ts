@@ -32,7 +32,6 @@ async function bootstrap(): Promise<INestApplication> {
       origin: true,
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      allowedHeaders: 'Content-Type, Accept, Authorization',
     });
 
     await app.init();

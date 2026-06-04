@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -12,32 +9,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  fullName  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  refreshToken String?
-
-  phoneNumber        String?  @unique
-  dateOfBirth        DateTime?
-  emailNotifications Boolean  @default(true)
-
-  onboardingCompleted Boolean  @default(false)
-  currentStreak       Int      @default(0)
-  longestStreak       Int      @default(0)
-
-  cycles        Cycle[]
-  dailyLogs     DailyLog[]
-  alerts        Alert[]
-  lifestyle     UserLifestyle?
-  healthHistory UserHealthHistory?
-  goals         UserGoals?
-  symptoms      UserSymptoms?
-  healthProfile HealthProfile?
+  id                  String             @id @default(uuid())
+  email               String             @unique
+  password            String
+  fullName            String
+  role                Role               @default(USER)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  refreshToken        String?
+  phoneNumber         String?            @unique
+  dateOfBirth         DateTime?
+  emailNotifications  Boolean            @default(true)
+  currentStreak       Int                @default(0)
+  longestStreak       Int                @default(0)
+  onboardingCompleted Boolean            @default(false)
+  alerts              Alert[]
+  cycles              Cycle[]
+  dailyLogs           DailyLog[]
+  healthProfile       HealthProfile?
+  goals               UserGoals?
+  healthHistory       UserHealthHistory?
+  lifestyle           UserLifestyle?
+  symptoms            UserSymptoms?
 
   @@map("users")
 }
@@ -47,33 +40,29 @@ model Cycle {
   startDate DateTime
   endDate   DateTime?
   userId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@map("cycles")
 }
 
 model DailyLog {
-  id           String   @id @default(uuid())
-  date         DateTime
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  symptoms     String[]
-  moods        String[]
-  sleepHours   Float?
-  waterIntake  Int?     // in ml
-  notes        String?
-
+  id              String   @id @default(uuid())
+  date            DateTime
+  userId          String
+  symptoms        String[]
+  moods           String[]
+  sleepHours      Float?
+  waterIntake     Int?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   energyLevel     Int?
-  stressLevel     Int?
   exerciseMinutes Int?
   nutritionNotes  String?
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  stressLevel     Int?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date])
   @@map("daily_logs")
@@ -86,18 +75,11 @@ model Alert {
   level     AlertLevel
   isRead    Boolean    @default(false)
   userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@map("alerts")
-}
-
-enum AlertLevel {
-  INFO
-  ATTENTION
-  MEDICAL_SUGGESTION
 }
 
 model Article {
@@ -109,22 +91,15 @@ model Article {
   category  String
   tags      String[]
   imageUrl  String?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("articles")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model UserLifestyle {
   id            String   @id @default(uuid())
   userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sleepHours    Float
   waterIntake   Int
   activityLevel String
@@ -132,6 +107,7 @@ model UserLifestyle {
   screenTime    Float
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_lifestyles")
 }
@@ -139,13 +115,13 @@ model UserLifestyle {
 model UserHealthHistory {
   id                   String   @id @default(uuid())
   userId               String   @unique
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   hasPcos              Boolean
   hasThyroid           Boolean
   hasHormonalImbalance Boolean
   medications          String[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_health_histories")
 }
@@ -153,10 +129,10 @@ model UserHealthHistory {
 model UserGoals {
   id        String   @id @default(uuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   goals     String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_goals")
 }
@@ -164,11 +140,11 @@ model UserGoals {
 model UserSymptoms {
   id           String   @id @default(uuid())
   userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   symptoms     String[]
   painSeverity String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_symptoms")
 }
@@ -176,7 +152,6 @@ model UserSymptoms {
 model HealthProfile {
   id               String   @id @default(uuid())
   userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   wellnessScore    Int
   cycleHealthScore Int
   sleepScore       Int
@@ -191,6 +166,18 @@ model HealthProfile {
   dailyRecs        String[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("health_profiles")
+}
+
+enum AlertLevel {
+  INFO
+  ATTENTION
+  MEDICAL_SUGGESTION
+}
+
+enum Role {
+  USER
+  ADMIN
 }
