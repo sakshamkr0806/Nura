@@ -19,6 +19,24 @@ export interface AIHealthProfileResponse {
   dailyRecs: string[];
 }
 
+export interface GeminiErrorDetails {
+  '@type'?: string;
+  retryDelay?: string;
+  links?: Array<{ description: string; url: string }>;
+  violations?: Array<{
+    quotaMetric?: string;
+    quotaId?: string;
+    quotaDimensions?: Record<string, string>;
+  }>;
+}
+
+export interface GeminiErrorResponse {
+  status?: number;
+  statusCode?: number;
+  message?: string;
+  errorDetails?: GeminiErrorDetails[];
+}
+
 @Injectable()
 export class AIService {
   private readonly logger = new Logger(AIService.name);
@@ -59,7 +77,9 @@ export class AIService {
         },
       });
 
-      const result = await model.generateContent(prompt);
+      const result = await this.callWithRetry(() =>
+        model.generateContent(prompt),
+      );
       const responseText = result.response.text();
       return JSON.parse(responseText || '{}') as Record<string, unknown>;
     } catch (error) {
@@ -116,7 +136,9 @@ export class AIService {
         },
       });
 
-      const result = await model.generateContent(prompt);
+      const result = await this.callWithRetry(() =>
+        model.generateContent(prompt),
+      );
       const responseText = result.response.text();
       return JSON.parse(responseText || '{}') as AIHealthProfileResponse;
     } catch (error) {
@@ -255,7 +277,9 @@ export class AIService {
         },
       });
 
-      const result = await model.generateContent(prompt);
+      const result = await this.callWithRetry(() =>
+        model.generateContent(prompt),
+      );
       const responseText = result.response.text();
       const updatedProfile = JSON.parse(
         responseText || '{}',
@@ -290,6 +314,66 @@ export class AIService {
         };
       }
       throw error;
+    }
+  }
+
+  private async callWithRetry<T>(
+    fn: () => Promise<T>,
+    retries = 3,
+    delay = 2000,
+  ): Promise<T> {
+    try {
+      return await fn();
+    } catch (err: unknown) {
+      const error = err as GeminiErrorResponse;
+      const errorMessage = error.message || String(err);
+      const isRateLimit =
+        error.status === 429 ||
+        error.statusCode === 429 ||
+        errorMessage.includes('429') ||
+        errorMessage.toLowerCase().includes('quota') ||
+        errorMessage.toLowerCase().includes('rate limit') ||
+        errorMessage.toLowerCase().includes('too many requests');
+
+      const isServerError =
+        (error.status && error.status >= 500) ||
+        (error.statusCode && error.statusCode >= 500) ||
+        errorMessage.includes('500') ||
+        errorMessage.includes('503');
+
+      if ((isRateLimit || isServerError) && retries > 0) {
+        let retryDelayMs = delay;
+
+        if (error.errorDetails && Array.isArray(error.errorDetails)) {
+          const retryInfo = error.errorDetails.find(
+            (detail) =>
+              detail?.['@type'] === 'type.googleapis.com/google.rpc.RetryInfo',
+          );
+          if (retryInfo?.retryDelay) {
+            const match = retryInfo.retryDelay.match(/^([\d.]+)(ms|s)$/);
+            if (match) {
+              const value = parseFloat(match[1]);
+              const unit = match[2];
+              retryDelayMs = Math.ceil(unit === 'ms' ? value : value * 1000);
+            }
+          }
+        }
+
+        // Cap delay at 30 seconds to avoid timing out the HTTP connection
+        retryDelayMs = Math.min(retryDelayMs, 30000);
+
+        // Add a random jitter of 0-1000ms
+        const jitter = Math.random() * 1000;
+        const totalDelay = retryDelayMs + jitter;
+
+        this.logger.warn(
+          `Gemini API returned retryable error. Retrying in ${Math.round(totalDelay)}ms... (${retries} retries left). Error: ${errorMessage}`,
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, totalDelay));
+        return this.callWithRetry(fn, retries - 1, delay * 2);
+      }
+      throw err;
     }
   }
 
