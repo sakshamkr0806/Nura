@@ -4,19 +4,41 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import { LoadingFallback } from "@/components/shared/LoadingFallback";
 
+// Helper to handle chunk loading errors due to deployment updates
+const safeLazy = (importFunc) => {
+  return lazy(async () => {
+    try {
+      return await importFunc();
+    } catch (error) {
+      console.error("Lazy import failed:", error);
+      const isChunkError =
+        error.message?.includes("Failed to fetch") ||
+        error.message?.includes("dynamically imported module") ||
+        error.message?.includes("Loading chunk") ||
+        error.message?.includes("ChunkLoadError") ||
+        error.name === "TypeError";
+      if (isChunkError && typeof window !== "undefined") {
+        window.location.reload();
+        return new Promise(() => {}); // Wait for reload
+      }
+      throw error;
+    }
+  });
+};
+
 // Lazy-loaded pages
-const Home = lazy(() => import("@/pages/Home"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Calendar = lazy(() => import("@/pages/Calendar"));
-const Reports = lazy(() => import("@/pages/Reports"));
-const Education = lazy(() => import("@/pages/Education"));
-const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
-const Profile = lazy(() => import("@/pages/Profile"));
-const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
-const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
-const PlaceholderPage = lazy(() => import("@/pages/PlaceholderPage"));
-const Seeds = lazy(() => import("@/pages/Seeds"));
-const OnboardingPage = lazy(
+const Home = safeLazy(() => import("@/pages/Home"));
+const Dashboard = safeLazy(() => import("@/pages/Dashboard"));
+const Calendar = safeLazy(() => import("@/pages/Calendar"));
+const Reports = safeLazy(() => import("@/pages/Reports"));
+const Education = safeLazy(() => import("@/pages/Education"));
+const ArticleDetail = safeLazy(() => import("@/pages/ArticleDetail"));
+const Profile = safeLazy(() => import("@/pages/Profile"));
+const LoginPage = safeLazy(() => import("@/features/auth/pages/LoginPage"));
+const SignupPage = safeLazy(() => import("@/features/auth/pages/SignupPage"));
+const PlaceholderPage = safeLazy(() => import("@/pages/PlaceholderPage"));
+const Seeds = safeLazy(() => import("@/pages/Seeds"));
+const OnboardingPage = safeLazy(
   () => import("@/features/onboarding/pages/OnboardingPage"),
 );
 

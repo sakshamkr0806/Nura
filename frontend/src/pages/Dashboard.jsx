@@ -380,8 +380,8 @@ export default function Dashboard() {
   // Cycle regularity calculation
   const hasCycles = cycles && cycles.length > 0;
   const isRegular =
-    predictions?.averageCycleLength >= 25 &&
-    predictions?.averageCycleLength <= 35;
+    (predictions?.averageCycleLength ?? 28) >= 25 &&
+    (predictions?.averageCycleLength ?? 28) <= 35;
 
   // Dynamic Health Score calculations
   const validSleepLogs = (dailyLogs || []).filter((log) => log.sleepHours > 0);
@@ -435,7 +435,7 @@ export default function Dashboard() {
             : 25
       : 0;
 
-  const avgCycleLength = predictions?.averageCycleLength || 0;
+  const avgCycleLength = predictions?.averageCycleLength ?? 28;
   let calculatedCycleHealthScore = 0;
   if (hasCycles) {
     if (avgCycleLength >= 28 && avgCycleLength <= 32)
@@ -735,9 +735,12 @@ export default function Dashboard() {
                         Predicted Start Date
                       </p>
                       <p className="font-extrabold text-sm text-[#4E3E5C]">
-                        {predictions?.predictedNextPeriod
+                        {predictions?.predictedNextPeriod &&
+                        !isNaN(
+                          new Date(predictions.predictedNextPeriod).getTime(),
+                        )
                           ? format(
-                              new Date(predictions?.predictedNextPeriod),
+                              new Date(predictions.predictedNextPeriod),
                               "MMMM d, yyyy",
                             )
                           : "No prediction data"}

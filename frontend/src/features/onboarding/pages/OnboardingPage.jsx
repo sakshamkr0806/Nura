@@ -136,9 +136,23 @@ export default function OnboardingPage() {
   };
 
   const onSubmit = async (data) => {
+    if (isSubmitting) return; // Prevent duplicate submissions
+
+    if (!data.personalDetails?.dateOfBirth) {
+      toast.error("Please provide your Date of Birth.");
+      setStep(1);
+      return;
+    }
+    if (!data.menstrualHealth?.lastPeriodDate) {
+      toast.error("Please provide your Last Period Date.");
+      setStep(2);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const response = await api.post("/onboarding", data);
+      // Set 15-second timeout on the onboarding API call
+      const response = await api.post("/onboarding", data, { timeout: 15000 });
       const { access_token } = response.data;
       const decoded = decodeJwt(access_token);
 
@@ -162,6 +176,56 @@ export default function OnboardingPage() {
       toast.success("AI Profile generated successfully! 🌸");
       navigate("/dashboard");
     } catch (err) {
+      console.error("Onboarding submission error:", err);
+      const isTimeout =
+        err.code === "ECONNABORTED" ||
+        err.message?.toLowerCase().includes("timeout") ||
+        err.response?.status === 408;
+
+      if (isTimeout) {
+        toast.success("Profile created! AI insights will load shortly. 🌸");
+        try {
+          // Attempt to refresh the tokens since onboarding completed flag has been updated in the DB
+          const refreshResponse = await api.post("/auth/refresh");
+          const { access_token } = refreshResponse.data;
+          const decoded = decodeJwt(access_token);
+          if (decoded) {
+            const updatedUser = {
+              id: decoded.sub,
+              email: decoded.email,
+              role: decoded.role,
+              fullName: decoded.fullName || user?.fullName || "",
+              phoneNumber: decoded.phoneNumber || "",
+              dateOfBirth: decoded.dateOfBirth || null,
+              onboardingCompleted: true,
+            };
+            setAuth(updatedUser, access_token);
+            resetOnboarding();
+            navigate("/dashboard");
+            return;
+          }
+        } catch (refreshErr) {
+          console.error(
+            "Token refresh failed during timeout recovery:",
+            refreshErr,
+          );
+        }
+
+        // Last-resort fallback: update auth store manually and redirect
+        if (user) {
+          const updatedUser = {
+            ...user,
+            onboardingCompleted: true,
+          };
+          // Try to use existing token or just update user state
+          const token = useAuthStore.getState().accessToken;
+          setAuth(updatedUser, token);
+        }
+        resetOnboarding();
+        navigate("/dashboard");
+        return;
+      }
+
       const msg = err.response?.data?.message;
       toast.error(
         Array.isArray(msg)

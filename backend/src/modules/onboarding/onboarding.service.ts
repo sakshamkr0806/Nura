@@ -2,14 +2,17 @@ import {
   Injectable,
   BadRequestException,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AIService } from '../ai/ai.service';
+import { AIService, AIHealthProfileResponse } from '../ai/ai.service';
 import { AuthService } from '../auth/auth.service';
 import { SubmitOnboardingDto } from './dto/submit-onboarding.dto';
 
 @Injectable()
 export class OnboardingService {
+  private readonly logger = new Logger(OnboardingService.name);
+
   constructor(
     private prisma: PrismaService,
     private aiService: AIService,
@@ -151,8 +154,72 @@ export class OnboardingService {
       },
     });
 
-    // 7. Trigger AI service to generate health profile
-    const profileData = await this.aiService.generateInitialProfile(dto);
+    // 7. Trigger AI service to generate health profile with a timeout of 12 seconds
+    let profileData: AIHealthProfileResponse | null = null;
+    let isFallback = false;
+
+    // Start the AI profile generation promise (only ONE call is made)
+    const aiGenerationPromise = this.aiService.generateInitialProfile(dto);
+
+    // Save the result in the background whenever the promise eventually resolves
+    aiGenerationPromise
+      .then(async (realProfile) => {
+        try {
+          await this.prisma.healthProfile.upsert({
+            where: { userId },
+            update: realProfile,
+            create: {
+              ...realProfile,
+              userId,
+            },
+          });
+          this.logger.log(
+            `AI profile successfully saved from background worker/promise for user ${userId}`,
+          );
+        } catch (dbErr) {
+          this.logger.error(
+            `Failed to save background AI profile for user ${userId}:`,
+            dbErr,
+          );
+        }
+      })
+      .catch((err) => {
+        this.logger.error(
+          `Background AI profile promise failed for user ${userId}:`,
+          err,
+        );
+      });
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('AI generation timed out')), 12000),
+    );
+
+    try {
+      profileData = await Promise.race([aiGenerationPromise, timeoutPromise]);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(
+        `AI initial profile generation failed or timed out: ${errMsg}. Using fallback data for immediate response.`,
+      );
+      isFallback = true;
+    }
+
+    if (isFallback || !profileData) {
+      profileData = {
+        wellnessScore: 70,
+        cycleHealthScore: 70,
+        sleepScore: 70,
+        stressScore: 70,
+        stressIndicator: 'Moderate',
+        sleepAnalysis: 'Profile created! AI insights will load shortly.',
+        stressAnalysis: 'Profile created! AI insights will load shortly.',
+        cycleInsights: 'Profile created! AI insights will load shortly.',
+        hydrationRecs: ['Aim for 2-3 liters of water daily'],
+        nutritionRecs: ['Prioritize nutrient-dense whole foods'],
+        actionPlan: ['Log symptoms daily in the calendar'],
+        dailyRecs: ['Perform 5 minutes of deep breathing'],
+      };
+    }
 
     // 8. Save the generated AI profile
     await this.prisma.healthProfile.upsert({
