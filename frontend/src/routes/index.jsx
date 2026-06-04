@@ -27,7 +27,6 @@ const safeLazy = (importFunc) => {
 };
 
 // Lazy-loaded pages
-<<<<<<< HEAD
 const Home = safeLazy(() => import("@/pages/Home"));
 const Dashboard = safeLazy(() => import("@/pages/Dashboard"));
 const Calendar = safeLazy(() => import("@/pages/Calendar"));
@@ -39,22 +38,8 @@ const LoginPage = safeLazy(() => import("@/features/auth/pages/LoginPage"));
 const SignupPage = safeLazy(() => import("@/features/auth/pages/SignupPage"));
 const PlaceholderPage = safeLazy(() => import("@/pages/PlaceholderPage"));
 const Seeds = safeLazy(() => import("@/pages/Seeds"));
+const Community = safeLazy(() => import("@/pages/Community"));
 const OnboardingPage = safeLazy(
-=======
-const Home = lazy(() => import("@/pages/Home"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const Calendar = lazy(() => import("@/pages/Calendar"));
-const Reports = lazy(() => import("@/pages/Reports"));
-const Education = lazy(() => import("@/pages/Education"));
-const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
-const Profile = lazy(() => import("@/pages/Profile"));
-const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
-const SignupPage = lazy(() => import("@/features/auth/pages/SignupPage"));
-const PlaceholderPage = lazy(() => import("@/pages/PlaceholderPage"));
-const Seeds = lazy(() => import("@/pages/Seeds"));
-const Community = lazy(() => import("@/pages/Community"));
-const OnboardingPage = lazy(
->>>>>>> 53d8e9b (Fix linting errors in ReportPreview)
   () => import("@/features/onboarding/pages/OnboardingPage"),
 );
 
