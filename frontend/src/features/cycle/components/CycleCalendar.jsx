@@ -483,6 +483,9 @@ export function CycleCalendar({
                 const isPeriod = highlightedDates?.period?.some((d) =>
                   isSameDay(d, dayDate),
                 );
+                const isPrediction = highlightedDates?.prediction?.some((d) =>
+                  isSameDay(d, dayDate),
+                );
                 const isLogged = highlightedDates?.logged?.some((d) =>
                   isSameDay(d, dayDate),
                 );
@@ -509,10 +512,11 @@ export function CycleCalendar({
                       "flex flex-col items-center justify-between p-4 rounded-2xl border transition-all duration-300 cursor-pointer hover:-translate-y-1 min-h-[160px]",
                       phaseColors[phase],
                       isSelected
-                        ? "ring-2 ring-[#F6A58E] ring-offset-2 border-transparent scale-105 shadow-md"
+                        ? "ring-2 ring-[#F4956A] ring-offset-2 border-transparent scale-105 shadow-md"
                         : "shadow-sm",
-                      isPeriod && "border-l-4 border-l-[#F8B6B6]",
-                      isLogged && "border-r-4 border-r-[#CDB4F6]",
+                      isPeriod && "border-l-4 border-l-[#E8727A]",
+                      isPrediction && "border-2 border-dashed border-[#B89FD8]",
+                      isLogged && "border-r-4 border-r-[#C3A6D4]",
                     )}
                   >
                     {/* Day Name */}
@@ -525,8 +529,10 @@ export function CycleCalendar({
                       <span
                         className={cn(
                           "text-2xl font-serif font-black",
-                          isPeriod && "text-[#E5989B]",
-                          isLogged && "text-[#9B6FD4]",
+                          isPeriod && "text-[#E8727A]",
+                          isPrediction && "text-[#B89FD8]",
+                          isLogged && "text-[#C3A6D4]",
+                          isSelected && "text-[#F4956A]",
                         )}
                       >
                         {format(dayDate, "d")}

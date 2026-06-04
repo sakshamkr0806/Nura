@@ -18,6 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { X } from "lucide-react";
 import api from "@/api/axios";
 import { toast } from "sonner";
 import { useEffect } from "react";
@@ -453,25 +454,27 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                 control={form.control}
                 name="isPeriodDay"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-xl border p-2.5 shadow-sm bg-white">
-                    <div className="space-y-0.5">
-                      <FormLabel className="font-bold text-xs text-[#2D1F1A]">
-                        Period Day
-                      </FormLabel>
-                    </div>
+                  <FormItem className="flex items-center space-y-0">
                     <FormControl>
                       <button
                         type="button"
-                        onClick={() => field.onChange(!field.value)}
-                        className={`w-10 h-5.5 rounded-full transition-colors relative flex items-center ${
-                          field.value ? "bg-[#F8B6B6]" : "bg-gray-200"
+                        onClick={() => {
+                          const nextVal = !field.value;
+                          field.onChange(nextVal);
+                          if (nextVal) {
+                            form.setValue("isPredictedPeriod", false);
+                          }
+                        }}
+                        className={`flex-1 h-12 w-full rounded-2xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 ${
+                          field.value
+                            ? "bg-[#E8727A] border-[#E8727A] text-white shadow-sm"
+                            : "bg-white border-[#8C7B74]/20 text-[#8C7B74] hover:bg-zinc-50"
                         }`}
                       >
-                        <span
-                          className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${
-                            field.value ? "translate-x-5" : "translate-x-1"
-                          }`}
-                        />
+                        Period Day
+                        {field.value && (
+                          <X size={14} className="stroke-[2.5]" />
+                        )}
                       </button>
                     </FormControl>
                   </FormItem>
@@ -482,25 +485,27 @@ export function LoggingModal({ date, isOpen, onClose, onSave }) {
                 control={form.control}
                 name="isPredictedPeriod"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-xl border p-2.5 shadow-sm bg-white">
-                    <div className="space-y-0.5">
-                      <FormLabel className="font-bold text-xs text-[#2D1F1A]">
-                        Predicted Period
-                      </FormLabel>
-                    </div>
+                  <FormItem className="flex items-center space-y-0">
                     <FormControl>
                       <button
                         type="button"
-                        onClick={() => field.onChange(!field.value)}
-                        className={`w-10 h-5.5 rounded-full transition-colors relative flex items-center ${
-                          field.value ? "bg-[#F8B6B6]" : "bg-gray-200"
+                        onClick={() => {
+                          const nextVal = !field.value;
+                          field.onChange(nextVal);
+                          if (nextVal) {
+                            form.setValue("isPeriodDay", false);
+                          }
+                        }}
+                        className={`flex-1 h-12 w-full rounded-2xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 ${
+                          field.value
+                            ? "bg-[#B89FD8] border-[#B89FD8] text-white shadow-sm"
+                            : "bg-white border-[#8C7B74]/20 text-[#8C7B74] hover:bg-zinc-50"
                         }`}
                       >
-                        <span
-                          className={`w-4 h-4 rounded-full bg-white absolute transition-transform ${
-                            field.value ? "translate-x-5" : "translate-x-1"
-                          }`}
-                        />
+                        Predicted Period
+                        {field.value && (
+                          <X size={14} className="stroke-[2.5]" />
+                        )}
                       </button>
                     </FormControl>
                   </FormItem>

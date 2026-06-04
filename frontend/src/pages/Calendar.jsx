@@ -126,7 +126,7 @@ export default function CalendarPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{ background: "#F8B6B6" }}
+                    style={{ background: "#E8727A" }}
                   />
                   <span
                     className="text-sm font-medium"
@@ -138,7 +138,7 @@ export default function CalendarPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full border-2 border-dashed"
-                    style={{ borderColor: "#F8B6B6" }}
+                    style={{ borderColor: "#B89FD8", background: "#E8D5F5" }}
                   />
                   <span
                     className="text-sm font-medium"
@@ -150,9 +150,7 @@ export default function CalendarPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{
-                      background: "linear-gradient(135deg, #F6A58E, #F8B6B6)",
-                    }}
+                    style={{ background: "#F4956A" }}
                   />
                   <span
                     className="text-sm font-medium"
@@ -164,7 +162,7 @@ export default function CalendarPage() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{ background: "#CDB4F6" }}
+                    style={{ background: "#C3A6D4" }}
                   />
                   <span
                     className="text-sm font-medium"
