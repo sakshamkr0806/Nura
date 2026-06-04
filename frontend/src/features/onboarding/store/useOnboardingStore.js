@@ -2,24 +2,41 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_ANSWERS = {
-  basicInfo: {
+  personalDetails: {
     fullName: "",
     age: "",
     height: "",
     weight: "",
+    dateOfBirth: "",
+    phoneNumber: "",
   },
-  cycleTracking: {
+  menstrualHealth: {
     lastPeriodDate: "",
     averageCycleLength: 28,
+    pmsSymptoms: [],
+    irregularCycles: false,
+    painSeverity: "None",
   },
-  symptomPreferences: {
-    trackCramps: false,
-    trackMood: false,
-    trackEnergy: false,
-    trackBloating: false,
+  lifestyle: {
+    sleepHours: 7,
+    waterIntake: 2000,
+    activityLevel: "sedentary",
+    stressLevel: "medium",
+    screenTime: 4,
   },
-  healthGoals: {
-    primaryGoal: "",
+  healthHistory: {
+    hasPcos: false,
+    hasThyroid: false,
+    hasHormonalImbalance: false,
+    medications: [],
+  },
+  wellnessGoals: {
+    goals: [],
+  },
+  moodEnergy: {
+    moods: [],
+    energyLevel: "Medium",
+    anxietyFrequency: "Never",
   },
 };
 

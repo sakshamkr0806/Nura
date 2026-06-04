@@ -90,6 +90,22 @@ export class PersonalDetailsDto {
     message: 'phoneNumber must be in E.164 format (e.g. +919876543210)',
   })
   phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  fullName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  age?: number;
+
+  @IsOptional()
+  @IsNumber()
+  height?: number;
+
+  @IsOptional()
+  @IsNumber()
+  weight?: number;
 }
 
 export class SubmitOnboardingDto {

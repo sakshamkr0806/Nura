@@ -16,6 +16,7 @@ import {
   Activity,
   Smile,
   CheckCircle,
+  User,
 } from "lucide-react";
 import { decodeJwt } from "@/utils/jwt";
 import { DateOfBirthPicker } from "@/components/ui/date-of-birth-picker";
@@ -24,14 +25,13 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { isAfter, subYears } from "date-fns";
 
 const STEPS = [
-  { id: "welcome", title: "Welcome" },
   { id: "personalDetails", title: "Personal Details" },
-  { id: "menstrualHealth", title: "Menstrual Health" },
+  { id: "personalDetails", title: "Date of Birth & Phone" },
+  { id: "menstrualHealth", title: "Menstrual Cycle Info" },
+  { id: "menstrualHealth", title: "Symptoms Selection" },
   { id: "lifestyle", title: "Lifestyle Habits" },
-  { id: "healthHistory", title: "Health History" },
-  { id: "wellnessGoals", title: "Wellness Goals" },
-  { id: "moodEnergy", title: "Mood & Energy" },
-  { id: "summary", title: "Summary" },
+  { id: "lifestyle", title: "Stress Level" },
+  { id: "summary", title: "Summary & Review" },
 ];
 
 const PMS_SYMPTOMS = [
@@ -44,28 +44,6 @@ const PMS_SYMPTOMS = [
   "Breast Tenderness",
   "Insomnia",
   "Cravings",
-];
-
-const WELLNESS_GOALS = [
-  "Improve sleep quality",
-  "Reduce daily stress",
-  "Clearer skin",
-  "Reduce period pain & cramps",
-  "Balance hormones naturally",
-  "Boost overall energy",
-  "Better nutrition & diet habits",
-  "Accurate cycle tracking",
-];
-
-const MOODS = [
-  "Calm",
-  "Happy",
-  "Anxious",
-  "Tired & Fatigued",
-  "Irritable",
-  "Sensitive",
-  "Focused",
-  "Restless",
 ];
 
 const LOADING_PHASES = [
@@ -116,7 +94,14 @@ export default function OnboardingPage() {
 
   const handleNext = async () => {
     let isValid = true;
-    if (currentStep === 1) {
+    if (currentStep === 0) {
+      isValid = await trigger([
+        "personalDetails.fullName",
+        "personalDetails.age",
+        "personalDetails.height",
+        "personalDetails.weight",
+      ]);
+    } else if (currentStep === 1) {
       isValid = await trigger([
         "personalDetails.dateOfBirth",
         "personalDetails.phoneNumber",
@@ -138,6 +123,11 @@ export default function OnboardingPage() {
   const onSubmit = async (data) => {
     if (isSubmitting) return; // Prevent duplicate submissions
 
+    if (!data.personalDetails?.fullName) {
+      toast.error("Please provide your Name.");
+      setStep(0);
+      return;
+    }
     if (!data.personalDetails?.dateOfBirth) {
       toast.error("Please provide your Date of Birth.");
       setStep(1);
@@ -287,11 +277,9 @@ export default function OnboardingPage() {
             CycleWell
           </span>
         </div>
-        {currentStep > 0 && (
-          <div className="text-xs font-semibold text-[#8C7B74] bg-[#FFFAF8] border border-rose-100 px-3 py-1.5 rounded-full">
-            Step {currentStep} of {STEPS.length - 1}
-          </div>
-        )}
+        <div className="text-xs font-semibold text-[#8C7B74] bg-[#FFFAF8] border border-rose-100 px-3 py-1.5 rounded-full">
+          Step {currentStep + 1} of {STEPS.length}
+        </div>
       </div>
 
       {/* ── CARD CONTENT ── */}
@@ -300,39 +288,169 @@ export default function OnboardingPage() {
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-[#FFF0ED]/40 blur-3xl pointer-events-none" />
 
         <FormStepWrapper currentStep={currentStep}>
-          {/* STEP 0: WELCOME */}
+          {/* STEP 1: PERSONAL DETAILS */}
           {currentStep === 0 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              className="text-center py-6"
+              className="space-y-6"
             >
-              <span className="text-xs uppercase tracking-wider font-bold text-[#F6A58E] bg-[#FFF0ED] px-3 py-1 rounded-full">
-                Personalized Onboarding
-              </span>
-              <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-[#2D1F1A] mt-6 leading-tight">
-                Welcome to your new hormonal wellness sanctuary 🌸
-              </h1>
-              <p className="text-[#8C7B74] text-sm mt-4 leading-relaxed max-w-md mx-auto">
-                Let's customize your experience. We'll ask you a few questions
-                about your menstrual cycle, lifestyle habits, and health history
-                so our AI coach can generate your personalized dashboard.
-              </p>
-              <div className="mt-8">
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#F6A58E] hover:bg-[#F5947A] text-white font-semibold py-3 px-8 rounded-full shadow-sm active:scale-[0.98] transition-all"
-                >
-                  Begin Journey <ArrowRight size={18} />
-                </button>
+              <div>
+                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
+                  <User className="text-[#F6A58E]" size={22} /> Tell us about
+                  yourself
+                </h2>
+                <p className="text-[#8C7B74] text-xs mt-1">
+                  We use your details to customize predictions and insights.
+                </p>
+              </div>
+
+              {/* Name */}
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-semibold text-[#2D1F1A]">
+                  Your Name
+                </label>
+                <Controller
+                  control={control}
+                  name="personalDetails.fullName"
+                  rules={{ required: "Name is required" }}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className="flex flex-col gap-1 w-full">
+                      <input
+                        type="text"
+                        placeholder="Jane Doe"
+                        {...field}
+                        className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/30"
+                      />
+                      {error && (
+                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                          {error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+
+              {/* Age, Height, Weight in a grid */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-[#2D1F1A]">
+                    Age (Years)
+                  </label>
+                  <Controller
+                    control={control}
+                    name="personalDetails.age"
+                    rules={{
+                      required: "Required",
+                      min: { value: 13, message: "Min 13" },
+                      max: { value: 120, message: "Max 120" },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <div className="flex flex-col gap-1 w-full">
+                        <input
+                          type="number"
+                          placeholder="25"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : parseInt(e.target.value),
+                            )
+                          }
+                          className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/30"
+                        />
+                        {error && (
+                          <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                            {error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-[#2D1F1A]">
+                    Height (cm)
+                  </label>
+                  <Controller
+                    control={control}
+                    name="personalDetails.height"
+                    rules={{
+                      required: "Required",
+                      min: { value: 50, message: "Min 50cm" },
+                      max: { value: 250, message: "Max 250cm" },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <div className="flex flex-col gap-1 w-full">
+                        <input
+                          type="number"
+                          placeholder="165"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : parseFloat(e.target.value),
+                            )
+                          }
+                          className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/30"
+                        />
+                        {error && (
+                          <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                            {error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-[#2D1F1A]">
+                    Weight (kg)
+                  </label>
+                  <Controller
+                    control={control}
+                    name="personalDetails.weight"
+                    rules={{
+                      required: "Required",
+                      min: { value: 20, message: "Min 20kg" },
+                      max: { value: 300, message: "Max 300kg" },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <div className="flex flex-col gap-1 w-full">
+                        <input
+                          type="number"
+                          placeholder="60"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : parseFloat(e.target.value),
+                            )
+                          }
+                          className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/30"
+                        />
+                        {error && (
+                          <p className="text-red-500 text-[10px] mt-1 font-semibold">
+                            {error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
               </div>
             </motion.div>
           )}
 
-          {/* STEP 1: PERSONAL DETAILS */}
+          {/* STEP 2: DATE OF BIRTH + PHONE NUMBER */}
           {currentStep === 1 && (
             <motion.div
               variants={stepVariants}
@@ -343,11 +461,11 @@ export default function OnboardingPage() {
             >
               <div>
                 <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Heart className="text-[#F6A58E]" size={22} />A little about
-                  yourself
+                  <Heart className="text-[#F6A58E]" size={22} /> Date of birth &
+                  contact
                 </h2>
                 <p className="text-[#8C7B74] text-xs mt-1">
-                  We use your details to customize predictions and insights.
+                  We use your age to tailor physiological predictions.
                 </p>
               </div>
 
@@ -445,7 +563,7 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* STEP 2: MENSTRUAL HEALTH */}
+          {/* STEP 3: MENSTRUAL CYCLE INFO */}
           {currentStep === 2 && (
             <motion.div
               variants={stepVariants}
@@ -519,13 +637,31 @@ export default function OnboardingPage() {
                   )}
                 />
               </div>
+            </motion.div>
+          )}
+
+          {/* STEP 4: SYMPTOMS SELECTION */}
+          {currentStep === 3 && (
+            <motion.div
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="space-y-6"
+            >
+              <div>
+                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
+                  <Activity className="text-[#F6A58E]" size={22} />
+                  Symptoms selection
+                </h2>
+                <p className="text-[#8C7B74] text-xs mt-1">
+                  What symptoms do you typically experience? (Select all that
+                  apply)
+                </p>
+              </div>
 
               {/* PMS Symptoms */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  What symptoms do you typically experience? (Select all that
-                  apply)
-                </label>
                 <Controller
                   control={control}
                   name="menstrualHealth.pmsSymptoms"
@@ -563,73 +699,11 @@ export default function OnboardingPage() {
                   )}
                 />
               </div>
-
-              {/* Irregular / Pain Severity */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Are your cycles irregular?
-                  </label>
-                  <Controller
-                    control={control}
-                    name="menstrualHealth.irregularCycles"
-                    render={({ field }) => (
-                      <div className="flex gap-2">
-                        {[
-                          { val: true, label: "Yes" },
-                          { val: false, label: "No" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.label}
-                            type="button"
-                            onClick={() => field.onChange(opt.val)}
-                            className={`flex-1 h-11 rounded-2xl text-xs font-bold transition-all border ${
-                              field.value === opt.val
-                                ? "bg-[#FFF0ED] border-[#F6A58E] text-[#F6A58E]"
-                                : "bg-white border-[#8C7B74]/15 text-[#8C7B74]"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Period pain severity:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="menstrualHealth.painSeverity"
-                    render={({ field }) => (
-                      <div className="flex gap-1 bg-[#FFFAF8] border border-rose-100/50 p-1 rounded-2xl h-11">
-                        {["None", "Mild", "Moderate", "Severe"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-[10px] font-extrabold transition-all ${
-                              field.value === level
-                                ? "bg-[#F6A58E] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </div>
-              </div>
             </motion.div>
           )}
 
-          {/* STEP 3: LIFESTYLE HABITS */}
-          {currentStep === 3 && (
+          {/* STEP 5: LIFESTYLE */}
+          {currentStep === 4 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -640,11 +714,10 @@ export default function OnboardingPage() {
               <div>
                 <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
                   <Moon className="text-[#8BC0D0]" size={22} />
-                  Lifestyle & daily rhythms
+                  Lifestyle details
                 </h2>
                 <p className="text-[#8C7B74] text-xs mt-1">
-                  Sleep, hydration, and movement directly influence cortisol and
-                  hormones.
+                  Sleep and hydration habits help us customize your plan.
                 </p>
               </div>
 
@@ -706,188 +779,10 @@ export default function OnboardingPage() {
                   )}
                 />
               </div>
-
-              {/* Stress Level & Activity Level */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Perceived Stress Level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="lifestyle.stressLevel"
-                    render={({ field }) => (
-                      <div className="flex gap-1.5 bg-[#FFFAF8] border border-rose-100/50 p-1.5 rounded-2xl h-11">
-                        {["low", "medium", "high"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-xs font-bold capitalize transition-all ${
-                              field.value === level
-                                ? "bg-[#8BC0D0] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Physical Activity Level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="lifestyle.activityLevel"
-                    render={({ field }) => (
-                      <select
-                        {...field}
-                        className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-11 px-4 text-xs font-semibold text-[#8C7B74] focus:outline-none"
-                      >
-                        <option value="sedentary">
-                          Sedentary (No exercise)
-                        </option>
-                        <option value="lightly_active">Lightly Active</option>
-                        <option value="moderately_active">
-                          Moderately Active
-                        </option>
-                        <option value="very_active">
-                          Very Active (Daily sports)
-                        </option>
-                      </select>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Screen Time */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
-                  <span>Average Daily Screen Time (Hours):</span>
-                  <span className="text-[#8BC0D0]">
-                    {watch("lifestyle.screenTime")} hours
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="lifestyle.screenTime"
-                  render={({ field }) => (
-                    <input
-                      type="range"
-                      min="1"
-                      max="12"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full accent-[#8BC0D0]"
-                    />
-                  )}
-                />
-              </div>
             </motion.div>
           )}
 
-          {/* STEP 4: HEALTH HISTORY */}
-          {currentStep === 4 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Heart className="text-[#F8B6B6]" size={22} />
-                  Hormonal Health History
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  Your medical details are confidential and used to customize
-                  nutritional recommendations.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {/* PCOS / Thyroid / Imbalance */}
-                {[
-                  {
-                    name: "hasPcos",
-                    label: "Do you have a history of PCOS?",
-                  },
-                  {
-                    name: "hasThyroid",
-                    label: "Do you have diagnosed Thyroid conditions?",
-                  },
-                  {
-                    name: "hasHormonalImbalance",
-                    label: "Do you experience general Hormonal Imbalance?",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-between p-4 border border-rose-100 rounded-2xl bg-[#FFFAF8]/50"
-                  >
-                    <span className="text-xs font-semibold text-[#2D1F1A]">
-                      {item.label}
-                    </span>
-                    <Controller
-                      control={control}
-                      name={`healthHistory.${item.name}`}
-                      render={({ field }) => (
-                        <button
-                          type="button"
-                          onClick={() => field.onChange(!field.value)}
-                          className={`w-12 h-7 rounded-full transition-colors relative flex items-center ${
-                            field.value ? "bg-[#F8B6B6]" : "bg-gray-200"
-                          }`}
-                        >
-                          <span
-                            className={`w-5 h-5 rounded-full bg-white absolute transition-transform ${
-                              field.value ? "translate-x-6" : "translate-x-1"
-                            }`}
-                          />
-                        </button>
-                      )}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Medications / Supplements */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  List any active medications or supplements (Separated by
-                  commas):
-                </label>
-                <Controller
-                  control={control}
-                  name="healthHistory.medications"
-                  render={({ field }) => (
-                    <input
-                      type="text"
-                      placeholder="e.g. Magnesium, Zinc, Birth Control, Levothyroxine"
-                      value={field.value?.join(", ") || ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        )
-                      }
-                      className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F8B6B6]/30"
-                    />
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 5: WELLNESS GOALS */}
+          {/* STEP 6: STRESS LEVEL */}
           {currentStep === 5 && (
             <motion.div
               variants={stepVariants}
@@ -898,175 +793,44 @@ export default function OnboardingPage() {
             >
               <div>
                 <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Activity className="text-[#8BC0D0]" size={22} />
-                  What are your wellness goals?
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  We customize dashboard checklists based on what you select.
-                </p>
-              </div>
-
-              <Controller
-                control={control}
-                name="wellnessGoals.goals"
-                render={({ field }) => (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {WELLNESS_GOALS.map((goal) => {
-                      const isSelected = field.value?.includes(goal);
-                      return (
-                        <button
-                          key={goal}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              field.onChange(
-                                field.value.filter((v) => v !== goal),
-                              );
-                            } else {
-                              field.onChange([...(field.value || []), goal]);
-                            }
-                          }}
-                          className={`p-4 rounded-2xl border text-left text-xs font-semibold transition-all ${
-                            isSelected
-                              ? "bg-[#E6F4F8] border-[#8BC0D0] text-[#8BC0D0] shadow-sm"
-                              : "bg-white border-[#8C7B74]/15 text-[#8C7B74] hover:bg-[#FFFAF8]/50"
-                          }`}
-                        >
-                          {goal}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              />
-            </motion.div>
-          )}
-
-          {/* STEP 6: MOOD & ENERGY */}
-          {currentStep === 6 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
                   <Smile className="text-[#F6A58E]" size={22} />
-                  Mood patterns & energy levels
+                  Stress level
                 </h2>
                 <p className="text-[#8C7B74] text-xs mt-1">
-                  Help us understand how hormones correlate with your stress and
-                  vibe.
+                  How would you rate your typical stress level?
                 </p>
               </div>
 
-              {/* Moods */}
+              {/* Stress Level */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  Select typical moods you notice:
-                </label>
                 <Controller
                   control={control}
-                  name="moodEnergy.moods"
+                  name="lifestyle.stressLevel"
                   render={({ field }) => (
-                    <div className="flex flex-wrap gap-2">
-                      {MOODS.map((mood) => {
-                        const isSelected = field.value?.includes(mood);
-                        return (
-                          <button
-                            key={mood}
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                field.onChange(
-                                  field.value.filter((v) => v !== mood),
-                                );
-                              } else {
-                                field.onChange([...(field.value || []), mood]);
-                              }
-                            }}
-                            className={`px-3 py-2 rounded-full text-xs font-semibold border transition-all ${
-                              isSelected
-                                ? "bg-[#FFF0ED] border-[#F6A58E] text-[#F6A58E]"
-                                : "bg-white border-[#8C7B74]/15 text-[#8C7B74]"
-                            }`}
-                          >
-                            {mood}
-                          </button>
-                        );
-                      })}
+                    <div className="flex gap-2 bg-[#FFFAF8] border border-rose-100/50 p-2 rounded-2xl h-14">
+                      {["low", "medium", "high"].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => field.onChange(level)}
+                          className={`flex-1 h-full rounded-xl text-sm font-bold capitalize transition-all ${
+                            field.value === level
+                              ? "bg-[#F6A58E] text-white shadow-sm"
+                              : "text-[#8C7B74]"
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
                     </div>
                   )}
                 />
-              </div>
-
-              {/* Energy Level & Anxiety Frequency */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Overall Energy level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="moodEnergy.energyLevel"
-                    render={({ field }) => (
-                      <div className="flex gap-1.5 bg-[#FFFAF8] border border-rose-100/50 p-1.5 rounded-2xl h-11">
-                        {["Low", "Medium", "High"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-xs font-bold transition-all ${
-                              field.value === level
-                                ? "bg-[#F6A58E] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Do you feel anxious?
-                  </label>
-                  <Controller
-                    control={control}
-                    name="moodEnergy.anxietyFrequency"
-                    render={({ field }) => (
-                      <div className="flex gap-1 bg-[#FFFAF8] border border-rose-100/50 p-1 rounded-2xl h-11">
-                        {["Never", "Rarely", "Sometimes", "Often"].map(
-                          (level) => (
-                            <button
-                              key={level}
-                              type="button"
-                              onClick={() => field.onChange(level)}
-                              className={`flex-1 h-full rounded-xl text-[10px] font-extrabold transition-all ${
-                                field.value === level
-                                  ? "bg-[#F6A58E] text-white shadow-sm"
-                                  : "text-[#8C7B74]"
-                              }`}
-                            >
-                              {level}
-                            </button>
-                          ),
-                        )}
-                      </div>
-                    )}
-                  />
-                </div>
               </div>
             </motion.div>
           )}
 
           {/* STEP 7: SUMMARY & REVIEW */}
-          {currentStep === 7 && (
+          {currentStep === 6 && (
             <motion.div
               variants={stepVariants}
               initial="initial"
@@ -1090,6 +854,34 @@ export default function OnboardingPage() {
                   <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
                     Personal Details
                   </h4>
+                  <p>
+                    Name:{" "}
+                    <span className="text-[#2D1F1A]">
+                      {getValues("personalDetails.fullName") || "Not set"}
+                    </span>
+                  </p>
+                  <p>
+                    Age:{" "}
+                    <span className="text-[#2D1F1A]">
+                      {getValues("personalDetails.age") || "Not set"}
+                    </span>
+                  </p>
+                  <p>
+                    Height:{" "}
+                    <span className="text-[#2D1F1A]">
+                      {getValues("personalDetails.height")
+                        ? `${getValues("personalDetails.height")} cm`
+                        : "Not set"}
+                    </span>
+                  </p>
+                  <p>
+                    Weight:{" "}
+                    <span className="text-[#2D1F1A]">
+                      {getValues("personalDetails.weight")
+                        ? `${getValues("personalDetails.weight")} kg`
+                        : "Not set"}
+                    </span>
+                  </p>
                   <p>
                     Date of Birth:{" "}
                     <span className="text-[#2D1F1A]">
@@ -1156,16 +948,6 @@ export default function OnboardingPage() {
                     <span className="text-[#2D1F1A] capitalize">
                       {getValues("lifestyle.stressLevel")}
                     </span>
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
-                    Wellness Goals
-                  </h4>
-                  <p className="text-[#2D1F1A]">
-                    {getValues("wellnessGoals.goals")?.join(", ") ||
-                      "No goals selected"}
                   </p>
                 </div>
               </div>

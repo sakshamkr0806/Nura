@@ -154,6 +154,10 @@ export class OnboardingService {
         onboardingCompleted: true,
         dateOfBirth: dob,
         phoneNumber: personalDetails.phoneNumber || null,
+        fullName: personalDetails.fullName || undefined,
+        age: personalDetails.age || undefined,
+        height: personalDetails.height || undefined,
+        weight: personalDetails.weight || undefined,
       },
     });
 
