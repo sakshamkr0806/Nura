@@ -71,7 +71,7 @@ export class AIService {
 
     try {
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model: this.config.get<string>('GEMINI_MODEL') || 'gemini-2.5-flash',
         generationConfig: {
           responseMimeType: 'application/json',
         },
@@ -130,7 +130,7 @@ export class AIService {
 
     try {
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model: this.config.get<string>('GEMINI_MODEL') || 'gemini-2.5-flash',
         generationConfig: {
           responseMimeType: 'application/json',
         },
@@ -271,7 +271,7 @@ export class AIService {
 
     try {
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model: this.config.get<string>('GEMINI_MODEL') || 'gemini-2.5-flash',
         generationConfig: {
           responseMimeType: 'application/json',
         },
@@ -359,8 +359,8 @@ export class AIService {
           }
         }
 
-        // Cap delay at 30 seconds to avoid timing out the HTTP connection
-        retryDelayMs = Math.min(retryDelayMs, 30000);
+        // Cap delay at 65 seconds to avoid timing out the HTTP connection
+        retryDelayMs = Math.min(retryDelayMs, 65000);
 
         // Add a random jitter of 0-1000ms
         const jitter = Math.random() * 1000;
