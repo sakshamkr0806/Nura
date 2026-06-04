@@ -1,5 +1,16 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+
+// Suppress Node.js DEP0169 deprecation warning from third-party libraries using url.parse
+process.on('warning', (warning) => {
+  if (
+    warning.name === 'DeprecationWarning' &&
+    (warning as { code?: string }).code === 'DEP0169'
+  ) {
+    return;
+  }
+  console.warn(warning.stack || `${warning.name}: ${warning.message}`);
+});
 import { ValidationPipe, INestApplication, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { Express } from 'express';
