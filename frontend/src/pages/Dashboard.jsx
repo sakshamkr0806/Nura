@@ -735,7 +735,7 @@ export default function Dashboard() {
                       <p className="font-extrabold text-sm text-[#4E3E5C]">
                         {predictions?.predictedNextPeriod
                           ? format(
-                              new Date(predictions.predictedNextPeriod),
+                              new Date(predictions?.predictedNextPeriod),
                               "MMMM d, yyyy",
                             )
                           : "No prediction data"}
@@ -747,7 +747,7 @@ export default function Dashboard() {
                       </p>
                       <p className="font-extrabold text-sm text-[#4E3E5C]">
                         {predictions?.averageCycleLength
-                          ? `${Math.round(predictions.averageCycleLength)} Days`
+                          ? `${Math.round(predictions?.averageCycleLength)} Days`
                           : "28 Days"}
                       </p>
                     </div>
@@ -1234,7 +1234,7 @@ export default function Dashboard() {
                     </div>
                     <p className="text-[11px] font-semibold text-[#5C4D4A] leading-relaxed">
                       {hasCycles
-                        ? `Your average cycle length is ${Math.round(predictions.averageCycleLength)} days. This falls within the expected hormonal regularity range.`
+                        ? `Your average cycle length is ${Math.round(predictions?.averageCycleLength || 28)} days. This falls within the expected hormonal regularity range.`
                         : "Log your next period starting day in the calendar to start analyzing your cycle regularity."}
                     </p>
                   </div>
