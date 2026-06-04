@@ -15,13 +15,20 @@ export default function ProtectedRoute({ children, roles }) {
 
   if (
     user &&
-    !user.onboardingCompleted &&
+    (!user.onboardingCompleted ||
+      user.profileStatus === "NEW" ||
+      user.profileStatus === "INCOMPLETE") &&
     location.pathname !== "/onboarding"
   ) {
     return <Navigate to="/onboarding" replace />;
   }
 
-  if (user && user.onboardingCompleted && location.pathname === "/onboarding") {
+  if (
+    user &&
+    user.onboardingCompleted &&
+    user.profileStatus === "COMPLETE" &&
+    location.pathname === "/onboarding"
+  ) {
     return <Navigate to="/dashboard" replace />;
   }
 

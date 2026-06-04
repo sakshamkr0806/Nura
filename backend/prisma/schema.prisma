@@ -23,6 +23,11 @@ model User {
   currentStreak       Int                @default(0)
   longestStreak       Int                @default(0)
   onboardingCompleted Boolean            @default(false)
+  profileStatus       ProfileStatus      @default(NEW)
+  lastCompletedStep   Int                @default(0)
+  height              Float?
+  weight              Float?
+  age                 Int?
   alerts              Alert[]
   cycles              Cycle[]
   dailyLogs           DailyLog[]
@@ -95,6 +100,12 @@ model Article {
   updatedAt DateTime @updatedAt
 
   @@map("articles")
+}
+
+enum ProfileStatus {
+  NEW
+  INCOMPLETE
+  COMPLETE
 }
 
 model UserLifestyle {

@@ -10,71 +10,70 @@ import {
   Sparkles,
   ArrowRight,
   ArrowLeft,
-  Moon,
-  Droplets,
-  Heart,
+  Calendar,
   Activity,
-  Smile,
-  CheckCircle,
+  User,
+  Heart,
+  Ruler,
+  Scale,
 } from "lucide-react";
 import { decodeJwt } from "@/utils/jwt";
-import { DateOfBirthPicker } from "@/components/ui/date-of-birth-picker";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { isValidPhoneNumber } from "react-phone-number-input";
-import { isAfter, subYears } from "date-fns";
 
 const STEPS = [
-  { id: "welcome", title: "Welcome" },
-  { id: "personalDetails", title: "Personal Details" },
-  { id: "menstrualHealth", title: "Menstrual Health" },
-  { id: "lifestyle", title: "Lifestyle Habits" },
-  { id: "healthHistory", title: "Health History" },
-  { id: "wellnessGoals", title: "Wellness Goals" },
-  { id: "moodEnergy", title: "Mood & Energy" },
-  { id: "summary", title: "Summary" },
+  { id: "basicInfo", title: "Let's get to know you" },
+  { id: "cycleTracking", title: "Your cycle basics" },
+  { id: "symptomPreferences", title: "What should Nura track for you?" },
+  { id: "healthGoals", title: "What are you focusing on?" },
 ];
 
-const PMS_SYMPTOMS = [
-  "Cramps",
-  "Headaches",
-  "Bloating",
-  "Acne",
-  "Fatigue",
-  "Mood Swings",
-  "Breast Tenderness",
-  "Insomnia",
-  "Cravings",
-];
-
-const WELLNESS_GOALS = [
-  "Improve sleep quality",
-  "Reduce daily stress",
-  "Clearer skin",
-  "Reduce period pain & cramps",
-  "Balance hormones naturally",
-  "Boost overall energy",
-  "Better nutrition & diet habits",
-  "Accurate cycle tracking",
-];
-
-const MOODS = [
-  "Calm",
-  "Happy",
-  "Anxious",
-  "Tired & Fatigued",
-  "Irritable",
-  "Sensitive",
-  "Focused",
-  "Restless",
-];
-
-const LOADING_PHASES = [
-  "Analyzing your hormonal wellness patterns...",
-  "Consulting botanical and lifestyle databases...",
-  "Synthesizing your personalized recommendations...",
-  "Customizing your CycleWell health dashboard...",
-  "Almost ready! Preparing your sanctuary...",
-];
+// Floating animated background blobs
+const BackgroundBlobs = () => (
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    {/* Subtle noise overlay */}
+    <div
+      className="absolute inset-0 opacity-[0.03] mix-blend-overlay z-10"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+      }}
+    />
+    <motion.div
+      animate={{
+        x: [0, 50, -30, 0],
+        y: [0, -40, 20, 0],
+        scale: [1, 1.1, 0.9, 1],
+      }}
+      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+      className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full mix-blend-multiply filter blur-[100px] opacity-30"
+      style={{
+        background: "radial-gradient(circle, #F6A58E 0%, transparent 70%)",
+      }}
+    />
+    <motion.div
+      animate={{
+        x: [0, -60, 40, 0],
+        y: [0, 50, -30, 0],
+        scale: [1, 0.9, 1.1, 1],
+      }}
+      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+      className="absolute top-[20%] -right-[10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full mix-blend-multiply filter blur-[100px] opacity-20"
+      style={{
+        background: "radial-gradient(circle, #F8B6B6 0%, transparent 70%)",
+      }}
+    />
+    <motion.div
+      animate={{
+        x: [0, 40, -50, 0],
+        y: [0, -30, 60, 0],
+        scale: [1, 1.2, 0.8, 1],
+      }}
+      transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+      className="absolute -bottom-[20%] left-[20%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full mix-blend-multiply filter blur-[120px] opacity-20"
+      style={{
+        background: "radial-gradient(circle, #FFF0ED 0%, transparent 70%)",
+      }}
+    />
+  </div>
+);
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
@@ -83,27 +82,32 @@ export default function OnboardingPage() {
   const setStep = useOnboardingStore((state) => state.setStep);
   const updateSection = useOnboardingStore((state) => state.updateSection);
   const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
-  const [answers] = useState(() => useOnboardingStore.getState().answers);
+  const answers = useOnboardingStore((state) => state.answers);
 
-  const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Cycle through loading texts
-  useEffect(() => {
-    let interval;
-    if (isSubmitting) {
-      interval = setInterval(() => {
-        setLoadingTextIndex((prev) => (prev + 1) % LOADING_PHASES.length);
-      }, 3000);
-    }
-    return () => clearInterval(interval);
-  }, [isSubmitting]);
-
-  const { control, handleSubmit, watch, getValues, trigger } = useForm({
+  const { control, watch, getValues, trigger, setValue } = useForm({
     defaultValues: answers,
   });
 
-  // Watch form fields of the current section to save progress to Zustand store in real-time
+  // Pre-fill name from auth context if missing
+  useEffect(() => {
+    if (user?.fullName && !getValues("basicInfo.fullName")) {
+      setValue("basicInfo.fullName", user.fullName);
+    }
+
+    // Resume logic based on profileStatus and lastCompletedStep
+    if (
+      user?.profileStatus === "INCOMPLETE" &&
+      typeof user?.lastCompletedStep === "number"
+    ) {
+      if (user.lastCompletedStep < STEPS.length - 1) {
+        setStep(user.lastCompletedStep + 1);
+      }
+    }
+  }, [user, getValues, setValue, setStep]);
+
+  // Watch current section for live store updates
   const currentSection = STEPS[currentStep]?.id;
   const currentSectionValues = watch(currentSection);
   const currentSectionValuesStr = JSON.stringify(currentSectionValues);
@@ -112,20 +116,47 @@ export default function OnboardingPage() {
     if (currentSection && currentSectionValues) {
       updateSection(currentSection, currentSectionValues);
     }
-  }, [currentSection, currentSectionValuesStr, updateSection]);
+  }, [
+    currentSection,
+    currentSectionValues,
+    currentSectionValuesStr,
+    updateSection,
+  ]);
 
   const handleNext = async () => {
     let isValid = true;
-    if (currentStep === 1) {
+    if (currentStep === 0) {
       isValid = await trigger([
-        "personalDetails.dateOfBirth",
-        "personalDetails.phoneNumber",
+        "basicInfo.fullName",
+        "basicInfo.age",
+        "basicInfo.height",
+        "basicInfo.weight",
       ]);
+    } else if (currentStep === 1) {
+      isValid = await trigger(["cycleTracking.lastPeriodDate"]);
     } else if (currentStep === 2) {
-      isValid = await trigger(["menstrualHealth.lastPeriodDate"]);
+      isValid = true;
+    } else if (currentStep === 3) {
+      isValid = await trigger(["healthGoals.primaryGoal"]);
     }
-    if (isValid && currentStep < STEPS.length - 1) {
-      setStep(currentStep + 1);
+
+    if (isValid) {
+      // Auto-save step
+      try {
+        const payload = {
+          step: currentStep,
+          [currentSection]: getValues(currentSection),
+        };
+        await api.post("/onboarding/step", payload);
+      } catch (err) {
+        console.error("Failed to auto-save step", err);
+      }
+
+      if (currentStep < STEPS.length - 1) {
+        setStep(currentStep + 1);
+      } else {
+        completeFlow();
+      }
     }
   };
 
@@ -135,24 +166,16 @@ export default function OnboardingPage() {
     }
   };
 
-  const onSubmit = async (data) => {
-    if (isSubmitting) return; // Prevent duplicate submissions
-
-    if (!data.personalDetails?.dateOfBirth) {
-      toast.error("Please provide your Date of Birth.");
-      setStep(1);
-      return;
-    }
-    if (!data.menstrualHealth?.lastPeriodDate) {
-      toast.error("Please provide your Last Period Date.");
-      setStep(2);
-      return;
-    }
-
+  const completeFlow = async () => {
     setIsSubmitting(true);
     try {
-      // Set 15-second timeout on the onboarding API call
-      const response = await api.post("/onboarding", data, { timeout: 15000 });
+      // Save last step just in case
+      await api.post("/onboarding/step", {
+        step: currentStep,
+        [currentSection]: getValues(currentSection),
+      });
+
+      const response = await api.post("/onboarding/complete");
       const { access_token } = response.data;
       const decoded = decodeJwt(access_token);
 
@@ -160,20 +183,17 @@ export default function OnboardingPage() {
         throw new Error("Invalid session token generated.");
       }
 
-      // Update auth store with onboardingCompleted=true user state
+      // Update auth store with onboardingCompleted=true and profileStatus=COMPLETE
       const updatedUser = {
-        id: decoded.sub,
-        email: decoded.email,
-        role: decoded.role,
-        fullName: decoded.fullName || user?.fullName || "",
-        phoneNumber: decoded.phoneNumber || "",
-        dateOfBirth: decoded.dateOfBirth || null,
+        ...user,
         onboardingCompleted: decoded.onboardingCompleted,
+        profileStatus: decoded.profileStatus,
+        lastCompletedStep: decoded.lastCompletedStep,
       };
 
       setAuth(updatedUser, access_token);
       resetOnboarding();
-      toast.success("AI Profile generated successfully! 🌸");
+      toast.success("Profile setup complete! Welcome to Nura 🌸");
       navigate("/dashboard");
     } catch (err) {
       console.error("Onboarding submission error:", err);
@@ -238,986 +258,486 @@ export default function OnboardingPage() {
 
   // Stepper container animation
   const stepVariants = {
-    initial: { opacity: 0, x: 50 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, x: -50, transition: { duration: 0.3 } },
+    initial: { opacity: 0, x: 20, scale: 0.98 },
+    animate: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+    },
+    exit: { opacity: 0, x: -20, scale: 0.98, transition: { duration: 0.3 } },
   };
 
   if (isSubmitting) {
     return (
       <div
-        className="min-h-screen flex flex-col items-center justify-center p-6 text-center"
+        className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative"
         style={{ backgroundColor: "#FFF9F7" }}
       >
-        <div className="relative mb-8">
-          <div className="w-20 h-20 rounded-full border-4 border-rose-100 border-t-[#F6A58E] animate-spin" />
+        <BackgroundBlobs />
+        <div className="relative z-10 mb-8">
+          <div className="w-20 h-20 rounded-full border-4 border-rose-100 border-t-[#F6A58E] animate-spin shadow-[0_0_15px_rgba(246,165,142,0.4)]" />
           <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-[#F6A58E] animate-pulse" />
         </div>
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={loadingTextIndex}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5 }}
-            className="text-lg font-serif font-semibold text-[#2D1F1A] max-w-md h-8"
-          >
-            {LOADING_PHASES[loadingTextIndex]}
-          </motion.p>
-        </AnimatePresence>
-        <p className="mt-4 text-xs font-medium text-[#8C7B74]">
-          This takes about 10-15 seconds. Please do not close this window.
+        <p className="relative z-10 text-xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2D1F1A] to-[#8C7B74] max-w-md h-8">
+          Preparing your sanctuary...
         </p>
       </div>
     );
   }
 
+  const inputBaseClass =
+    "w-full bg-white/60 border border-white/60 rounded-2xl h-14 pl-12 pr-4 text-sm text-[#2D1F1A] placeholder:text-[#8C7B74]/50 focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/40 focus:border-[#F6A58E]/40 transition-all duration-200 focus:scale-[1.01] focus:bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]";
+
   return (
     <div
-      className="min-h-screen flex flex-col justify-between py-12 px-4 sm:px-6 lg:px-8"
-      style={{ backgroundColor: "#FFF9F7" }}
+      className="min-h-screen flex flex-col justify-between py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundColor: "#FFF9F7",
+        backgroundImage: "url('/onboarding-bg.jpg')",
+      }}
     >
+      <BackgroundBlobs />
+
       {/* ── HEADER ── */}
-      <div className="max-w-2xl w-full mx-auto flex items-center justify-between mb-8">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#FFF0ED] flex items-center justify-center border border-rose-200">
-            <Sparkles size={16} className="text-[#F6A58E]" />
-          </div>
-          <span className="font-serif font-bold text-xl text-[#2D1F1A]">
-            CycleWell
-          </span>
+      <div className="relative z-10 max-w-2xl w-full mx-auto flex items-center justify-between mb-8 sm:mb-12">
+        {/* Removed Nura logo as requested */}
+        <div></div>
+
+        {/* Animated Progress Indicator */}
+        <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm border border-white/50 px-4 py-2.5 rounded-full shadow-sm">
+          {STEPS.map((_, idx) => (
+            <div
+              key={idx}
+              className={`h-2 rounded-full transition-all duration-500 ease-out ${
+                idx === currentStep
+                  ? "w-6 bg-[#F6A58E] shadow-[0_0_8px_rgba(246,165,142,0.6)]"
+                  : idx < currentStep
+                    ? "w-2 bg-[#F6A58E]/40"
+                    : "w-2 bg-[#8C7B74]/20"
+              }`}
+            />
+          ))}
         </div>
-        {currentStep > 0 && (
-          <div className="text-xs font-semibold text-[#8C7B74] bg-[#FFFAF8] border border-rose-100 px-3 py-1.5 rounded-full">
-            Step {currentStep} of {STEPS.length - 1}
-          </div>
-        )}
       </div>
 
       {/* ── CARD CONTENT ── */}
-      <div className="max-w-2xl w-full mx-auto bg-white border border-rose-50 shadow-md rounded-3xl p-6 sm:p-10 flex-1 flex flex-col justify-between relative overflow-hidden">
-        {/* Decorative background blur */}
-        <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-[#FFF0ED]/40 blur-3xl pointer-events-none" />
+      <div className="relative z-10 max-w-xl w-full mx-auto flex-1 flex flex-col justify-center">
+        {/* Soft ambient glow behind the card */}
+        <div className="absolute inset-0 bg-[#F6A58E]/5 blur-[80px] rounded-[40px] pointer-events-none" />
 
-        <FormStepWrapper currentStep={currentStep}>
-          {/* STEP 0: WELCOME */}
-          {currentStep === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(140,123,116,0.08)] rounded-[32px] p-6 sm:p-10 flex flex-col relative overflow-hidden transition-transform duration-500 hover:-translate-y-1"
+        >
+          {/* Card breathing animation (subtle) */}
+          <motion.div
+            animate={{ scale: [1, 1.005, 1] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 pointer-events-none rounded-[32px] border border-[#F6A58E]/10"
+          />
+
+          <AnimatePresence mode="wait">
             <motion.div
+              key={currentStep}
               variants={stepVariants}
               initial="initial"
               animate="animate"
               exit="exit"
-              className="text-center py-6"
-            >
-              <span className="text-xs uppercase tracking-wider font-bold text-[#F6A58E] bg-[#FFF0ED] px-3 py-1 rounded-full">
-                Personalized Onboarding
-              </span>
-              <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-[#2D1F1A] mt-6 leading-tight">
-                Welcome to your new hormonal wellness sanctuary 🌸
-              </h1>
-              <p className="text-[#8C7B74] text-sm mt-4 leading-relaxed max-w-md mx-auto">
-                Let's customize your experience. We'll ask you a few questions
-                about your menstrual cycle, lifestyle habits, and health history
-                so our AI coach can generate your personalized dashboard.
-              </p>
-              <div className="mt-8">
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#F6A58E] hover:bg-[#F5947A] text-white font-semibold py-3 px-8 rounded-full shadow-sm active:scale-[0.98] transition-all"
-                >
-                  Begin Journey <ArrowRight size={18} />
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 1: PERSONAL DETAILS */}
-          {currentStep === 1 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
+              className="space-y-6 w-full relative z-10"
             >
               <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Heart className="text-[#F6A58E]" size={22} />A little about
-                  yourself
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  We use your details to customize predictions and insights.
-                </p>
-              </div>
-
-              {/* Date of Birth Picker */}
-              <div className="space-y-2 flex flex-col">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  Date of Birth
-                </label>
-                <Controller
-                  control={control}
-                  name="personalDetails.dateOfBirth"
-                  rules={{
-                    required: "Date of birth is required",
-                    validate: (val) => {
-                      if (!val) return "Date of birth is required";
-                      const date = new Date(val);
-                      if (isNaN(date.getTime())) return "Invalid date format";
-                      if (isAfter(date, new Date())) {
-                        return "Date of birth cannot be in the future";
-                      }
-                      const today = new Date();
-                      const minAgeDate = subYears(today, 13);
-                      if (date > minAgeDate) {
-                        return "You must be at least 13 years old to use Nura";
-                      }
-                      return true;
-                    },
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <div className="flex flex-col gap-1 w-full">
-                      <DateOfBirthPicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(date) =>
-                          field.onChange(date ? date.toISOString() : "")
-                        }
-                        error={error}
-                      />
-                      {error && (
-                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
-                          {error.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* Phone Input */}
-              <div className="space-y-2 flex flex-col">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  Phone Number{" "}
-                  <span
-                    className="normal-case font-normal text-xs"
-                    style={{ color: "#8C7B74" }}
-                  >
-                    (optional)
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="personalDetails.phoneNumber"
-                  rules={{
-                    validate: (val) => {
-                      if (!val || val.trim() === "") return true;
-                      const trimmed = val.trim();
-                      const isJustCountryCode = /^\+[1-9]\d{0,2}$/.test(
-                        trimmed,
-                      );
-                      if (isJustCountryCode) return true;
-                      const isValid =
-                        isValidPhoneNumber(trimmed) &&
-                        /^\+[1-9]\d{6,14}$/.test(trimmed);
-                      return (
-                        isValid ||
-                        "Invalid phone number format (e.g. +919876543210)"
-                      );
-                    },
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <div className="flex flex-col gap-1 w-full">
-                      <PhoneInput
-                        value={field.value}
-                        onChange={field.onChange}
-                        error={error}
-                      />
-                      {error && (
-                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
-                          {error.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 2: MENSTRUAL HEALTH */}
-          {currentStep === 2 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Droplets className="text-[#F6A58E]" size={22} />
-                  Tell us about your cycle
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  We use these details to calculate cycle phase predictions.
-                </p>
-              </div>
-
-              {/* Cycle Length */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
-                  <span>Average Cycle Length (Days)</span>
-                  <span className="text-[#F6A58E]">
-                    {watch("menstrualHealth.averageCycleLength")} days
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="menstrualHealth.averageCycleLength"
-                  render={({ field }) => (
-                    <input
-                      type="range"
-                      min="21"
-                      max="45"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full accent-[#F6A58E]"
-                    />
-                  )}
-                />
-                <div className="flex justify-between text-[10px] font-bold text-[#8C7B74]/60">
-                  <span>21 Days</span>
-                  <span>28 Days (Avg)</span>
-                  <span>45 Days</span>
-                </div>
-              </div>
-
-              {/* Last Period Start Date */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  When did your last period start?
-                </label>
-                <Controller
-                  control={control}
-                  name="menstrualHealth.lastPeriodDate"
-                  rules={{ required: "This date is required" }}
-                  render={({ field, fieldState: { error } }) => (
-                    <div className="relative">
-                      <input
-                        type="date"
-                        {...field}
-                        max={new Date().toISOString().split("T")[0]}
-                        className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F6A58E]/30"
-                      />
-                      {error && (
-                        <p className="text-red-500 text-[10px] mt-1 font-semibold">
-                          {error.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* PMS Symptoms */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  What symptoms do you typically experience? (Select all that
-                  apply)
-                </label>
-                <Controller
-                  control={control}
-                  name="menstrualHealth.pmsSymptoms"
-                  render={({ field }) => (
-                    <div className="flex flex-wrap gap-2">
-                      {PMS_SYMPTOMS.map((symptom) => {
-                        const isSelected = field.value?.includes(symptom);
-                        return (
-                          <button
-                            key={symptom}
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                field.onChange(
-                                  field.value.filter((v) => v !== symptom),
-                                );
-                              } else {
-                                field.onChange([
-                                  ...(field.value || []),
-                                  symptom,
-                                ]);
-                              }
-                            }}
-                            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                              isSelected
-                                ? "bg-[#FFF0ED] border-[#F6A58E] text-[#F6A58E]"
-                                : "bg-white border-[#8C7B74]/10 text-[#8C7B74]"
-                            }`}
-                          >
-                            {symptom}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* Irregular / Pain Severity */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Are your cycles irregular?
-                  </label>
-                  <Controller
-                    control={control}
-                    name="menstrualHealth.irregularCycles"
-                    render={({ field }) => (
-                      <div className="flex gap-2">
-                        {[
-                          { val: true, label: "Yes" },
-                          { val: false, label: "No" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.label}
-                            type="button"
-                            onClick={() => field.onChange(opt.val)}
-                            className={`flex-1 h-11 rounded-2xl text-xs font-bold transition-all border ${
-                              field.value === opt.val
-                                ? "bg-[#FFF0ED] border-[#F6A58E] text-[#F6A58E]"
-                                : "bg-white border-[#8C7B74]/15 text-[#8C7B74]"
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                <h2 className="font-serif font-bold text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-br from-[#2D1F1A] to-[#8C7B74] flex items-center gap-3">
+                  <div className="p-2 bg-white/80 rounded-2xl shadow-sm border border-white">
+                    {currentStep === 0 && (
+                      <User className="text-[#F6A58E]" size={24} />
                     )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Period pain severity:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="menstrualHealth.painSeverity"
-                    render={({ field }) => (
-                      <div className="flex gap-1 bg-[#FFFAF8] border border-rose-100/50 p-1 rounded-2xl h-11">
-                        {["None", "Mild", "Moderate", "Severe"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-[10px] font-extrabold transition-all ${
-                              field.value === level
-                                ? "bg-[#F6A58E] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
+                    {currentStep === 1 && (
+                      <Calendar className="text-[#F6A58E]" size={24} />
                     )}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 3: LIFESTYLE HABITS */}
-          {currentStep === 3 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Moon className="text-[#8BC0D0]" size={22} />
-                  Lifestyle & daily rhythms
+                    {currentStep === 2 && (
+                      <Activity className="text-[#F6A58E]" size={24} />
+                    )}
+                    {currentStep === 3 && (
+                      <Heart className="text-[#F6A58E]" size={24} />
+                    )}
+                  </div>
+                  {STEPS[currentStep].title}
                 </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  Sleep, hydration, and movement directly influence cortisol and
-                  hormones.
-                </p>
               </div>
 
-              {/* Sleep Hours */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
-                  <span>How much sleep do you get?</span>
-                  <span className="text-[#8BC0D0]">
-                    {watch("lifestyle.sleepHours")} hours
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="lifestyle.sleepHours"
-                  render={({ field }) => (
-                    <input
-                      type="range"
-                      min="4"
-                      max="12"
-                      step="0.5"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
-                      className="w-full accent-[#8BC0D0]"
-                    />
-                  )}
-                />
-              </div>
-
-              {/* Water Intake */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
-                  <span>Daily Water Intake:</span>
-                  <span className="text-[#8BC0D0]">
-                    {(watch("lifestyle.waterIntake") / 1000).toFixed(1)}L
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="lifestyle.waterIntake"
-                  render={({ field }) => (
-                    <div className="flex gap-2">
-                      {[1000, 1500, 2000, 2500, 3000].map((ml) => (
-                        <button
-                          key={ml}
-                          type="button"
-                          onClick={() => field.onChange(ml)}
-                          className={`flex-1 h-10 rounded-2xl text-xs font-semibold border transition-all ${
-                            field.value === ml
-                              ? "bg-[#E6F4F8] border-[#8BC0D0] text-[#8BC0D0]"
-                              : "bg-white border-[#8C7B74]/15 text-[#8C7B74]"
-                          }`}
-                        >
-                          {ml / 1000}L
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* Stress Level & Activity Level */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Perceived Stress Level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="lifestyle.stressLevel"
-                    render={({ field }) => (
-                      <div className="flex gap-1.5 bg-[#FFFAF8] border border-rose-100/50 p-1.5 rounded-2xl h-11">
-                        {["low", "medium", "high"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-xs font-bold capitalize transition-all ${
-                              field.value === level
-                                ? "bg-[#8BC0D0] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Physical Activity Level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="lifestyle.activityLevel"
-                    render={({ field }) => (
-                      <select
-                        {...field}
-                        className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-11 px-4 text-xs font-semibold text-[#8C7B74] focus:outline-none"
-                      >
-                        <option value="sedentary">
-                          Sedentary (No exercise)
-                        </option>
-                        <option value="lightly_active">Lightly Active</option>
-                        <option value="moderately_active">
-                          Moderately Active
-                        </option>
-                        <option value="very_active">
-                          Very Active (Daily sports)
-                        </option>
-                      </select>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Screen Time */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
-                  <span>Average Daily Screen Time (Hours):</span>
-                  <span className="text-[#8BC0D0]">
-                    {watch("lifestyle.screenTime")} hours
-                  </span>
-                </label>
-                <Controller
-                  control={control}
-                  name="lifestyle.screenTime"
-                  render={({ field }) => (
-                    <input
-                      type="range"
-                      min="1"
-                      max="12"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="w-full accent-[#8BC0D0]"
-                    />
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 4: HEALTH HISTORY */}
-          {currentStep === 4 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Heart className="text-[#F8B6B6]" size={22} />
-                  Hormonal Health History
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  Your medical details are confidential and used to customize
-                  nutritional recommendations.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {/* PCOS / Thyroid / Imbalance */}
-                {[
-                  {
-                    name: "hasPcos",
-                    label: "Do you have a history of PCOS?",
-                  },
-                  {
-                    name: "hasThyroid",
-                    label: "Do you have diagnosed Thyroid conditions?",
-                  },
-                  {
-                    name: "hasHormonalImbalance",
-                    label: "Do you experience general Hormonal Imbalance?",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-between p-4 border border-rose-100 rounded-2xl bg-[#FFFAF8]/50"
-                  >
-                    <span className="text-xs font-semibold text-[#2D1F1A]">
-                      {item.label}
-                    </span>
+              {/* STEP 0: BASIC INFO */}
+              {currentStep === 0 && (
+                <div className="space-y-6 mt-8">
+                  <div className="space-y-2.5">
+                    <label className="text-xs font-bold tracking-wide text-[#8C7B74] uppercase ml-1">
+                      Your Name
+                    </label>
                     <Controller
                       control={control}
-                      name={`healthHistory.${item.name}`}
-                      render={({ field }) => (
-                        <button
-                          type="button"
-                          onClick={() => field.onChange(!field.value)}
-                          className={`w-12 h-7 rounded-full transition-colors relative flex items-center ${
-                            field.value ? "bg-[#F8B6B6]" : "bg-gray-200"
-                          }`}
-                        >
-                          <span
-                            className={`w-5 h-5 rounded-full bg-white absolute transition-transform ${
-                              field.value ? "translate-x-6" : "translate-x-1"
-                            }`}
+                      name="basicInfo.fullName"
+                      rules={{ required: "Name is required" }}
+                      render={({ field, fieldState: { error } }) => (
+                        <div className="relative">
+                          <User
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F6A58E]/70"
+                            size={20}
                           />
-                        </button>
+                          <input
+                            type="text"
+                            placeholder="Jane Doe"
+                            {...field}
+                            className={inputBaseClass}
+                          />
+                          {error && (
+                            <p className="text-red-500 text-[10px] mt-1.5 ml-1 font-semibold">
+                              {error.message}
+                            </p>
+                          )}
+                        </div>
                       )}
                     />
                   </div>
-                ))}
-              </div>
-
-              {/* Medications / Supplements */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  List any active medications or supplements (Separated by
-                  commas):
-                </label>
-                <Controller
-                  control={control}
-                  name="healthHistory.medications"
-                  render={({ field }) => (
-                    <input
-                      type="text"
-                      placeholder="e.g. Magnesium, Zinc, Birth Control, Levothyroxine"
-                      value={field.value?.join(", ") || ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        )
-                      }
-                      className="w-full bg-[#FFFAF8] border border-rose-100 rounded-2xl h-12 px-4 text-sm text-[#2D1F1A] focus:outline-none focus:ring-2 focus:ring-[#F8B6B6]/30"
-                    />
-                  )}
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {/* STEP 5: WELLNESS GOALS */}
-          {currentStep === 5 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Activity className="text-[#8BC0D0]" size={22} />
-                  What are your wellness goals?
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  We customize dashboard checklists based on what you select.
-                </p>
-              </div>
-
-              <Controller
-                control={control}
-                name="wellnessGoals.goals"
-                render={({ field }) => (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {WELLNESS_GOALS.map((goal) => {
-                      const isSelected = field.value?.includes(goal);
-                      return (
-                        <button
-                          key={goal}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              field.onChange(
-                                field.value.filter((v) => v !== goal),
-                              );
-                            } else {
-                              field.onChange([...(field.value || []), goal]);
-                            }
-                          }}
-                          className={`p-4 rounded-2xl border text-left text-xs font-semibold transition-all ${
-                            isSelected
-                              ? "bg-[#E6F4F8] border-[#8BC0D0] text-[#8BC0D0] shadow-sm"
-                              : "bg-white border-[#8C7B74]/15 text-[#8C7B74] hover:bg-[#FFFAF8]/50"
-                          }`}
-                        >
-                          {goal}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              />
-            </motion.div>
-          )}
-
-          {/* STEP 6: MOOD & ENERGY */}
-          {currentStep === 6 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <Smile className="text-[#F6A58E]" size={22} />
-                  Mood patterns & energy levels
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  Help us understand how hormones correlate with your stress and
-                  vibe.
-                </p>
-              </div>
-
-              {/* Moods */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-[#2D1F1A]">
-                  Select typical moods you notice:
-                </label>
-                <Controller
-                  control={control}
-                  name="moodEnergy.moods"
-                  render={({ field }) => (
-                    <div className="flex flex-wrap gap-2">
-                      {MOODS.map((mood) => {
-                        const isSelected = field.value?.includes(mood);
-                        return (
-                          <button
-                            key={mood}
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                field.onChange(
-                                  field.value.filter((v) => v !== mood),
-                                );
-                              } else {
-                                field.onChange([...(field.value || []), mood]);
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div className="space-y-2.5">
+                      <label className="text-xs font-bold tracking-wide text-[#8C7B74] uppercase ml-1">
+                        Age{" "}
+                        <span className="text-[#8C7B74]/50 font-normal lowercase">
+                          (opt)
+                        </span>
+                      </label>
+                      <Controller
+                        control={control}
+                        name="basicInfo.age"
+                        render={({ field }) => (
+                          <div className="relative">
+                            <Calendar
+                              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F6A58E]/70"
+                              size={18}
+                            />
+                            <input
+                              type="number"
+                              placeholder="25"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value) || "")
                               }
-                            }}
-                            className={`px-3 py-2 rounded-full text-xs font-semibold border transition-all ${
-                              isSelected
-                                ? "bg-[#FFF0ED] border-[#F6A58E] text-[#F6A58E]"
-                                : "bg-white border-[#8C7B74]/15 text-[#8C7B74]"
-                            }`}
-                          >
-                            {mood}
-                          </button>
-                        );
-                      })}
+                              className={inputBaseClass}
+                            />
+                          </div>
+                        )}
+                      />
                     </div>
-                  )}
-                />
-              </div>
-
-              {/* Energy Level & Anxiety Frequency */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Overall Energy level:
-                  </label>
-                  <Controller
-                    control={control}
-                    name="moodEnergy.energyLevel"
-                    render={({ field }) => (
-                      <div className="flex gap-1.5 bg-[#FFFAF8] border border-rose-100/50 p-1.5 rounded-2xl h-11">
-                        {["Low", "Medium", "High"].map((level) => (
-                          <button
-                            key={level}
-                            type="button"
-                            onClick={() => field.onChange(level)}
-                            className={`flex-1 h-full rounded-xl text-xs font-bold transition-all ${
-                              field.value === level
-                                ? "bg-[#F6A58E] text-white shadow-sm"
-                                : "text-[#8C7B74]"
-                            }`}
-                          >
-                            {level}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  />
+                    <div className="space-y-2.5">
+                      <label className="text-xs font-bold tracking-wide text-[#8C7B74] uppercase ml-1">
+                        Height{" "}
+                        <span className="text-[#8C7B74]/50 font-normal lowercase">
+                          (cm)
+                        </span>
+                      </label>
+                      <Controller
+                        control={control}
+                        name="basicInfo.height"
+                        render={({ field }) => (
+                          <div className="relative">
+                            <Ruler
+                              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F6A58E]/70"
+                              size={18}
+                            />
+                            <input
+                              type="number"
+                              placeholder="165"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value) || "")
+                              }
+                              className={inputBaseClass}
+                            />
+                          </div>
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-2.5">
+                      <label className="text-xs font-bold tracking-wide text-[#8C7B74] uppercase ml-1">
+                        Weight{" "}
+                        <span className="text-[#8C7B74]/50 font-normal lowercase">
+                          (kg)
+                        </span>
+                      </label>
+                      <Controller
+                        control={control}
+                        name="basicInfo.weight"
+                        render={({ field }) => (
+                          <div className="relative">
+                            <Scale
+                              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F6A58E]/70"
+                              size={18}
+                            />
+                            <input
+                              type="number"
+                              placeholder="60"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value) || "")
+                              }
+                              className={inputBaseClass}
+                            />
+                          </div>
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
+              )}
 
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-[#2D1F1A]">
-                    Do you feel anxious?
-                  </label>
+              {/* STEP 1: CYCLE TRACKING */}
+              {currentStep === 1 && (
+                <div className="space-y-8 mt-8">
+                  <div className="space-y-2.5">
+                    <label className="text-sm font-semibold text-[#2D1F1A] ml-1">
+                      First day of your last period?
+                    </label>
+                    <Controller
+                      control={control}
+                      name="cycleTracking.lastPeriodDate"
+                      rules={{ required: "This date is required" }}
+                      render={({ field, fieldState: { error } }) => (
+                        <div className="relative">
+                          <Calendar
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F6A58E]/70"
+                            size={20}
+                          />
+                          <input
+                            type="date"
+                            {...field}
+                            max={new Date().toISOString().split("T")[0]}
+                            className={inputBaseClass}
+                          />
+                          {error && (
+                            <p className="text-red-500 text-[10px] mt-1.5 ml-1 font-semibold">
+                              {error.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-4 bg-white/50 p-5 rounded-3xl border border-white/60">
+                    <label className="text-sm font-semibold text-[#2D1F1A] flex justify-between">
+                      <span>Average cycle length</span>
+                      <span className="text-[#F6A58E] font-bold bg-white px-3 py-1 rounded-full text-xs shadow-sm">
+                        {watch("cycleTracking.averageCycleLength")} days
+                      </span>
+                    </label>
+                    <Controller
+                      control={control}
+                      name="cycleTracking.averageCycleLength"
+                      render={({ field }) => (
+                        <input
+                          type="range"
+                          min="21"
+                          max="45"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
+                          className="w-full accent-[#F6A58E] h-2 bg-rose-100 rounded-lg appearance-none cursor-pointer"
+                        />
+                      )}
+                    />
+                    <div className="flex justify-between text-xs font-semibold text-[#8C7B74]/60">
+                      <span>21 Days</span>
+                      <span>28 Days</span>
+                      <span>45 Days</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: SYMPTOM PREFERENCES */}
+              {currentStep === 2 && (
+                <div className="space-y-4 mt-8">
+                  {[
+                    {
+                      name: "trackCramps",
+                      label: "Cramps severity tracking",
+                      icon: <Activity size={18} />,
+                    },
+                    {
+                      name: "trackMood",
+                      label: "Mood & emotional tracking",
+                      icon: <Heart size={18} />,
+                    },
+                    {
+                      name: "trackEnergy",
+                      label: "Daily energy levels",
+                      icon: <Sparkles size={18} />,
+                    },
+                    {
+                      name: "trackBloating",
+                      label: "Bloating & digestion",
+                      icon: <Scale size={18} />,
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.name}
+                      className="group flex items-center gap-4 p-4 sm:p-5 border border-white/60 rounded-2xl bg-white/40 hover:bg-white/80 transition-all duration-300 cursor-pointer shadow-[inset_0_2px_4px_rgba(255,255,255,0.4)] hover:shadow-md hover:shadow-[#F6A58E]/5 hover:-translate-y-0.5"
+                      onClick={() => {
+                        const current = getValues(
+                          `symptomPreferences.${item.name}`,
+                        );
+                        setValue(`symptomPreferences.${item.name}`, !current, {
+                          shouldDirty: true,
+                        });
+                      }}
+                    >
+                      <Controller
+                        control={control}
+                        name={`symptomPreferences.${item.name}`}
+                        render={({ field }) => (
+                          <div
+                            className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all duration-300 ${field.value ? "bg-[#F6A58E] border-[#F6A58E] scale-110 shadow-sm shadow-[#F6A58E]/40" : "bg-white border-rose-200 group-hover:border-[#F6A58E]/50"}`}
+                          >
+                            <motion.div
+                              initial={false}
+                              animate={{
+                                scale: field.value ? 1 : 0,
+                                opacity: field.value ? 1 : 0,
+                              }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20,
+                              }}
+                            >
+                              <Sparkles size={12} className="text-white" />
+                            </motion.div>
+                          </div>
+                        )}
+                      />
+                      <div className="flex items-center gap-3 text-sm font-semibold text-[#2D1F1A] select-none">
+                        <span className="text-[#8C7B74] group-hover:text-[#F6A58E] transition-colors">
+                          {item.icon}
+                        </span>
+                        {item.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* STEP 3: HEALTH GOALS */}
+              {currentStep === 3 && (
+                <div className="space-y-4 mt-8">
                   <Controller
                     control={control}
-                    name="moodEnergy.anxietyFrequency"
-                    render={({ field }) => (
-                      <div className="flex gap-1 bg-[#FFFAF8] border border-rose-100/50 p-1 rounded-2xl h-11">
-                        {["Never", "Rarely", "Sometimes", "Often"].map(
-                          (level) => (
-                            <button
-                              key={level}
-                              type="button"
-                              onClick={() => field.onChange(level)}
-                              className={`flex-1 h-full rounded-xl text-[10px] font-extrabold transition-all ${
-                                field.value === level
-                                  ? "bg-[#F6A58E] text-white shadow-sm"
-                                  : "text-[#8C7B74]"
-                              }`}
+                    name="healthGoals.primaryGoal"
+                    rules={{ required: "Please select a primary focus" }}
+                    render={({ field, fieldState: { error } }) => (
+                      <div className="space-y-3 sm:space-y-4">
+                        {[
+                          "Cycle tracking only",
+                          "Pain & symptom management",
+                          "Fitness alignment with cycle",
+                          "Pregnancy planning (optional)",
+                        ].map((goal) => (
+                          <div
+                            key={goal}
+                            onClick={() => field.onChange(goal)}
+                            className={`p-4 sm:p-5 border rounded-2xl cursor-pointer transition-all duration-300 flex items-center justify-between ${field.value === goal ? "border-[#F6A58E] bg-[#FFF0ED]/80 shadow-[0_4px_12px_rgba(246,165,142,0.15)] -translate-y-0.5" : "border-white/60 bg-white/40 hover:bg-white/80 hover:border-[#F6A58E]/40"}`}
+                          >
+                            <span
+                              className={`text-sm font-bold ${field.value === goal ? "text-[#F6A58E]" : "text-[#2D1F1A]"}`}
                             >
-                              {level}
-                            </button>
-                          ),
+                              {goal}
+                            </span>
+                            <div
+                              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-300 ${field.value === goal ? "border-[#F6A58E]" : "border-rose-200"}`}
+                            >
+                              <motion.div
+                                initial={false}
+                                animate={{
+                                  scale: field.value === goal ? 1 : 0,
+                                }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 300,
+                                  damping: 20,
+                                }}
+                                className="w-2.5 h-2.5 rounded-full bg-[#F6A58E]"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                        {error && (
+                          <p className="text-red-500 text-[10px] mt-2 ml-1 font-semibold">
+                            {error.message}
+                          </p>
                         )}
                       </div>
                     )}
                   />
                 </div>
-              </div>
+              )}
             </motion.div>
-          )}
+          </AnimatePresence>
 
-          {/* STEP 7: SUMMARY & REVIEW */}
-          {currentStep === 7 && (
-            <motion.div
-              variants={stepVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="space-y-6"
-            >
-              <div>
-                <h2 className="font-serif font-bold text-2xl text-[#2D1F1A] flex items-center gap-2">
-                  <CheckCircle className="text-[#8BC0D0]" size={22} />
-                  Summary & Final Review
-                </h2>
-                <p className="text-[#8C7B74] text-xs mt-1">
-                  Make sure everything looks right before we call your AI
-                  wellness coach.
-                </p>
-              </div>
+          {/* ── FOOTER ACTIONS (INSIDE CARD NOW FOR CLEANER LOOK) ── */}
+          <div className="flex justify-between items-center mt-10 pt-6 border-t border-[#8C7B74]/10 relative z-10">
+            {currentStep > 0 ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#8C7B74] hover:text-[#2D1F1A] transition-colors py-2 px-3 -ml-3 rounded-xl hover:bg-white/50"
+              >
+                <ArrowLeft
+                  size={16}
+                  className="transition-transform group-hover:-translate-x-1"
+                />{" "}
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
 
-              <div className="bg-[#FFFAF8] border border-rose-100 rounded-3xl p-5 space-y-4 text-xs font-semibold text-[#8C7B74] max-h-72 overflow-y-auto">
-                <div>
-                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
-                    Personal Details
-                  </h4>
-                  <p>
-                    Date of Birth:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("personalDetails.dateOfBirth")
-                        ? new Date(
-                            getValues("personalDetails.dateOfBirth"),
-                          ).toLocaleDateString()
-                        : "Not set"}
-                    </span>
-                  </p>
-                  {getValues("personalDetails.phoneNumber") && (
-                    <p>
-                      Phone Number:{" "}
-                      <span className="text-[#2D1F1A]">
-                        {getValues("personalDetails.phoneNumber")}
-                      </span>
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
-                    Menstrual Cycle
-                  </h4>
-                  <p>
-                    Average cycle length:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("menstrualHealth.averageCycleLength")} days
-                    </span>
-                  </p>
-                  <p>
-                    Last period date:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("menstrualHealth.lastPeriodDate")}
-                    </span>
-                  </p>
-                  <p>
-                    Symptoms selected:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("menstrualHealth.pmsSymptoms")?.join(", ") ||
-                        "None"}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
-                    Lifestyle
-                  </h4>
-                  <p>
-                    Avg sleep:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("lifestyle.sleepHours")} hours
-                    </span>
-                  </p>
-                  <p>
-                    Water intake:{" "}
-                    <span className="text-[#2D1F1A]">
-                      {getValues("lifestyle.waterIntake") / 1000}L
-                    </span>
-                  </p>
-                  <p>
-                    Stress level:{" "}
-                    <span className="text-[#2D1F1A] capitalize">
-                      {getValues("lifestyle.stressLevel")}
-                    </span>
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-[#2D1F1A] uppercase tracking-wider text-[10px] font-bold border-b pb-1 mb-2">
-                    Wellness Goals
-                  </h4>
-                  <p className="text-[#2D1F1A]">
-                    {getValues("wellnessGoals.goals")?.join(", ") ||
-                      "No goals selected"}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </FormStepWrapper>
-
-        {/* ── FOOTER ACTIONS ── */}
-        <div className="flex justify-between items-center mt-10 border-t border-rose-50 pt-6">
-          {currentStep > 0 ? (
-            <button
-              type="button"
-              onClick={handleBack}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8C7B74] hover:text-[#2D1F1A] transition-colors"
-            >
-              <ArrowLeft size={14} /> Back
-            </button>
-          ) : (
-            <div />
-          )}
-
-          {currentStep < STEPS.length - 1 ? (
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center gap-1.5 bg-[#FFF0ED] text-[#F6A58E] hover:bg-[#FFE0D9] text-xs font-bold py-2.5 px-5 rounded-full active:scale-[0.98] transition-all border border-[#F6A58E]/10"
+              className="group relative inline-flex items-center gap-2 overflow-hidden bg-gradient-to-r from-[#F6A58E] to-[#F8B6B6] text-white hover:shadow-[0_8px_20px_rgba(246,165,142,0.3)] hover:-translate-y-0.5 text-sm font-bold py-3.5 px-8 rounded-full shadow-sm active:scale-[0.97] transition-all duration-300"
             >
-              Continue <ArrowRight size={14} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-              className="inline-flex items-center gap-2 bg-[#F6A58E] text-white hover:bg-[#F5947A] text-xs font-bold py-2.5 px-6 rounded-full shadow-sm active:scale-[0.98] transition-all"
-            >
-              Generate AI Profile <Sparkles size={14} />
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+              {/* Button shimmer effect */}
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
 
-function FormStepWrapper({ children, currentStep }) {
-  return (
-    <div className="flex-1 flex flex-col justify-center">
-      <AnimatePresence mode="wait">
-        <div key={currentStep} className="w-full">
-          {children}
-        </div>
-      </AnimatePresence>
+              <span className="relative z-10 flex items-center gap-2">
+                {currentStep < STEPS.length - 1 ? (
+                  <>
+                    Continue{" "}
+                    <ArrowRight
+                      size={16}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
+                  </>
+                ) : (
+                  <>
+                    Finish Setup{" "}
+                    <Sparkles size={16} className="animate-pulse" />
+                  </>
+                )}
+              </span>
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      <style>{`
+        @keyframes shimmer {
+          100% {
+            transform: translateX(100%);
+          }
+        }
+      `}</style>
     </div>
   );
 }

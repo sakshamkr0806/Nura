@@ -8,6 +8,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AIService, AIHealthProfileResponse } from '../ai/ai.service';
 import { AuthService } from '../auth/auth.service';
 import { SubmitOnboardingDto } from './dto/submit-onboarding.dto';
+import { SaveOnboardingStepDto } from './dto/save-onboarding-step.dto';
+
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OnboardingService {
@@ -240,6 +243,93 @@ export class OnboardingService {
       updatedUser.phoneNumber ?? undefined,
       updatedUser.dateOfBirth,
       updatedUser.onboardingCompleted,
+    );
+
+    await this.authService.updateRtHash(updatedUser.id, tokens.refresh_token);
+
+    return tokens;
+  }
+
+  async saveStep(userId: string, dto: SaveOnboardingStepDto) {
+    const { step, basicInfo, cycleTracking, symptomPreferences, healthGoals } =
+      dto;
+
+    const data: Prisma.UserUpdateInput = {
+      lastCompletedStep: step,
+      profileStatus: 'INCOMPLETE',
+    };
+
+    if (basicInfo) {
+      if (basicInfo.fullName) data.fullName = basicInfo.fullName;
+      if (basicInfo.age) data.age = basicInfo.age;
+      if (basicInfo.height) data.height = basicInfo.height;
+      if (basicInfo.weight) data.weight = basicInfo.weight;
+    }
+
+    if (symptomPreferences) {
+      const symptoms: string[] = [];
+      if (symptomPreferences.trackCramps) symptoms.push('Cramps');
+      if (symptomPreferences.trackMood) symptoms.push('Mood Swings');
+      if (symptomPreferences.trackEnergy) symptoms.push('Fatigue');
+      if (symptomPreferences.trackBloating) symptoms.push('Bloating');
+
+      await this.prisma.userSymptoms.upsert({
+        where: { userId },
+        update: { symptoms },
+        create: { userId, symptoms, painSeverity: 'Moderate' },
+      });
+    }
+
+    if (healthGoals && healthGoals.primaryGoal) {
+      await this.prisma.userGoals.upsert({
+        where: { userId },
+        update: { goals: [healthGoals.primaryGoal] },
+        create: { userId, goals: [healthGoals.primaryGoal] },
+      });
+    }
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    if (cycleTracking && cycleTracking.lastPeriodDate) {
+      const lastPeriodStartDate = new Date(cycleTracking.lastPeriodDate);
+      if (!isNaN(lastPeriodStartDate.getTime())) {
+        lastPeriodStartDate.setUTCHours(0, 0, 0, 0);
+        const existingCycle = await this.prisma.cycle.findFirst({
+          where: { userId, startDate: lastPeriodStartDate },
+        });
+        if (!existingCycle) {
+          await this.prisma.cycle.create({
+            data: { userId, startDate: lastPeriodStartDate },
+          });
+        }
+      }
+    }
+
+    return user;
+  }
+
+  async completeOnboarding(userId: string) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        onboardingCompleted: true,
+        profileStatus: 'COMPLETE',
+      },
+    });
+
+    const tokens = await this.authService.getTokens(
+      updatedUser.id,
+      updatedUser.email,
+      updatedUser.role,
+      updatedUser.fullName,
+      updatedUser.phoneNumber ?? undefined,
+      updatedUser.dateOfBirth,
+      updatedUser.onboardingCompleted,
+      updatedUser.profileStatus,
+      updatedUser.lastCompletedStep,
     );
 
     await this.authService.updateRtHash(updatedUser.id, tokens.refresh_token);
