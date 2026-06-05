@@ -33,12 +33,35 @@ export default function Education() {
         params: { q: search, category: selectedCategory },
       });
 
-      // exact sort order for Cycle Phase cards
+      // exact sort order for all articles across categories
       const PHASE_ORDER = {
+        // Cycles Tab
         "understanding-menstrual-phase": 1,
         "understanding-follicular-phase": 2,
         "understanding-ovulatory-phase": 3,
         "understanding-luteal-phase": 4,
+
+        // Nutrition Tab
+        "nutrition-menstrual-phase": 10,
+        "nutrition-follicular-phase": 11,
+        "nutrition-ovulatory-phase": 12,
+        "nutrition-luteal-phase": 13,
+        "nutrition-hormonal-balance": 14,
+
+        // Mental Health Tab
+        "mood-menstrual-cycle": 20,
+        "cycle-sleep-connection": 21,
+        "managing-pms-pmdd": 22,
+
+        // Myth-Busting Tab
+        "myth-period-pain-normal": 30,
+        "myth-pregnant-during-period": 31,
+        "myth-irregular-periods-normal": 32,
+
+        // Lifestyle Tab
+        "exercise-cycle-train-smarter": 40,
+        "cycle-syncing-your-diet": 41,
+        "stress-hormonal-balance": 42,
       };
 
       const sorted = [...res.data].sort((a, b) => {

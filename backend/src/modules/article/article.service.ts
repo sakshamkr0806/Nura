@@ -269,6 +269,44 @@ export class ArticleService implements OnModuleInit {
         category: 'Nutrition',
         tags: ['Nutrition', 'Luteal', 'PMS'],
       },
+      {
+        title: 'Nutrition for Hormonal Balance',
+        slug: 'nutrition-hormonal-balance',
+        excerpt:
+          'Learn how stabilizing blood sugar, eating healthy fats, and supporting your liver can promote overall endocrine health.',
+        content: `
+<h2>Why General Nutrition Matters</h2>
+<p class="mb-6">While cycle syncing is powerful, foundational nutrition is key for your hormones. Consistent blood sugar levels, healthy fat intake, and liver health lay the groundwork for optimal estrogen and progesterone production.</p>
+<img src="/education/indian_healthy_foods.png" alt="Indian Healthy Foods" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#F5E6D3]" />
+
+<h2>1. Stabilizing Blood Sugar</h2>
+<p class="mb-4">Insulin spikes trigger cortisol release, which can disrupt ovulation and lead to irregular cycles. Eating balanced meals helps prevent these hormonal crashes:</p>
+<ul class="list-disc pl-5 space-y-2 mb-6">
+  <li>Combine complex carbs (oats, brown rice) with a quality protein (paneer, lentils, chicken).</li>
+  <li>Ensure high fiber intake to slow down sugar absorption.</li>
+</ul>
+
+<h2>2. Healthy Fats are Hormone Builders</h2>
+<p class="mb-4">Steroid hormones (estrogen, progesterone, testosterone) are synthesized from cholesterol. Eating clean, healthy fats is essential for hormone synthesis:</p>
+<ul class="list-disc pl-5 space-y-2 mb-6">
+  <li>Incorporate ghee, avocados, nuts (almonds, walnuts), and seeds (flax, chia).</li>
+  <li>Use cold-pressed oils like coconut oil or olive oil for cooking.</li>
+</ul>
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/healthy_meal_prepping.png" alt="Meal Prepping" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF6F0]" />
+  <img src="/education/herbal_teas.png" alt="Herbal Teas" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF6F0]" />
+</div>
+
+<h2>3. Supporting Estrogen Detoxification</h2>
+<p class="mb-6">The liver is responsible for filtering out excess or "dirty" estrogen. Support your liver by drinking plenty of water, eating cruciferous vegetables (cabbage, cauliflower, broccoli), and incorporating herbal infusions like dandelion root or tulsi tea.</p>
+
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Start your morning with a savory, protein-rich breakfast instead of sweet cereal or fruit to prevent a morning blood sugar spike.
+</div>
+        `,
+        category: 'Nutrition',
+        tags: ['Nutrition', 'Hormones', 'Balance'],
+      },
       // 🧠 Mental Health Category
       {
         title: 'Mood & Your Menstrual Cycle',
@@ -278,7 +316,10 @@ export class ArticleService implements OnModuleInit {
         content: `
 <h2>The Hormonal Emotional Rollercoaster</h2>
 <p class="mb-6">Hormones are powerful chemical messengers. Throughout your 28-day cycle, estrogen and progesterone fluctuate significantly, impacting neurotransmitters in the brain like serotonin and dopamine, which regulate mood, sleep, and emotional stability.</p>
-<img src="/education/calm_woman_journaling.png" alt="Journaling" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/calm_woman_journaling.png" alt="Journaling" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+  <img src="/education/hormone_chart_illustration.png" alt="Hormone Chart" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+</div>
 
 <h2>What to Expect in Each Phase</h2>
 <h3 class="font-bold text-base mt-4 mb-2 text-[#C87B7B]">🌱 Menstrual Phase (Low Mood, Introspective)</h3>
@@ -300,6 +341,9 @@ export class ArticleService implements OnModuleInit {
   <li><strong>Adjust your schedule:</strong> Plan high-intensity meetings or social outings during your follicular/ovulatory phases, and schedule quiet downtime during your menstrual phase.</li>
   <li><strong>Mindful breathing:</strong> Practice 5 minutes of deep belly breathing to calm cortisol spikes during the luteal phase.</li>
 </ul>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Create a "Phase Plan" in your journal, listing self-care tasks tailored to your energy levels so you can review it when feeling low.
+</div>
 
 <h2>When to Seek Professional Support</h2>
 <p class="mb-6">If your mood swings feel unmanageable, cause severe disruption to your relationships or work, or lead to feelings of hopelessness, seek support from a healthcare professional. You could be experiencing PMDD, a severe and treatable form of premenstrual distress.</p>
@@ -318,6 +362,8 @@ export class ArticleService implements OnModuleInit {
 <img src="/education/woman_stressed_calm.png" alt="Stress to Calm" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
 
 <h2>Recognizing the Symptoms</h2>
+<p class="mb-4">Symptoms range from physical changes to severe psychological disturbances. Recognizing where you fall can help guide clinical treatment:</p>
+<img src="/education/period_pain_myth.png" alt="Doctor Consultation" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
 <h3>Standard PMS Symptoms:</h3>
 <ul class="list-disc pl-5 space-y-2 mb-6">
   <li>Mild irritability, fatigue, and bloating</li>
@@ -346,6 +392,10 @@ export class ArticleService implements OnModuleInit {
 
 <h2>Medical Treatment Paths</h2>
 <p class="mb-6">If natural treatments aren't enough, doctors may recommend targeted options like selective serotonin reuptake inhibitors (SSRIs) taken during the luteal phase, or specific hormonal therapies to suppress ovulation. Talk to your gynecologist or therapist to find your path.</p>
+
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Keep a symptom diary for at least two full cycles. Accurate tracking is the most powerful tool for diagnosing PMDD.
+</div>
         `,
         category: 'Mental Health',
         tags: ['PMDD', 'PMS', 'Therapy'],
@@ -374,8 +424,11 @@ export class ArticleService implements OnModuleInit {
   <li><strong>Limit screens:</strong> Avoid blue light for 1 hour before bed to help your brain produce natural melatonin.</li>
 </ul>
 <div class="grid grid-cols-2 gap-4 my-8">
-  <img src="/education/turmeric_milk.png" alt="Turmeric Milk" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
-  <img src="/education/cozy_self_care.png" alt="Cozy Bedroom" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
+  <img src="/education/bedtime_routine.png" alt="Bedtime Routine" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
+  <img src="/education/ovulation_illustration.png" alt="Moon Illustration" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
+</div>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Keep your room temperature at 18°C (65°F) during your luteal phase to counteract the progesterone-induced temperature rise.
 </div>
         `,
         category: 'Mental Health',
@@ -393,16 +446,23 @@ export class ArticleService implements OnModuleInit {
 <img src="/education/period_pain_myth.png" alt="Patient and Doctor" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
 
 <h2>When Cramps Are Red Flags</h2>
-<p class="mb-4">Severe pain is often a sign of secondary dysmenorrhea caused by underlying reproductive conditions:</p>
+<p class="mb-4">Severe pain is often a sign of secondary discomfort caused by underlying reproductive conditions:</p>
+<img src="/education/woman_in_pain.png" alt="Woman in Pain" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
 <ul class="list-disc pl-5 space-y-2 mb-6">
   <li><strong>Endometriosis:</strong> A painful condition where tissue similar to the lining of the uterus grows outside the uterus (on ovaries, fallopian tubes, or bladder).</li>
   <li><strong>Adenomyosis:</strong> When the lining tissue grows directly into the muscular wall of the uterus.</li>
   <li><strong>PCOS (Polycystic Ovary Syndrome):</strong> Can cause irregular, heavy, and unusually painful periods due to cystic follicles.</li>
 </ul>
-<img src="/education/period_cramps.png" alt="Severe Cramps" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
 
 <h2>When to Consult a Doctor</h2>
 <p class="mb-6">If your menstrual pain is accompanied by heavy bleeding, pain during intercourse, chronic lower back pain, or digestive issues, schedule a comprehensive consultation with a gynecologist. Advocating for your health starts with realizing you do not have to live in pain.</p>
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/period_pain_myth.png" alt="Doctor Consultation" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+  <img src="/education/uterus_illustration.png" alt="Uterus Illustration" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+</div>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Keep a log of your pain scale (1-10) and whether it affects your ability to perform daily tasks. This is highly useful context for your doctor.
+</div>
         `,
         category: 'Myth-Busting',
         tags: ['Myth-Busting', 'Pain', 'Endometriosis'],
@@ -423,10 +483,16 @@ export class ArticleService implements OnModuleInit {
 
 <h3>2. Short Cycles and Early Ovulation</h3>
 <p class="mb-4">If you have a shorter-than-average cycle (e.g., 21-24 days), ovulation can happen as early as day 7 or 8 of your cycle. If you have intercourse on day 3 of your period, sperm can easily survive until ovulation occurs, leading to fertilization.</p>
-<img src="/education/ovulation_illustration.png" alt="Ovulation" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#F5E6D3]" />
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/calendar_cycle_days.png" alt="Calendar Days" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+  <img src="/education/sperm_illustration.png" alt="Sperm Illustration" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+</div>
 
 <h2>Summary Advice</h2>
 <p class="mb-6">Unless you are actively tracking your biological biomarkers (like basal body temperature and cervical mucus) and have a highly regular cycle, always use protection if you want to avoid pregnancy. Do not rely solely on the calendar or active bleeding as a contraceptive method.</p>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Real-time ovulation tracking using LH strips or basal body temperature is much safer than relying on standard 28-day calendar math.
+</div>
         `,
         category: 'Myth-Busting',
         tags: ['Myth-Busting', 'Fertility', 'Contraception'],
@@ -447,10 +513,13 @@ export class ArticleService implements OnModuleInit {
   <li><strong>Thyroid dysfunction:</strong> Hypothyroidism or hyperthyroidism affects metabolism and cycle regulation.</li>
   <li><strong>Nutritional deficiency:</strong> Extreme dieting, low body weight, or intense overtraining can suppress ovulation (hypothalamic amenorrhea).</li>
 </ul>
-<img src="/education/progesterone_chart.png" alt="Hormone Chart" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
 
 <h2>When to Speak with a Gynecologist</h2>
 <p class="mb-6">If your period is consistently missing for over 3 months, if your cycles are highly unpredictable, or if irregularity is paired with acne, hair loss, or sudden weight gain, request a blood panel and pelvic ultrasound. Tracking your cycle with Nura provides your doctor with invaluable diagnostic history.</p>
+<img src="/education/period_pain_myth.png" alt="Woman with Doctor" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> If your cycle is consistently shorter than 21 days or longer than 35 days, log these dates and schedule a routine blood panel test.
+</div>
         `,
         category: 'Myth-Busting',
         tags: ['Myth-Busting', 'Irregular', 'PCOS'],
@@ -464,7 +533,7 @@ export class ArticleService implements OnModuleInit {
         content: `
 <h2>Why Work Out with Your Cycle?</h2>
 <p class="mb-6">Your cardiovascular capacity, muscle recovery, and energy levels shift in response to estrogen and progesterone. By syncing your exercises with your biology, you can build lean muscle, recover faster, and avoid hormonal exhaustion.</p>
-<img src="/education/woman_exercising.png" alt="Woman Exercising" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF6F0]" />
+<img src="/education/running.png" alt="Running" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF6F0]" />
 
 <h2>How to Train in Each Phase</h2>
 <h3 class="font-bold text-base mt-4 mb-2 text-[#C87B7B]">🌱 Menstrual Phase (Rest & Restore)</h3>
@@ -478,7 +547,13 @@ export class ArticleService implements OnModuleInit {
 
 <h3 class="font-bold text-base mt-4 mb-2 text-[#7B5EA7]">🍂 Luteal Phase (Moderate Cardio & Strength)</h3>
 <p class="mb-4"><strong>Best:</strong> Pilates, steady-state jog, light resistance training.<br />Progesterone raises body temperature and makes recovery slower. Shift to moderate effort and prioritize flexibility and recovery.</p>
-<img src="/education/yoga_pose.png" alt="Yoga Pose" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/woman_exercising.png" alt="HIIT Workouts" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+  <img src="/education/yoga_pose.png" alt="Yoga Pose" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FFF0ED]" />
+</div>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Never force high-intensity workouts during your period. Rest is active cycle-syncing, too!
+</div>
         `,
         category: 'Lifestyle',
         tags: ['Exercise', 'Fitness', 'Biohacking'],
@@ -491,7 +566,10 @@ export class ArticleService implements OnModuleInit {
         content: `
 <h2>The Power of Nutritional Alignment</h2>
 <p class="mb-6">Your caloric needs and metabolic rate are not static. During your cycle, the body requires different micronutrients to metabolize hormones, replenish iron, and stabilize insulin levels. Syncing your diet supports ovulatory health and eases PMS.</p>
-<img src="/education/colourful_foods.png" alt="Colourful Foods" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#F5E6D3]" />
+<div class="grid grid-cols-2 gap-4 my-8">
+  <img src="/education/colourful_foods.png" alt="Colourful Foods" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#F5E6D3]" />
+  <img src="/education/indian_healthy_foods.png" alt="Indian Healthy Foods" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#F5E6D3]" />
+</div>
 
 <h2>Your Phase-by-Phase Plate</h2>
 <h3>🌱 Menstrual: Warming & Iron-Rich</h3>
@@ -499,13 +577,15 @@ export class ArticleService implements OnModuleInit {
 
 <h3>🌸 Follicular: Light & Fermented</h3>
 <p class="mb-4">Digestion is strong, and estrogen requires liver clearance. Focus on cruciferous veggies (broccoli, cauliflower), fresh salads, and fermented foods (yogurt, kimchi).</p>
-<img src="/education/fresh_salad.png" alt="Fresh Salad" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF6F0]" />
 
 <h3>🌕 Ovulatory: Antioxidants & Fiber</h3>
 <p class="mb-4">Egg health requires glutathione and zinc. Eat colorful berries, pumpkin seeds, raw carrots, and plenty of hydrating fruits.</p>
 
 <h3>🍂 Luteal: Complex Carbs & Magnesium</h3>
 <p class="mb-4">Your metabolism increases by 100-300 calories. Avoid blood sugar crashes by eating complex carbs (sweet potatoes, oats) and magnesium-rich dark chocolate to calm cramps.</p>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Coordinate your seed cycling along with your diet: flax and pumpkin seeds in the first half of your cycle, and sesame and sunflower seeds in the second half.
+</div>
         `,
         category: 'Lifestyle',
         tags: ['Diet', 'Nutrition', 'Lifestyle'],
@@ -529,7 +609,7 @@ export class ArticleService implements OnModuleInit {
 
 <h2>Daily Stress Management Rituals</h2>
 <div class="grid grid-cols-2 gap-4 my-8">
-  <img src="/education/cozy_self_care.png" alt="Relaxation" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
+  <img src="/education/herbal_teas.png" alt="Herbal Teas" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
   <img src="/education/turmeric_milk.png" alt="Hot Drink" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
 </div>
 <ul class="list-disc pl-5 space-y-2 mb-6">
@@ -537,6 +617,9 @@ export class ArticleService implements OnModuleInit {
   <li><strong>Hormone-Soothing Teas:</strong> Incorporate chamomile, ashwagandha, or hot turmeric milk to calm the nervous system in the evening.</li>
   <li><strong>Nature Walks:</strong> Spending 20 minutes outside in greenery is clinically proven to reduce stress biomarkers.</li>
 </ul>
+<div class="bg-[#FFF9F6] p-4 rounded-xl border border-[#F6A58E] my-6">
+  <strong>💡 Tip:</strong> Try drinking warm Tulsi or Brahmi tea in the late afternoon to support your adrenals and naturally lower cortisol levels.
+</div>
         `,
         category: 'Lifestyle',
         tags: ['Stress', 'Cortisol', 'Self-Care'],
