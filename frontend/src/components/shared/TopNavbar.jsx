@@ -8,21 +8,21 @@ import { Menu, X, LogOut } from "lucide-react";
 import api from "@/api/axios";
 import { toast } from "sonner";
 
-const NAV_LINKS = [
-  { label: "Home", path: "/" },
-  { label: "Cycle", path: "/calendar" },
-  { label: "Log", path: "/log" },
-  { label: "Learn", path: "/education" },
-  { label: "Coach", path: "/coach" },
-  { label: "Seeds", path: "/seeds" },
-  { label: "Reports", path: "/reports" },
-  { label: "Community", path: "/community" },
-];
-
 export default function TopNavbar() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { label: "Home", path: user ? "/dashboard" : "/" },
+    { label: "Cycle", path: "/calendar" },
+    { label: "Log", path: "/log" },
+    { label: "Learn", path: "/education" },
+    { label: "Coach", path: "/coach" },
+    { label: "Seeds", path: "/seeds" },
+    { label: "Reports", path: "/reports" },
+    { label: "Community", path: "/community" },
+  ];
 
   const handleLogout = async () => {
     try {
@@ -41,7 +41,10 @@ export default function TopNavbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between gap-4 py-3">
           {/* Brand */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+          <Link
+            to={user ? "/dashboard" : "/"}
+            className="flex items-center gap-2.5 shrink-0 group"
+          >
             <div className="transition-transform duration-300 group-hover:rotate-12">
               <FlowerLogo className="w-9 h-9" />
             </div>
@@ -55,11 +58,11 @@ export default function TopNavbar() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
-                end={link.path === "/"}
+                end={link.path === "/" || link.path === "/dashboard"}
                 className={({ isActive }) =>
                   `px-3 lg:px-4 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-200 ${
                     isActive ? "nav-link-active" : "nav-link-idle"
@@ -145,11 +148,11 @@ export default function TopNavbar() {
       {open && (
         <div className="md:hidden border-t border-[rgba(246,165,142,0.12)] bg-[rgba(255,249,247,0.97)] backdrop-blur-xl animate-fade-in">
           <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
-                end={link.path === "/"}
+                end={link.path === "/" || link.path === "/dashboard"}
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
                   `block px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${

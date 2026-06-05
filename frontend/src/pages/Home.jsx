@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import TopNavbar from "@/components/shared/TopNavbar";
 import Footer from "@/components/shared/Footer";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -71,7 +71,14 @@ const CARE = [
 
 export default function Home() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -79,6 +86,10 @@ export default function Home() {
     toast.success("You're in! Welcome to the Nura sanctuary 🌸");
     setEmail("");
   };
+
+  if (user) {
+    return null;
+  }
 
   return (
     <div
