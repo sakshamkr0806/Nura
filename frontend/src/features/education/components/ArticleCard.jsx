@@ -9,15 +9,51 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const PHASE_ACCENTS = {
+  "understanding-menstrual-phase": {
+    border: "border-t-4 border-t-[#E8727A]",
+    bg: "bg-[#FFF0ED]",
+    text: "text-[#E8727A]",
+  },
+  "understanding-follicular-phase": {
+    border: "border-t-4 border-t-[#9B6FD4]",
+    bg: "bg-[#F7F3FF]",
+    text: "text-[#9B6FD4]",
+  },
+  "understanding-ovulatory-phase": {
+    border: "border-t-4 border-t-[#F4956A]",
+    bg: "bg-[#FFF5F2]",
+    text: "text-[#F4956A]",
+  },
+  "understanding-luteal-phase": {
+    border: "border-t-4 border-t-[#C3A6D4]",
+    bg: "bg-[#F3ECF9]",
+    text: "text-[#C3A6D4]",
+  },
+};
 
 export function ArticleCard({ article }) {
+  const accent = PHASE_ACCENTS[article.slug];
+
   return (
-    <Card className="group flex h-full flex-col transition-shadow hover:shadow-md">
+    <Card
+      className={cn(
+        "group flex h-full flex-col transition-shadow hover:shadow-md",
+        accent?.border,
+      )}
+    >
       <CardHeader>
         <div className="mb-2 flex items-center justify-between">
           <Badge
             variant="secondary"
-            className="border-none bg-primary/10 text-primary hover:bg-primary/20"
+            className={cn(
+              "border-none hover:opacity-90 transition-opacity",
+              accent
+                ? `${accent.bg} ${accent.text}`
+                : "bg-primary/10 text-primary hover:bg-primary/20",
+            )}
           >
             {article.category}
           </Badge>

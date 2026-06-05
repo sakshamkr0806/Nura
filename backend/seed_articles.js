@@ -1,47 +1,13 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-@Injectable()
-export class ArticleService implements OnModuleInit {
-  constructor(private prisma: PrismaService) {}
-
-  async onModuleInit() {
-    await this.seed();
-  }
-
-  async findAll(query?: string, category?: string) {
-    return this.prisma.article.findMany({
-      where: {
-        AND: [
-          category && category !== 'All' ? { category } : {},
-          query
-            ? {
-                OR: [
-                  { title: { contains: query, mode: 'insensitive' } },
-                  { content: { contains: query, mode: 'insensitive' } },
-                ],
-              }
-            : {},
-        ],
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-  }
-
-  async findBySlug(slug: string) {
-    return this.prisma.article.findUnique({
-      where: { slug },
-    });
-  }
-
-  async seed() {
-    const articles = [
-      {
-        title: '🌱 Understanding Your Menstrual Phase (Day 1–5)',
-        slug: 'understanding-menstrual-phase',
-        excerpt:
-          'Your period begins. Learn what’s happening in your body and how to support yourself during this phase.',
-        content: `
+const articles = [
+  {
+    title: '🌱 Understanding Your Menstrual Phase (Day 1–5)',
+    slug: 'understanding-menstrual-phase',
+    excerpt:
+      'Your period begins. Learn what’s happening in your body and how to support yourself during this phase.',
+    content: `
 <h2>What happens</h2>
 <p class="mb-6">Uterine lining sheds, estrogen & progesterone are at their lowest.</p>
 <img src="/education/uterus_illustration.png" alt="Uterus" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -61,16 +27,16 @@ export class ArticleService implements OnModuleInit {
 </div>
 <h2>Nutrition tips</h2>
 <p class="mb-6">Iron-rich foods (spinach, lentils), warm ginger tea, flax + pumpkin seeds.</p>
-        `,
-        category: 'Cycles',
-        tags: ['Menstrual', 'Cramps', 'Rest'],
-      },
-      {
-        title: '🌸 Understanding Your Follicular Phase (Day 6–13)',
-        slug: 'understanding-follicular-phase',
-        excerpt:
-          'Energy rises and estrogen builds. Discover how to make the most of this high-energy phase.',
-        content: `
+    `,
+    category: 'Cycles',
+    tags: ['Menstrual', 'Cramps', 'Rest'],
+  },
+  {
+    title: '🌸 Understanding Your Follicular Phase (Day 6–13)',
+    slug: 'understanding-follicular-phase',
+    excerpt:
+      'Energy rises and estrogen builds. Discover how to make the most of this high-energy phase.',
+    content: `
 <h2>What happens</h2>
 <p class="mb-6">FSH stimulates follicle growth, estrogen rises, uterine lining rebuilds.</p>
 <img src="/education/follicle_growth.png" alt="Follicle" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF6F0]" />
@@ -90,16 +56,16 @@ export class ArticleService implements OnModuleInit {
 </div>
 <h2>Nutrition tips</h2>
 <p class="mb-6">Fermented foods, leafy greens, flax + pumpkin seeds.</p>
-        `,
-        category: 'Cycles',
-        tags: ['Follicular', 'Energy', 'Estrogen'],
-      },
-      {
-        title: '🌕 Understanding Your Ovulatory Phase (Day 14–16)',
-        slug: 'understanding-ovulatory-phase',
-        excerpt:
-          'Your most fertile window. Learn what ovulation means for your body, energy, and mood.',
-        content: `
+    `,
+    category: 'Cycles',
+    tags: ['Follicular', 'Energy', 'Estrogen'],
+  },
+  {
+    title: '🌕 Understanding Your Ovulatory Phase (Day 14–16)',
+    slug: 'understanding-ovulatory-phase',
+    excerpt:
+      'Your most fertile window. Learn what ovulation means for your body, energy, and mood.',
+    content: `
 <h2>What happens</h2>
 <p class="mb-6">LH surge triggers egg release, estrogen peaks, progesterone begins to rise.</p>
 <img src="/education/ovulation_illustration.png" alt="Ovulation" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#F5E6D3]" />
@@ -119,16 +85,16 @@ export class ArticleService implements OnModuleInit {
 </div>
 <h2>Nutrition tips</h2>
 <p class="mb-6">Zinc-rich foods (pumpkin seeds), antioxidants, sesame + sunflower seeds.</p>
-        `,
-        category: 'Cycles',
-        tags: ['Ovulation', 'Fertility', 'Confidence'],
-      },
-      {
-        title: '🍂 Understanding Your Luteal Phase (Day 17–28)',
-        slug: 'understanding-luteal-phase',
-        excerpt:
-          'Progesterone rises and PMS may set in. Here’s how to navigate the second half of your cycle with ease.',
-        content: `
+    `,
+    category: 'Cycles',
+    tags: ['Ovulation', 'Fertility', 'Confidence'],
+  },
+  {
+    title: '🍂 Understanding Your Luteal Phase (Day 17–28)',
+    slug: 'understanding-luteal-phase',
+    excerpt:
+      'Progesterone rises and PMS may set in. Here’s how to navigate the second half of your cycle with ease.',
+    content: `
 <h2>What happens</h2>
 <p class="mb-6">Progesterone peaks then drops if no pregnancy, body prepares to shed lining.</p>
 <img src="/education/progesterone_chart.png" alt="Chart" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
@@ -149,16 +115,16 @@ export class ArticleService implements OnModuleInit {
 </div>
 <h2>Nutrition tips</h2>
 <p class="mb-6">Magnesium-rich foods (dark chocolate, nuts), complex carbs, sesame + sunflower seeds, turmeric milk.</p>
-        `,
-        category: 'Cycles',
-        tags: ['Luteal', 'PMS', 'Self-care'],
-      },
-      {
-        title: 'What to Eat During Your Period',
-        slug: 'nutrition-menstrual-phase',
-        excerpt:
-          'Ease cramps and replenish lost iron with the right foods during your menstrual phase.',
-        content: `
+    `,
+    category: 'Cycles',
+    tags: ['Luteal', 'PMS', 'Self-care'],
+  },
+  {
+    title: 'What to Eat During Your Period',
+    slug: 'nutrition-menstrual-phase',
+    excerpt:
+      'Ease cramps and replenish lost iron with the right foods during your menstrual phase.',
+    content: `
 <h2>Nutrition for Your Menstrual Phase (Day 1–5)</h2>
 <p class="mb-6"><strong>Focus:</strong> Replenish iron, reduce inflammation, ease cramps.</p>
 <h3><span class="text-green-700">🥦</span> Veg options</h3>
@@ -178,16 +144,16 @@ export class ArticleService implements OnModuleInit {
 <div class="bg-[#FFF0ED] p-4 rounded-xl border border-[#F6A58E] my-6">
   <strong>💡 Tip:</strong> Eat warm, cooked meals — avoid raw salads during this phase.
 </div>
-        `,
-        category: 'Nutrition',
-        tags: ['Nutrition', 'Menstrual', 'Iron'],
-      },
-      {
-        title: 'Fuel Your Rise: Eating for the Follicular Phase',
-        slug: 'nutrition-follicular-phase',
-        excerpt:
-          'Your energy is climbing — here’s what to eat to support estrogen and feel your best.',
-        content: `
+    `,
+    category: 'Nutrition',
+    tags: ['Nutrition', 'Menstrual', 'Iron'],
+  },
+  {
+    title: 'Fuel Your Rise: Eating for the Follicular Phase',
+    slug: 'nutrition-follicular-phase',
+    excerpt:
+      'Your energy is climbing — here’s what to eat to support estrogen and feel your best.',
+    content: `
 <h2>Nutrition for Your Follicular Phase (Day 6–13)</h2>
 <p class="mb-6"><strong>Focus:</strong> Support estrogen production, boost energy, gut health.</p>
 <h3><span class="text-green-700">🥦</span> Veg options</h3>
@@ -207,16 +173,16 @@ export class ArticleService implements OnModuleInit {
 <div class="bg-[#FDF6F0] p-4 rounded-xl border border-[#F6A58E] my-6">
   <strong>💡 Tip:</strong> Great time to try new healthy recipes — your digestion is strong!
 </div>
-        `,
-        category: 'Nutrition',
-        tags: ['Nutrition', 'Follicular', 'Energy'],
-      },
-      {
-        title: 'Eat to Ovulate: Nutrition for Your Peak Phase',
-        slug: 'nutrition-ovulatory-phase',
-        excerpt:
-          'Support ovulation and keep energy high with anti-inflammatory, hormone-friendly foods.',
-        content: `
+    `,
+    category: 'Nutrition',
+    tags: ['Nutrition', 'Follicular', 'Energy'],
+  },
+  {
+    title: 'Eat to Ovulate: Nutrition for Your Peak Phase',
+    slug: 'nutrition-ovulatory-phase',
+    excerpt:
+      'Support ovulation and keep energy high with anti-inflammatory, hormone-friendly foods.',
+    content: `
 <h2>Nutrition for Your Ovulatory Phase (Day 14–16)</h2>
 <p class="mb-6"><strong>Focus:</strong> Support progesterone rise, antioxidants, reduce estrogen dominance.</p>
 <h3><span class="text-green-700">🥦</span> Veg options</h3>
@@ -236,16 +202,16 @@ export class ArticleService implements OnModuleInit {
 <div class="bg-[#F5E6D3] p-4 rounded-xl border border-[#F6A58E] my-6">
   <strong>💡 Tip:</strong> Eat colourful — antioxidant-rich foods protect the egg!
 </div>
-        `,
-        category: 'Nutrition',
-        tags: ['Nutrition', 'Ovulation', 'Antioxidants'],
-      },
-      {
-        title: 'Beat PMS with Food: Luteal Phase Nutrition',
-        slug: 'nutrition-luteal-phase',
-        excerpt:
-          'Manage bloating, mood swings and cravings with magnesium-rich, comforting foods.',
-        content: `
+    `,
+    category: 'Nutrition',
+    tags: ['Nutrition', 'Ovulation', 'Antioxidants'],
+  },
+  {
+    title: 'Beat PMS with Food: Luteal Phase Nutrition',
+    slug: 'nutrition-luteal-phase',
+    excerpt:
+      'Manage bloating, mood swings and cravings with magnesium-rich, comforting foods.',
+    content: `
 <h2>Nutrition for Your Luteal Phase (Day 17–28)</h2>
 <p class="mb-6"><strong>Focus:</strong> Stabilise mood, reduce bloating, manage cravings, support progesterone.</p>
 <h3><span class="text-green-700">🥦</span> Veg options</h3>
@@ -265,17 +231,17 @@ export class ArticleService implements OnModuleInit {
 <div class="bg-[#FDF2F4] p-4 rounded-xl border border-[#F6A58E] my-6">
   <strong>💡 Tip:</strong> Craving chocolate? Dark chocolate (70%+) is actually beneficial — magnesium helps with cramps!
 </div>
-        `,
-        category: 'Nutrition',
-        tags: ['Nutrition', 'Luteal', 'PMS'],
-      },
-      // 🧠 Mental Health Category
-      {
-        title: 'Mood & Your Menstrual Cycle',
-        slug: 'mood-menstrual-cycle',
-        excerpt:
-          'Learn how estrogen and progesterone affect your mood, anxiety, and emotions across the different phases of your cycle.',
-        content: `
+    `,
+    category: 'Nutrition',
+    tags: ['Nutrition', 'Luteal', 'PMS'],
+  },
+  // 🧠 Mental Health Category
+  {
+    title: 'Mood & Your Menstrual Cycle',
+    slug: 'mood-menstrual-cycle',
+    excerpt:
+      'Learn how estrogen and progesterone affect your mood, anxiety, and emotions across the different phases of your cycle.',
+    content: `
 <h2>The Hormonal Emotional Rollercoaster</h2>
 <p class="mb-6">Hormones are powerful chemical messengers. Throughout your 28-day cycle, estrogen and progesterone fluctuate significantly, impacting neurotransmitters in the brain like serotonin and dopamine, which regulate mood, sleep, and emotional stability.</p>
 <img src="/education/calm_woman_journaling.png" alt="Journaling" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -303,16 +269,16 @@ export class ArticleService implements OnModuleInit {
 
 <h2>When to Seek Professional Support</h2>
 <p class="mb-6">If your mood swings feel unmanageable, cause severe disruption to your relationships or work, or lead to feelings of hopelessness, seek support from a healthcare professional. You could be experiencing PMDD, a severe and treatable form of premenstrual distress.</p>
-        `,
-        category: 'Mental Health',
-        tags: ['Mood', 'Mental Health', 'Hormones'],
-      },
-      {
-        title: 'Managing PMS & PMDD',
-        slug: 'managing-pms-pmdd',
-        excerpt:
-          'Understand the difference between PMS and PMDD, recognize the symptoms, and explore natural remedies vs medical options.',
-        content: `
+    `,
+    category: 'Mental Health',
+    tags: ['Mood', 'Mental Health', 'Hormones'],
+  },
+  {
+    title: 'Managing PMS & PMDD',
+    slug: 'managing-pms-pmdd',
+    excerpt:
+      'Understand the difference between PMS and PMDD, recognize the symptoms, and explore natural remedies vs medical options.',
+    content: `
 <h2>PMS vs. PMDD: Knowing the Difference</h2>
 <p class="mb-6">Premenstrual Syndrome (PMS) affects up to 80% of women with mild to moderate physical and emotional symptoms. Premenstrual Dysphoric Disorder (PMDD) is a severe, chronic medical condition affecting 3-8% of women, characterized by debilitating emotional distress that disrupts daily functioning.</p>
 <img src="/education/woman_stressed_calm.png" alt="Stress to Calm" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
@@ -346,16 +312,16 @@ export class ArticleService implements OnModuleInit {
 
 <h2>Medical Treatment Paths</h2>
 <p class="mb-6">If natural treatments aren't enough, doctors may recommend targeted options like selective serotonin reuptake inhibitors (SSRIs) taken during the luteal phase, or specific hormonal therapies to suppress ovulation. Talk to your gynecologist or therapist to find your path.</p>
-        `,
-        category: 'Mental Health',
-        tags: ['PMDD', 'PMS', 'Therapy'],
-      },
-      {
-        title: 'Cycle & Sleep Connection',
-        slug: 'cycle-sleep-connection',
-        excerpt:
-          'How hormonal shifts disrupt sleep in your luteal phase, and evidence-based tips to rest peacefully.',
-        content: `
+    `,
+    category: 'Mental Health',
+    tags: ['PMDD', 'PMS', 'Therapy'],
+  },
+  {
+    title: 'Cycle & Sleep Connection',
+    slug: 'cycle-sleep-connection',
+    excerpt:
+      'How hormonal shifts disrupt sleep in your luteal phase, and evidence-based tips to rest peacefully.',
+    content: `
 <h2>Why Hormones Rule Your Sleep</h2>
 <p class="mb-6">Does your sleep quality drop right before your period? You are not alone. Progesterone levels rise rapidly after ovulation and then plummet right before menstruation, directly impacting your body temperature regulation, REM cycles, and melatonin production.</p>
 <img src="/education/woman_sleeping_peacefully.png" alt="Sleeping Peacefully" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF2F4]" />
@@ -377,17 +343,17 @@ export class ArticleService implements OnModuleInit {
   <img src="/education/turmeric_milk.png" alt="Turmeric Milk" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
   <img src="/education/cozy_self_care.png" alt="Cozy Bedroom" class="w-full h-auto aspect-square rounded-3xl object-cover border border-[#FDF2F4]" />
 </div>
-        `,
-        category: 'Mental Health',
-        tags: ['Sleep', 'Melatonin', 'Luteal'],
-      },
-      // 🚫 Myth-Busting Category
-      {
-        title: 'Myth: Period Pain is Normal & You Should Just Bear It',
-        slug: 'myth-period-pain-normal',
-        excerpt:
-          'Debunking the age-old myth that severe period pain is normal. Learn when cramping is a red flag for conditions like endometriosis or PCOS.',
-        content: `
+    `,
+    category: 'Mental Health',
+    tags: ['Sleep', 'Melatonin', 'Luteal'],
+  },
+  // 🚫 Myth-Busting Category
+  {
+    title: 'Myth: Period Pain is Normal & You Should Just Bear It',
+    slug: 'myth-period-pain-normal',
+    excerpt:
+      'Debunking the age-old myth that severe period pain is normal. Learn when cramping is a red flag for conditions like endometriosis or PCOS.',
+    content: `
 <h2>The Truth About Menstrual Cramping</h2>
 <p class="mb-6">While mild pelvic discomfort or a dull ache is a common response to uterine contractions, severe, debilitating pain that leaves you bedridden, missing school, or dependent on heavy painkillers is <strong>not normal</strong>.</p>
 <img src="/education/period_pain_myth.png" alt="Patient and Doctor" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -403,16 +369,16 @@ export class ArticleService implements OnModuleInit {
 
 <h2>When to Consult a Doctor</h2>
 <p class="mb-6">If your menstrual pain is accompanied by heavy bleeding, pain during intercourse, chronic lower back pain, or digestive issues, schedule a comprehensive consultation with a gynecologist. Advocating for your health starts with realizing you do not have to live in pain.</p>
-        `,
-        category: 'Myth-Busting',
-        tags: ['Myth-Busting', 'Pain', 'Endometriosis'],
-      },
-      {
-        title: 'Myth: You Can’t Get Pregnant During Your Period',
-        slug: 'myth-pregnant-during-period',
-        excerpt:
-          'Can you conceive on your period? We explain the science of sperm survival, early ovulation, and why you should stay protected.',
-        content: `
+    `,
+    category: 'Myth-Busting',
+    tags: ['Myth-Busting', 'Pain', 'Endometriosis'],
+  },
+  {
+    title: 'Myth: You Can’t Get Pregnant During Your Period',
+    slug: 'myth-pregnant-during-period',
+    excerpt:
+      'Can you conceive on your period? We explain the science of sperm survival, early ovulation, and why you should stay protected.',
+    content: `
 <h2>The Biology of Conception</h2>
 <p class="mb-6">Many believe that active menstrual bleeding guarantees a safe, non-fertile window. While the probability is lower, it is biologically possible to get pregnant from intercourse that occurs during your period.</p>
 <img src="/education/calendar_cycle_days.png" alt="Cycle Days" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -427,16 +393,16 @@ export class ArticleService implements OnModuleInit {
 
 <h2>Summary Advice</h2>
 <p class="mb-6">Unless you are actively tracking your biological biomarkers (like basal body temperature and cervical mucus) and have a highly regular cycle, always use protection if you want to avoid pregnancy. Do not rely solely on the calendar or active bleeding as a contraceptive method.</p>
-        `,
-        category: 'Myth-Busting',
-        tags: ['Myth-Busting', 'Fertility', 'Contraception'],
-      },
-      {
-        title: 'Myth: Irregular Periods are Always Normal',
-        slug: 'myth-irregular-periods-normal',
-        excerpt:
-          'What defines an irregular cycle, what causes it, and when should you seek a professional medical opinion?',
-        content: `
+    `,
+    category: 'Myth-Busting',
+    tags: ['Myth-Busting', 'Fertility', 'Contraception'],
+  },
+  {
+    title: 'Myth: Irregular Periods are Always Normal',
+    slug: 'myth-irregular-periods-normal',
+    excerpt:
+      'What defines an irregular cycle, what causes it, and when should you seek a professional medical opinion?',
+    content: `
 <h2>What is an Irregular Period?</h2>
 <p class="mb-6">Your cycle is considered irregular if it is consistently shorter than 21 days, longer than 35 days, or varies dramatically in length from month to month. While occasional irregularity due to stress or travel is normal, chronic irregularity points to systemic issues.</p>
 <img src="/education/period_tracker_app.png" alt="Tracker App" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -451,17 +417,17 @@ export class ArticleService implements OnModuleInit {
 
 <h2>When to Speak with a Gynecologist</h2>
 <p class="mb-6">If your period is consistently missing for over 3 months, if your cycles are highly unpredictable, or if irregularity is paired with acne, hair loss, or sudden weight gain, request a blood panel and pelvic ultrasound. Tracking your cycle with Nura provides your doctor with invaluable diagnostic history.</p>
-        `,
-        category: 'Myth-Busting',
-        tags: ['Myth-Busting', 'Irregular', 'PCOS'],
-      },
-      // 🌿 Lifestyle Category
-      {
-        title: 'Exercise & Your Cycle: Train Smarter',
-        slug: 'exercise-cycle-train-smarter',
-        excerpt:
-          'Optimize your fitness by aligning workouts with your cycle phases — from restorative rest to high-intensity training.',
-        content: `
+    `,
+    category: 'Myth-Busting',
+    tags: ['Myth-Busting', 'Irregular', 'PCOS'],
+  },
+  // 🌿 Lifestyle Category
+  {
+    title: 'Exercise & Your Cycle: Train Smarter',
+    slug: 'exercise-cycle-train-smarter',
+    excerpt:
+      'Optimize your fitness by aligning workouts with your cycle phases — from restorative rest to high-intensity training.',
+    content: `
 <h2>Why Work Out with Your Cycle?</h2>
 <p class="mb-6">Your cardiovascular capacity, muscle recovery, and energy levels shift in response to estrogen and progesterone. By syncing your exercises with your biology, you can build lean muscle, recover faster, and avoid hormonal exhaustion.</p>
 <img src="/education/woman_exercising.png" alt="Woman Exercising" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FDF6F0]" />
@@ -479,16 +445,16 @@ export class ArticleService implements OnModuleInit {
 <h3 class="font-bold text-base mt-4 mb-2 text-[#7B5EA7]">🍂 Luteal Phase (Moderate Cardio & Strength)</h3>
 <p class="mb-4"><strong>Best:</strong> Pilates, steady-state jog, light resistance training.<br />Progesterone raises body temperature and makes recovery slower. Shift to moderate effort and prioritize flexibility and recovery.</p>
 <img src="/education/yoga_pose.png" alt="Yoga Pose" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
-        `,
-        category: 'Lifestyle',
-        tags: ['Exercise', 'Fitness', 'Biohacking'],
-      },
-      {
-        title: 'Cycle Syncing Your Diet',
-        slug: 'cycle-syncing-your-diet',
-        excerpt:
-          'How to nourish your body through all four phases of your cycle. Learn to coordinate foods with hormonal fluctuations.',
-        content: `
+    `,
+    category: 'Lifestyle',
+    tags: ['Exercise', 'Fitness', 'Biohacking'],
+  },
+  {
+    title: 'Cycle Syncing Your Diet',
+    slug: 'cycle-syncing-your-diet',
+    excerpt:
+      'How to nourish your body through all four phases of your cycle. Learn to coordinate foods with hormonal fluctuations.',
+    content: `
 <h2>The Power of Nutritional Alignment</h2>
 <p class="mb-6">Your caloric needs and metabolic rate are not static. During your cycle, the body requires different micronutrients to metabolize hormones, replenish iron, and stabilize insulin levels. Syncing your diet supports ovulatory health and eases PMS.</p>
 <img src="/education/colourful_foods.png" alt="Colourful Foods" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#F5E6D3]" />
@@ -506,16 +472,16 @@ export class ArticleService implements OnModuleInit {
 
 <h3>🍂 Luteal: Complex Carbs & Magnesium</h3>
 <p class="mb-4">Your metabolism increases by 100-300 calories. Avoid blood sugar crashes by eating complex carbs (sweet potatoes, oats) and magnesium-rich dark chocolate to calm cramps.</p>
-        `,
-        category: 'Lifestyle',
-        tags: ['Diet', 'Nutrition', 'Lifestyle'],
-      },
-      {
-        title: 'Stress & Hormonal Balance',
-        slug: 'stress-hormonal-balance',
-        excerpt:
-          'Cortisol can make or break your menstrual health. Explore how stress affects your cycle, and daily tips like meditation and breathwork.',
-        content: `
+    `,
+    category: 'Lifestyle',
+    tags: ['Diet', 'Nutrition', 'Lifestyle'],
+  },
+  {
+    title: 'Stress & Hormonal Balance',
+    slug: 'stress-hormonal-balance',
+    excerpt:
+      'Cortisol can make or break your menstrual health. Explore how stress affects your cycle, and daily tips like meditation and breathwork.',
+    content: `
 <h2>The Cortisol-Progesterone Connection</h2>
 <p class="mb-6">When you experience chronic physical or psychological stress, your adrenal glands prioritize the production of cortisol (the stress hormone) over progesterone. This hormonal imbalance is a common trigger for painful cramps, severe PMS, and missed periods.</p>
 <img src="/education/woman_meditating_flowers.png" alt="Meditating" class="w-full h-auto rounded-3xl my-8 object-cover border border-[#FFF0ED]" />
@@ -537,14 +503,17 @@ export class ArticleService implements OnModuleInit {
   <li><strong>Hormone-Soothing Teas:</strong> Incorporate chamomile, ashwagandha, or hot turmeric milk to calm the nervous system in the evening.</li>
   <li><strong>Nature Walks:</strong> Spending 20 minutes outside in greenery is clinically proven to reduce stress biomarkers.</li>
 </ul>
-        `,
-        category: 'Lifestyle',
-        tags: ['Stress', 'Cortisol', 'Self-Care'],
-      },
-    ];
+    `,
+    category: 'Lifestyle',
+    tags: ['Stress', 'Cortisol', 'Self-Care'],
+  },
+];
 
+async function main() {
+  console.log('Seeding articles in database...');
+  try {
     for (const article of articles) {
-      await this.prisma.article.upsert({
+      await prisma.article.upsert({
         where: { slug: article.slug },
         update: {
           title: article.title,
@@ -556,5 +525,12 @@ export class ArticleService implements OnModuleInit {
         create: article,
       });
     }
+    console.log('Articles seeded successfully!');
+  } catch (e) {
+    console.error('Failed to seed articles:', e);
+  } finally {
+    await prisma.$disconnect();
   }
 }
+
+main();

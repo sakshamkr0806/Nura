@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { ArticleCard } from "@/features/education/components/ArticleCard";
@@ -15,10 +16,15 @@ const CATEGORIES = [
 ];
 
 export default function Education() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [articles, setArticles] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
+
+  const tabFromUrl = searchParams.get("tab") || "All";
+  const selectedCategory =
+    CATEGORIES.find((cat) => cat.toLowerCase() === tabFromUrl.toLowerCase()) ||
+    "All";
 
   const fetchArticles = useCallback(async () => {
     setIsLoading(true);
@@ -26,7 +32,22 @@ export default function Education() {
       const res = await api.get("/articles", {
         params: { q: search, category: selectedCategory },
       });
-      setArticles(res.data);
+
+      // exact sort order for Cycle Phase cards
+      const PHASE_ORDER = {
+        "understanding-menstrual-phase": 1,
+        "understanding-follicular-phase": 2,
+        "understanding-ovulatory-phase": 3,
+        "understanding-luteal-phase": 4,
+      };
+
+      const sorted = [...res.data].sort((a, b) => {
+        const orderA = PHASE_ORDER[a.slug] || 999;
+        const orderB = PHASE_ORDER[b.slug] || 999;
+        return orderA - orderB;
+      });
+
+      setArticles(sorted);
     } catch {
       // Silently handle error
     } finally {
@@ -79,7 +100,11 @@ export default function Education() {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  const newParams = new URLSearchParams(searchParams);
+                  newParams.set("tab", cat.toLowerCase());
+                  setSearchParams(newParams);
+                }}
                 className="px-5 py-2 rounded-full text-xs font-bold tracking-wide transition-all duration-200 shrink-0"
                 style={
                   selectedCategory === cat
